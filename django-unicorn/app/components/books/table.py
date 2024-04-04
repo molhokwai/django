@@ -4,7 +4,7 @@ from django.contrib import messages
 from app.models import Book
 
 from enum import Enum
-
+import copy
 
 class MessageStatus(Enum):
     SUCCESS = "Success"
@@ -15,10 +15,15 @@ class MessageStatus(Enum):
 class TableView(UnicornView):
     books = Book.objects.none()
     countries = None
+    fields = None
+    table_fields = None
 
 
     def mount(self):
         self.countries = list(zip(Book.Countries.values, Book.Countries.names))
+        self.fields = [f.name for f in Book._meta.get_fields()]
+        self.table_fields = copy.copy(self.fields)
+        self.table_fields.remove('id')
         self.load_table()
 
 

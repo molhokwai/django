@@ -1,6 +1,6 @@
 {% load static %}
+{% load static tailwind_tags %}
 
- 
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -8,8 +8,11 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>Django Unicorn</title>
-     
+        <title>Django Unicorn + Tailwind = ❤️</title>
+
+        {% tailwind_preload_css %}
+        {% tailwind_css %}
+
         <link rel="stylesheet" href="{% static 'templates/main/css/main.css' %}">
 
         {% load unicorn %}
@@ -20,8 +23,8 @@
         <script type="text/javascript" src="{% static 'templates/main/js/main.js' %}"></script>     
     </head>
 
-    <body class="bg-green-50">
-        <div class="container mx-auto mt-4">
+    <body class="bg-slate-100 w-full">
+        <div class="container w-full">
             {% block content %}
             {% endblock content %}
         </div>
