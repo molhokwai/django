@@ -1,0 +1,33 @@
+
+
+<!-- books/table.html -->
+{% load unicorn %}
+<div unicorn:view>
+    {% unicorn 'books.manage' parent=self %}
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% unicorn 'books.filter' parent=self %}
+    <table class="table">
+        <thead>
+            <tr>
+                <td>Author</td>
+                <td>Title</td>
+                <td>Date published</td>
+                <td>Country</td>
+            </tr>
+        </thead>
+        <tbody id="books-body">
+            {% for book in books %}
+                {% unicorn 'books.row' book=book key=book.id parent=self %}
+            {% endfor %}
+        </tbody>
+        <!-- span unicorn:visible.threshold-100="add_count"></span -->          
+    </table>
+</div>

@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# -*- coding: utf8 -*-
+
+# ------------------------- DEPLOYMENT --------------------------------
+# Deployment done manually through heroku dashboard app deployment page:
+xdg-open 'https://dashboard.heroku.com/apps/afriscience/deploy/github'
+
+
+
+# ------------------------- MIGRATIONS --------------------------------
+# -   src: https://stackoverflow.com/questions/38330432/django-makemigrations-and-migrate-on-heroku-server-dont-create-tables
+# 1.  Migrate locally:
+python manage.py makemigrations 
+python manage.py migrate
+
+# 2.  Commit your code
+# 3.  Push it to Heroku master
+# 4.  Run
+heroku run python manage.py makemigrations 
+heroku run python manage.py migrate
+
+
+
+# ------------------------- NOT WORKING --------------------------------
+# -- Gemini: "What's the command to deploy from the heroku command line ?"
+
+
+# prod - NOT WORKING
+heroku deploy:prod
+
+
+# staging  - NOT WORKING
+heroku deploy:beta
+
+# Specific Git branch deployment   - NOT WORKING
+heroku deploy:prod -b feature/new-feature
+
+
+# Rollbank, Release   - NOT WORKING ?
+heroku releases:rollback
+heroku releases:set RELEASE_ID
