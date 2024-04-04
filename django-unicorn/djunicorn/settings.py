@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from shutil import which
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +28,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 # Application definition
 
@@ -40,6 +44,9 @@ INSTALLED_APPS = [
     'django_unicorn',
     'djunicorn',
     'app',
+    'tailwind',
+    'theme',
+    'django_browser_reload',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
 
 ROOT_URLCONF = 'djunicorn.urls'
@@ -139,3 +147,11 @@ UNICORN = {
     }
 }
 
+# Tailwind 
+
+TAILWIND_APP_NAME = 'theme'
+
+# Node, npm
+
+# NPM_BIN_PATH = '/home/nkensa/.config/nvm/versions/node/v20.11.0/bin/npm'
+NPM_BIN_PATH = which("npm")
