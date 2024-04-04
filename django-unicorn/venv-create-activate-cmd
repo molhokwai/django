@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# -*- coding: utf8 -*-
+python3 -m venv venv # create a virtualenv
+source venv/bin/activate  # activate it
+
+# install
+pip install django==3.2
