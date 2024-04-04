@@ -26,7 +26,7 @@
                 </td>
                 {% for field in table_fields %}
                     <td class="bg-green-600 first:rounded-l-lg last:rounded-r-lg p-2 text-green-100 tracking-widest border-green-100">
-                        {{ field }}
+                        {{ field|title }}
                     </td>
                 {% endfor %}
             </tr>
