@@ -28,21 +28,21 @@
         </td>
         <td>
             {% if is_editing %}
-                <input type="text" unicorn:model.defer="book.author" value="{{ book.author }}" class="form-control rounded border-green-700 shadow-sm text-green-900 tracking-wider text-xs"/>
-            {% else %}
-                <font 
-                    class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
-                    {{ book.author }}
-                </font>                
-            {% endif %}
-        </td>
-        <td>
-            {% if is_editing %}
                 <input type="text" unicorn:model.defer="book.title" value="{{ book.title }}" class="form-control rounded border-green-700 shadow-sm text-green-900 tracking-wider text-xs"/>
             {% else %}
                 <font 
                     class="border-green-700 shadow-sm text-green-900 tracking-wider">
                     {{ book.title }}
+                </font>                
+            {% endif %}
+        </td>
+        <td>
+            {% if is_editing %}
+                <input type="text" unicorn:model.defer="book.author" value="{{ book.author }}" class="form-control rounded border-green-700 shadow-sm text-green-900 tracking-wider text-xs"/>
+            {% else %}
+                <font 
+                    class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
+                    {{ book.author }}
                 </font>                
             {% endif %}
         </td>
