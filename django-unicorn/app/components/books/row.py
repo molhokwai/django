@@ -34,4 +34,5 @@ class RowView(UnicornView):
         self.is_editing = False
         self.parent.messages_display(MessageStatus.SUCCESS, "Item saved.")
         self.parent.load_table(force_render=True)
+        return self.parent.reload()
 

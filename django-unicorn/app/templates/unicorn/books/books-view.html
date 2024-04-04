@@ -6,9 +6,9 @@
 {% csrf_token %}
 
 {% block content %}
-    <main>
+    <main class="container mx-auto px-4">
         <!--End of Title section-->
-        <div class="section section-md">
+        <div class="section">
             <div class="container">
 
                 <!-- row 1 | -->
@@ -18,7 +18,13 @@
                     <div class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle mb-4">
                       <span class="fas fa-horse-head text-tertiary"></span>
                     </div>
-                    <h3 class="fw-bolder">{% trans "Unicorn" %}</h3>
+                    <h1 class="text-3xl text-green-800">
+                          {% trans "Django Unicorn + Tailwind = ❤️" %}
+                    </h1>
+                      <h3 class="text-3x1 text-green-800">
+                          django-unicorn, tailwind
+                    </h3>
+
                     <p class="text-gray text-left"></p>
                   </div>
                 </div>

@@ -8,9 +8,20 @@
 {% csrf_token %}
 
 {% block content %}
-    <main>
-        <div class="section section-md">
-            <div class="container">
+
+    <div class="bg-slate-800 w-full top-0 py-4">
+        <h1 class="text-3xl text-green-100 text-center">
+              {% trans "Django Unicorn + Tailwind = ❤️" %}
+        </h1>
+          <h3 class="text-3x1 text-green-100 text-center">
+              django-unicorn, tailwind
+        </h3>
+        <p class="text-gray text-left"></p>
+    </div>
+
+    <main class="relative top-8 mx-auto mb-20 w-4/5 min-w-672-px overscroll-y-auto">
+        <div class="section section-md mx-auto align-center">
+            <div class="container max-w-4xl">
 
                 <!-- row 1 | -->
                 <div class="row justify-content-center mb-5 mb-lg-6">
@@ -19,8 +30,6 @@
                     <div class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle mb-4">
                       <span class="fas fa-horse-head text-tertiary"></span>
                     </div>
-                    <h3 class="fw-bolder">{% trans "Unicorn" %}</h3>
-                    <p class="text-gray text-left"></p>
                   </div>
                 </div>
                 <!-- /row 1 -->
@@ -38,5 +47,11 @@
         </div>
         <!-- /.section -->
     </main>
+
+    <div class="bg-slate-800 w-full fixed bottom-0 py-2 mt-20 text-center text-green-100">
+        <small>
+              @{% trans "inception completed." %}
+        </small>
+    </div>
 
 {% endblock %}

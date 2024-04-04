@@ -2,25 +2,33 @@
 
 <!-- books/table.html -->
 {% load unicorn %}
+{% load define_action %}
+
 <div unicorn:view>
     {% unicorn 'books.manage' parent=self %}
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <ul class="messages messages mt-20 block bg-slate-600 p-4 rounded text-green-100 text-center hidden">
+        {% if messages %}
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+        {% else %}
+            &nbsp;
+        {% endif %}
+    </ul>
 
     {% unicorn 'books.filter' parent=self %}
-    <table class="table">
-        <thead>
+    <table class="table table-auto rounded border-green-300">
+        <thead class="p-4 text-gray">
             <tr>
-                <td>Author</td>
-                <td>Title</td>
-                <td>Date published</td>
-                <td>Country</td>
+                <td class="min-w-32">
+                    &nbsp;
+                </td>
+                {% for field in table_fields %}
+                    <td class="bg-green-600 first:rounded-l-lg last:rounded-r-lg p-2 text-green-100 tracking-widest border-green-100">
+                        {{ field }}
+                    </td>
+                {% endfor %}
             </tr>
         </thead>
         <tbody id="books-body">
@@ -28,6 +36,6 @@
                 {% unicorn 'books.row' book=book key=book.id parent=self %}
             {% endfor %}
         </tbody>
-        <!-- span unicorn:visible.threshold-100="add_count"></span -->          
+        <!-- span unicorn:visible.threshold-100="add_count"></span -->
     </table>
 </div>

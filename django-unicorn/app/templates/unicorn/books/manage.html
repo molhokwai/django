@@ -2,16 +2,23 @@
 
 <!-- books/manage.html -->
 <div class="mb-5">
-    <input unicorn:model.defer="title"      type="text"   id="title"   placeholder="title"    class="form-control" />
-    <input unicorn:model.defer="author"     type="text"   id="author"  placeholder="author"   class="form-control" />
-    <input unicorn:model.defer="date_published"   type="text"   id="date_published"   placeholder="ex: 1997-05-15"   class="form-control" />
-    <select  unicorn:model.defer="country" id="country" class="form-select">
+    <input unicorn:model.defer="title"      type="text"   id="title"   placeholder="title"    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <input unicorn:model.defer="author"     type="text"   id="author"  placeholder="author"   class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <input unicorn:model.defer="date_published"   type="text"   id="date_published"   placeholder="ex: 1997-05-15"   
+        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <select  unicorn:model.defer="country" id="country" 
+        class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider">
         <option>Select a country...</option>
         {% for country in countries %}
             <option value="{{ country.0 }}">{{ country.1 }}</option>
         {% endfor %}
     </select>
-    <button unicorn:click="add"        class="btn btn-outline-tertiary">Add</button>
-    <button unicorn:click="delete"     class="btn btn-outline-dark">Delete</button>
-    <button unicorn:click="delete_all" class="btn btn-outline-danger">Delete All</button>
+    <div class="float-right pt-2 mr-10 sm:block sm:mt-5 sm:mb-10">
+        <button unicorn:click="add"
+            class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-2 px-4 text-white font-bold shadow-xl duration-1000">Add</button>
+        <button unicorn:click="delete"
+            class="btn btn-outline-dark rounded bg-orange-400 hover:bg-orange-500 p-2 px-4 text-white font-bold shadow-lg duration-200">Delete</button>
+        <button unicorn:click="delete_all"
+            class="btn btn-outline-danger rounded bg-red-500 hover:bg-red-700 p-2 px-4 text-white font-bold shadow-lg duration-200">Delete All</button>
+    </div>
 </div>
