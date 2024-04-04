@@ -1,0 +1,23 @@
+
+
+<!-- books/manage.html -->
+<div>
+    <input unicorn:model.defer="title"      type="text"   id="title"   placeholder="title"    class="form-control" />
+    <input unicorn:model.defer="author"     type="text"   id="author"  placeholder="author"   class="form-control" />
+    <input unicorn:model.lazy="date_published"   type="text"   id="date_published"   placeholder="ex: 1997-05-15"   class="form-control" />
+    <button unicorn:click="add"        class="btn btn-outline-tertiary">Add</button>
+    <button unicorn:click="delete"     class="btn btn-outline-dark">Delete</button>
+    <button unicorn:click="delete_all" class="btn btn-outline-danger">Delete All</button>
+    <br/>
+    <br/>    
+    <hr/>
+    <br/>    
+    <div id="books">
+      {% for book in books %}
+          <div class="book">
+              <strong>"{{ book.title }}"</strong> | by <em>{{ book.author }}</em>  
+              {% if book.date_published %}| <small>published:  {{ book.date_published }}</small>{% endif %}
+          </div>
+      {% endfor %}    
+    </div>
+</div>

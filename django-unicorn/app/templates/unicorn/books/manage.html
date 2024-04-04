@@ -1,0 +1,17 @@
+
+
+<!-- books/manage.html -->
+<div class="mb-5">
+    <input unicorn:model.defer="title"      type="text"   id="title"   placeholder="title"    class="form-control" />
+    <input unicorn:model.defer="author"     type="text"   id="author"  placeholder="author"   class="form-control" />
+    <input unicorn:model.defer="date_published"   type="text"   id="date_published"   placeholder="ex: 1997-05-15"   class="form-control" />
+    <select  unicorn:model.defer="country" id="country" class="form-select">
+        <option>Select a country...</option>
+        {% for country in countries %}
+            <option value="{{ country.0 }}">{{ country.1 }}</option>
+        {% endfor %}
+    </select>
+    <button unicorn:click="add"        class="btn btn-outline-tertiary">Add</button>
+    <button unicorn:click="delete"     class="btn btn-outline-dark">Delete</button>
+    <button unicorn:click="delete_all" class="btn btn-outline-danger">Delete All</button>
+</div>

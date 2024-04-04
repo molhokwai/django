@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# -*- coding: utf8 -*-
+sudo -i -u postgres psql
+sudo systemctl start|restart|stop postgresql
+
+# \c afriscience;
+# SELECT * FROM journals_journal;
+# TRUNCATE TABLE journals_journal CASCADE;
+# DELETE FROM auth_user WHERE id > 3;
+
+# PowerShell
+# $Server = "django-apprunner-db.c5044emeqwc6.us-east-2.rds.amazonaws.com"
+# $Port
+# $Database = "django-apprunner-db"
+# $User = "postgres"
+# $Password = "3c52EA6-e2gf46adgdA-3cBg2De3g4Df"
+# $Port = "5432"
+$postgresql = Connect-PostgreSQL  -User "postgres" -Password "3c52EA6-e2gf46adgdA-3cBg2De3g4Df" -Database "django-apprunner-db" -Server "django-apprunner-db.c5044emeqwc6.us-east-2.rds.amazonaws.com" -Port "5432"

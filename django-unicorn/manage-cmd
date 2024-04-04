@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# -*- coding: utf8 -*-
+python manage.py runserver
+
+python manage.py makemigrations
+python manage.py migrate
+
+python manage.py collectstatic
+
+python manage.py startunicorn [app] [new-unicorn]

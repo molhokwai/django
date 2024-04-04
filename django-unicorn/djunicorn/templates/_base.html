@@ -1,0 +1,29 @@
+{% load static %}
+
+ 
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Django Unicorn</title>
+     
+        <link rel="stylesheet" href="{% static 'templates/main/css/main.css' %}">
+
+        {% load unicorn %}
+        <script defer src="https://unpkg.com/@alpinejs/morph@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        {% unicorn_scripts %}
+
+        <script type="text/javascript" src="{% static 'templates/main/js/main.js' %}"></script>     
+    </head>
+
+    <body class="bg-green-50">
+        <div class="container mx-auto mt-4">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </body>
+</html>
