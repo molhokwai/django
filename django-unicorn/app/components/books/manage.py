@@ -27,6 +27,16 @@ class ManageView(UnicornView):
 
 
     def save_file(self):
+        """
+        DJANGO UNICORN FILE UPLOADS - From https://github.com/adamghill/django-unicorn/discussions/256
+
+        Test Data:
+            Emke – The Threepenny Review
+            Imbolo Mbue
+            2015-05-13
+            /home/nkensa/GDrive-local/Tree/Books/Imbolo_Mbue_Emke_The_Threepenny_Review.pdf
+        """
+
         image_data = self.new_media_base64.split(';base64,')[-1]  # Extract the base64 image data
         decoded_image = b64decode(image_data)
         if len(decoded_image) > 10 * 1024 * 1024:  # 10MB limit
