@@ -13,7 +13,7 @@ class Book(models.Model):
         UK = 'UK', _('United Kingdom')
 
 
-    title = models.CharField(max_length=200)    
+    title = models.CharField(max_length=200)
     author = models.CharField(max_length=200)
     date_published  = models.DateField(null=True, auto_now_add=False)
     country = models.CharField(null=True, max_length=2,  choices=Countries.choices)

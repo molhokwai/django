@@ -16,6 +16,9 @@ class ManageView(UnicornView):
 
     countries = None
 
+    new_media_base64 = None
+    new_media_file_name = None
+
     books: QuerySetType[Book] = Book.objects.all()
 
 
@@ -23,7 +26,22 @@ class ManageView(UnicornView):
         self.countries = self.parent.countries
 
 
+    def save_file(self):
+        image_data = self.new_media_base64.split(';base64,')[-1]  # Extract the base64 image data
+        decoded_image = b64decode(image_data)
+        if len(decoded_image) > 10 * 1024 * 1024:  # 10MB limit
+            raise "File exceeds the 10mb limit."
+
+        self.new_media_err = None
+        media = Media(
+            name=self.new_media_file_name,
+        )
+        media.src.save(self.generate_unique_media_name(), ContentFile(decoded_image), save=True)
+
+
     def add(self):
+        self.save_file()
+
         print('------------------ %s, %s, %s ----------------' % (self.title, self.author, self.country))
         Book.objects.create(
             title = self.title,
