@@ -1,0 +1,32 @@
+{% load static %}
+{% load static tailwind_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Dark / Light</title>
+
+        {% tailwind_preload_css %}
+        {% tailwind_css %}
+
+        <link rel="stylesheet" href="{% static 'templates/main/css/main.css' %}">
+
+        {% load unicorn %}
+        <script defer src="https://unpkg.com/@alpinejs/morph@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        {% unicorn_scripts %}
+
+        <script type="text/javascript" src="{% static 'templates/main/js/main.js' %}"></script>     
+    </head>
+
+    <body class="bg-slate-100 w-full">
+        <div class="container w-full">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </body>
+</html>

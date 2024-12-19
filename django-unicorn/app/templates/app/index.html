@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
  
 {% block content %}
-    <div class="mr-5">
+    <div class="mt-10 mx-auto">
         <h1 class="text-3xl text-green-800">
               Django Unicorn
         </h1>
@@ -14,6 +14,12 @@
           </li>
           <li>
               | <a href="{% url 'books_view' %}">Books view</a>
+          </li>
+          <li>
+              | <a href="{% url 'darklight_index' %}">Dark / Light</a>
+          </li>
+          <li>
+              | <a href="{% url 'ourcards_index' %}">Our Cards</a>
           </li>
         </ul>
     </div>

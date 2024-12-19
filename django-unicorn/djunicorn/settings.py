@@ -35,18 +35,27 @@ INTERNAL_IPS = [
 # Application definition
 
 INSTALLED_APPS = [
+    # core
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # extensions
     'django_unicorn',
+    'theme',
+    'tailwind',
+    'django_browser_reload',
+    'taggit',
+    'tinymce',
+
+    # apps
     'djunicorn',
     'app',
-    'tailwind',
-    'theme',
-    'django_browser_reload',
+    'darklight',
+    'ourcards'
 ]
 
 MIDDLEWARE = [
@@ -123,15 +132,22 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Static & Media files (CSS, JavaScript, Images)...
+# -------------------------------------------------
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
     BASE_DIR / 'media'
 ]
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -139,7 +155,8 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Unicorn 
+# Apps Settings
+# -------------
 
 UNICORN = {
     "MORPHER": {
@@ -147,11 +164,15 @@ UNICORN = {
     }
 }
 
-# Tailwind 
-
 TAILWIND_APP_NAME = 'theme'
 
 # Node, npm
 
 # NPM_BIN_PATH = '/home/nkensa/.config/nvm/versions/node/v20.11.0/bin/npm'
 NPM_BIN_PATH = which("npm")
+
+
+
+TAGGIT_CASE_INSENSITIVE = True
+TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING = True
+
