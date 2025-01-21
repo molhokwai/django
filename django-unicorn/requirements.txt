@@ -8,6 +8,7 @@ django-taggit==6.1.0
 django-tailwind==3.8.0
 django-tinymce==4.1.0
 django-unicorn==0.61.0
+fontawesomefree==5.14.0
 orjson==3.10.15
 pillow==11.1.0
 pytz==2024.2

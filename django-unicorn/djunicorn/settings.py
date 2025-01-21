@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django_browser_reload',
     'taggit',
     'tinymce',
+    'fontawesomefree',
 
     # apps
     'djunicorn',

@@ -4,11 +4,11 @@
     {% load define_action %}
 
     <div class="course">
-        <h4 class="">
-            <span class="fas fa-info-circle"></span>
+        <h4>
+            <span class="fas fa-video"></span>
             <span>{{ training.course.title }}</span>
         </h4>
-        <p class="status_text">
+        <p class="status-text">
             {% if training.course.status_text %}
                 {{ training.course.status_text }}
             {% else %}
@@ -19,69 +19,47 @@
         <table class="table table-auto rounded border-green-300">
             {% for tsession in training.course.sessions %}
                 <tr class="shadow-lg">
-                    <td title="{{ tsession.status_text }}">
+                    <td class="first">&nbsp;</td>
+
+                    <td 
+                        title="{{ tsession.status_text }}">
                         {{ forloop.counter }}. {{ tsession.title }}
                     </td>
-                    <td title="Preparation">
-                        {{ tsession.preparation }}
+                    <td class="status-icon {{ tsession.preparation.name }}"
+                        title="Preparation">
+                        {{ tsession.preparation.value }}
                     </td>
-                    <td title="Media: raw">
-                        {{ tsession.course_media_raw }}
+                    <td class="status-icon {{ tsession.course_media_raw.name }}"
+                        title="Media: raw">
+                        {{ tsession.course_media_raw.value }}
                     </td>
-                    <td title="Media: final">
-                        {{ tsession.course_media_final }}
+                    <td class="status-icon {{ tsession.course_media_final.name }}"
+                        title="Media: final">
+                        {{ tsession.course_media_final.value }}
                     </td>
-                    <td title="Media: validated">
-                        {{ tsession.course_media_validated }}
+                    <td class="status-icon {{ tsession.course_media_validated.name }}"
+                        title="Media: validated">
+                        {{ tsession.course_media_validated.value }}
                     </td>
-                    <td title="Implemented in app">
-                        {{ tsession.implemented_in_app }}
+                    <td class="status-icon {{ tsession.implemented_in_app.name }}"
+                        title="Implemented in app">
+                        {{ tsession.implemented_in_app.value }}
                     </td>
-                    <td title="Ready for whatsapp and telegram">
-                        {{ tsession.ready_for_whats_and_gram }}
+                    <td class="status-icon {{ tsession.ready_for_whats_and_gram.name }}"
+                        title="Ready for whatsapp and telegram">
+                        {{ tsession.ready_for_whats_and_gram.value }}
                     </td>
-                    <td title="In sales funnel">
-                        {{ tsession.in_sales_funnel }}
+                    <td class="status-icon {{ tsession.in_sales_funnel.name }}"
+                        title="In sales funnel">
+                        {{ tsession.in_sales_funnel.value }}
                     </td>
+
+                    <td class="last">&nbsp;</td>
                 </tr>
             {% endfor %}
         </table>      
 
-        <style>
-            .course {
-                width: 30%;
-                float: left;
-                margin-left: 2%;
-                min-width: 400px;
-            }
 
-            .course h4 {
-                background-color: #200101;
-                width: 100%;
-                color: #ffffff;
-                padding: .4em;
-                font-weight: bolder;
-                font-size: .9em;
-            }
-
-            .course h4 {
-                background-color: #200101;
-                width: 100%;
-                color: #ffffff;
-                padding: .4em;
-                font-weight: bolder;
-                font-size: .9em;
-            }
-
-            .course table {
-                width: 100%;
-            }
-            .course table td {
-                padding: .4em 0;
-                color: #2c1901; /* #334fb4  */
-            }
-
-        </style>
         <!-- 
             <td>
                 {% if is_editing %}
@@ -145,7 +123,6 @@
                 {% endif %}
             </td>
         -->
-
 
 
     </div>

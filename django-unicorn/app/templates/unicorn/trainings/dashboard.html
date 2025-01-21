@@ -21,4 +21,81 @@
             {% unicorn 'trainings.table' training=training parent=self %}
         {% endfor %}
     </div>
+
+
+    <style>
+        .course {
+            width: 30%;
+            float: left;
+            margin-left: 2%;
+            min-width: 400px;
+        }
+
+        .course h4 {
+            background-color: #200101;
+            width: 100%;
+            color: #ffffff;
+            padding: .4em;
+            font-weight: bolder;
+            font-size: .9em;
+        }
+
+        .course h4 .fas {
+            background-color: #FF0000;
+            padding: .4em;
+            margin-right: 1em;
+        }
+
+        .course h4 {
+            background-color: #200101;
+            width: 100%;
+            color: #ffffff;
+            padding: .4em;
+            font-weight: bolder;
+            font-size: .9em;
+        }
+
+        .course table {
+            width: 100%;
+        }
+        .course table td {
+            padding: .4em 0;
+            color: purple; # #2c1901; /* #334fb4  */
+        }
+
+        .course table td.status-icon {
+            color: darkgray;
+        }
+        .course table td.status-icon.TODO { }
+        .course table td.status-icon.IN_PROGRESS { color: navy; }
+        .course table td.status-icon.IN_VALIDATION { color: #343434; }
+        .course table td.status-icon.ON_HOLD { color: orange; }
+        .course table td.status-icon.COMPLETED { color: green; font-weight:bold; }
+        .course table td.status-icon.STOPPED { color: red; }
+        .course table td.status-icon.WHEN_FREE { color: lightblue; }
+
+        .course table tr td.first {
+            padding: 0 0 0 .2em !important;
+        }
+        .course table tr td.last {
+            padding: 0 .2em 0 0 !important;
+        }
+
+    </style>
+
+    <script>
+        window.onload = () => {
+            /***
+            .course table td.status-icon .↗ {}
+            .course table td.status-icon .✗ {}
+            .course table td.status-icon .⌛ {}
+            .course table td.status-icon .✓ { color: green; }
+            .course table td.status-icon .✗ {}
+            .course table td.status-icon .☴ {}
+            let statusIconCells = document.querySelector();
+             ****/
+        }
+        
+    </script>
+
 </div>
