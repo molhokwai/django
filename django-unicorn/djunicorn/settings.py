@@ -45,8 +45,8 @@ INSTALLED_APPS = [
 
     # extensions
     'django_unicorn',
-    'theme',
     'tailwind',
+    'theme',
     'django_browser_reload',
     'taggit',
     'tinymce',

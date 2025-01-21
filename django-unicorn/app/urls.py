@@ -14,4 +14,6 @@ urlpatterns = [
     path("books_demo/", views.books_demo, name='books_demo'),
 
     path("books_view/", BooksView.as_view(), name='books_view'),
+
+    path("trainings_dashboard/", views.trainings_dashboard, name='trainings_dashboard'),
 ]

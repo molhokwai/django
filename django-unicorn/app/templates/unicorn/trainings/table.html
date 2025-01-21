@@ -1,0 +1,151 @@
+
+
+    <!-- trainings/table.html -->
+    {% load define_action %}
+
+    <div class="course">
+        <h4 class="">
+            <span class="fas fa-info-circle"></span>
+            <span>{{ training.course.title }}</span>
+        </h4>
+        <p class="status_text">
+            {% if training.course.status_text %}
+                {{ training.course.status_text }}
+            {% else %}
+                &nbsp;
+            {% endif %}
+        </p>
+
+        <table class="table table-auto rounded border-green-300">
+            {% for tsession in training.course.sessions %}
+                <tr class="shadow-lg">
+                    <td title="{{ tsession.status_text }}">
+                        {{ forloop.counter }}. {{ tsession.title }}
+                    </td>
+                    <td title="Preparation">
+                        {{ tsession.preparation }}
+                    </td>
+                    <td title="Media: raw">
+                        {{ tsession.course_media_raw }}
+                    </td>
+                    <td title="Media: final">
+                        {{ tsession.course_media_final }}
+                    </td>
+                    <td title="Media: validated">
+                        {{ tsession.course_media_validated }}
+                    </td>
+                    <td title="Implemented in app">
+                        {{ tsession.implemented_in_app }}
+                    </td>
+                    <td title="Ready for whatsapp and telegram">
+                        {{ tsession.ready_for_whats_and_gram }}
+                    </td>
+                    <td title="In sales funnel">
+                        {{ tsession.in_sales_funnel }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>      
+
+        <style>
+            .course {
+                width: 30%;
+                float: left;
+                margin-left: 2%;
+                min-width: 400px;
+            }
+
+            .course h4 {
+                background-color: #200101;
+                width: 100%;
+                color: #ffffff;
+                padding: .4em;
+                font-weight: bolder;
+                font-size: .9em;
+            }
+
+            .course h4 {
+                background-color: #200101;
+                width: 100%;
+                color: #ffffff;
+                padding: .4em;
+                font-weight: bolder;
+                font-size: .9em;
+            }
+
+            .course table {
+                width: 100%;
+            }
+            .course table td {
+                padding: .4em 0;
+                color: #2c1901; /* #334fb4  */
+            }
+
+        </style>
+        <!-- 
+            <td>
+                {% if is_editing %}
+                    <input type="text" unicorn:model.defer="book.title" value="{{ book.title }}"
+                        class="form-control rounded border-green-700 shadow-sm text-green-900
+                               tracking-wider text-xs"/>
+                {% else %}
+                    <font
+                        class="border-green-700 shadow-sm text-green-900 tracking-wider">
+                        {{ book.title }}
+                    </font>
+                {% endif %}
+            </td>
+            <td>
+                {% if is_editing %}
+                    <input type="text" unicorn:model.defer="book.author" value="{{ book.author }}"
+                        class="form-control rounded border-green-700 shadow-sm text-green-900
+                               tracking-wider text-xs"/>
+                {% else %}
+                    <font
+                        class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
+                        {{ book.author }}
+                    </font>
+                {% endif %}
+            </td>
+            <td>
+                {% if is_editing %}
+                    <input type="text" unicorn:model.defer="book.date_published" value="{{ date_pub }}"
+                                                        placeholder="ex: 1997-05-15"
+                        class="form-control rounded border-green-700 shadow-sm text-green-900
+                               tracking-wider text-xs"/>
+                {% else %}
+                    <font
+                        class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
+                        {{ date_pub }}
+                    </font>
+                {% endif %}
+            </td>
+            <td class="border-green-400">
+                {% if is_editing %}
+                    <select  unicorn:model.defer="book.country" id="country"
+                        class="form-select rounded border-green-700 shadow-sm text-green-900
+                               tracking-wider text-sm max-w-20">
+                        <option {{ select_country }}>Select a country...</option>
+                        {% for country in countries %}
+
+                            {% define '' as country_selected %}
+                            {% if book.country and country.0 == book.country %}
+                                {% define 'selected' as country_selected %}
+                            {% endif %}
+
+                            <option value="{{ country.0 }}"
+                                    {{ country_selected }}>{{ country.1 }}</option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <font
+                        class="border-green-700 shadow-sm text-green-900 tracking-wider text-sm">
+                        {{ book.country }}
+                    </font>
+                {% endif %}
+            </td>
+        -->
+
+
+
+    </div>

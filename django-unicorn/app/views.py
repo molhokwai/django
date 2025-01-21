@@ -20,3 +20,10 @@ def books_demo(request):
     
     return render(request, "app/books.html", context)
 
+
+
+def trainings_dashboard(request):
+    context = {}
+    
+    return render(request, "app/trainings_dashboard.html", context)
+
