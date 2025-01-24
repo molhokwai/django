@@ -1,7 +1,7 @@
 from django_unicorn.components import LocationUpdate, UnicornView, QuerySetType
 from django.shortcuts import redirect
 from django.contrib import messages
-from app.models import Book, Countries
+from app.models import Webscrape, Countries, USStates
 
 from enum import Enum
 import copy
@@ -12,30 +12,34 @@ class MessageStatus(Enum):
     NOTICE = "Notice"
 
 
-class TableView(UnicornView):
-    books = Book.objects.none()
+class WebscrapesView(UnicornView):
+    webscrapes = Webscrape.objects.none()
+    us_states = None
     countries = None
     fields = None
     table_fields = None
 
 
     def mount(self):
+        self.us_states = list(zip(USStates.USStates, Countries.names))
         self.countries = list(zip(Countries.values, Countries.names))
-        self.fields = [f.name for f in Book._meta.get_fields()]
+
+        self.fields = [f.name for f in Webscrape._meta.get_fields()]
         self.table_fields = copy.copy(self.fields)
-        self.table_fields.remove('id')
+        for val in ('id',): #  'created_on', 'last_modified'
+            self.table_fields.remove(val)
         self.load_table()
 
 
     def load_table(self, force_render=False):
-        self.books = Book.objects.all().order_by("author")
-        if len(self.books):
-            self.books = self.books[0:10]
+        self.webscrapes = Webscrape.objects.all().order_by("author")
+        if len(self.webscrapes):
+            self.webscrapes = self.webscrapes[0:10]
         self.force_render = force_render
 
 
     def reload(self):
-        return redirect('books_demo')
+        return redirect('webscraping')
 
 
     def messages_display(self, status:MessageStatus=None, message:str=""):
@@ -46,4 +50,4 @@ class TableView(UnicornView):
 
 
     def add_count(self):
-        messages.success(self.request, "| %i books loaded..." % len(self.books))
+        messages.success(self.request, "| %i webscrapes loaded..." % len(self.webscrapes))

@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     'djunicorn',
     'app',
     'darklight',
-    'ourcards'
+    'ourcards',
+    'webscraping',
 ]
 
 MIDDLEWARE = [

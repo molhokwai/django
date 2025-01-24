@@ -37,20 +37,27 @@
             });
         })();
     </script>
+    <input unicorn:model.defer="website_url"      type="text"   id="website_url"   placeholder="website url, ex: https//wwww.truthfinder.com/"    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
     <input unicorn:model.defer="title"      type="text"   id="title"   placeholder="title"    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
-    <input unicorn:model.defer="author"     type="text"   id="author"  placeholder="author"   class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
-    <input unicorn:model.defer="date_published"   type="text"   id="date_published"   placeholder="ex: 1997-05-15"   
+
+    <input unicorn:model.defer="first_name"      type="text"   id="first_name"   placeholder="First name"    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <input unicorn:model.defer="last_name"      type="text"   id="last_name"   placeholder="Last name"    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <input unicorn:model.defer="middle_name"      type="text"   id="middle_name"   placeholder="Middle name"    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <input unicorn:model.defer="middle_initials"      type="text"   id="middle_initials"   placeholder="Middle initials"    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+
+    <input unicorn:model.defer="age"     type="text"   id="age"  placeholder="Age"   class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+
+    <input unicorn:model.defer="city"   type="text"   id="city"   placeholder="ex: Los angeles"   
         class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
     <select  unicorn:model.defer="country" id="country" 
         class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider">
-        <option>Select a country...</option>
-        {% for country in countries %}
-            <option value="{{ country.0 }}">{{ country.1 }}</option>
+        <option>Select a state...</option>
+        {% for us_state in us_states %}
+            <option value="{{ us_state.0 }}">{{ us_state.1 }}</option>
         {% endfor %}
     </select>
-    <input type="file" accept="image/*" required/>
-    <input type="hidden" class="file-data" unicorn:model="new_media_base64" />
-    <input type="hidden" class="file-name" unicorn:model="new_media_file_name" />
+
+
     <div class="float-right pt-2 mr-10 sm:block sm:mt-5 sm:mb-10">
         <button unicorn:click="add"
             class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-2 px-4 text-white font-bold shadow-xl duration-1000">Add</button>

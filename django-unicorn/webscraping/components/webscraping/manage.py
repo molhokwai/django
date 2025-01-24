@@ -1,8 +1,8 @@
 from django_unicorn.components import UnicornView, QuerySetType
 from datetime import date
-from app.models import Book
+from app.models import Webscrape
 
-from .table import MessageStatus
+from .webscrapes import MessageStatus
 
 
 class ManageView(UnicornView):
@@ -19,7 +19,7 @@ class ManageView(UnicornView):
     new_media_base64 = None
     new_media_file_name = None
 
-    books: QuerySetType[Book] = Book.objects.all()
+    webscrapes: QuerySetType[Webscrape] = Webscrape.objects.all()
 
 
     def mount(self):
@@ -34,7 +34,7 @@ class ManageView(UnicornView):
             Emke – The Threepenny Review
             Imbolo Mbue
             2015-05-13
-            /home/nkensa/GDrive-local/Tree/Books/Imbolo_Mbue_Emke_The_Threepenny_Review.pdf
+            /home/nkensa/GDrive-local/Tree/Webscrapes/Imbolo_Mbue_Emke_The_Threepenny_Review.pdf
         """
 
         image_data = self.new_media_base64.split(';base64,')[-1]  # Extract the base64 image data
@@ -50,26 +50,33 @@ class ManageView(UnicornView):
 
 
     def add(self):
-        self.save_file()
+        # ?
+        # -
+        # self.save_file()
 
         print('------------------ %s, %s, %s ----------------' % (self.title, self.author, self.country))
-        Book.objects.create(
+        Webscrape.objects.create(
+            website_url = self.website_url,
             title = self.title,
-            author = self.author,
-            date_published = self.date_published,
-            country = self.country,
+            first_name = self.first_name,
+            last_name = self.last_name,
+            middle_name = self.middle_name,
+            middle_initials = self.middle_initials,
+            age = self.age,
+            city = self.city,
+            state = self.state,
         )
         self.clear_fields()
         return self.parent.reload()
 
     def delete(self):
-        Book.objects.filter(title=self.title).delete()
+        Webscrape.objects.filter(title=self.title).delete()
         self.parent.messages_display(MessageStatus.SUCCESS, "Item deleted.")
         return self.parent.reload()
 
 
     def delete_all(self):
-        Book.objects.all().delete()
+        Webscrape.objects.all().delete()
         self.parent.messages_display(MessageStatus.SUCCESS, "All items deleted.")
         self.update_list()
 
@@ -80,5 +87,13 @@ class ManageView(UnicornView):
 
     def clear_fields(self):
         self.title = ''
-        self.author = ''
-        self.date_published = ''
+        self.first_name = ''
+        self.last_name = ''
+        self.middle_name = ''
+        self.middle_initials = ''
+        self.last_name = ''
+        self.age = ''
+        self.city = ''
+        self.state = ''
+
+

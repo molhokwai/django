@@ -23,5 +23,7 @@ urlpatterns = [
     path("", include("app.urls")),
     path("darklight/", include("darklight.urls")),
     path("ourcards/", include("ourcards.urls")),
+    path("webscraping/", include("webscraping.urls")),
     path("__reload__/", include("django_browser_reload.urls")),
 ]
+
