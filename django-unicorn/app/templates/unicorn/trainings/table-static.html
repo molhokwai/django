@@ -6,18 +6,18 @@
     <div class="course">
         <h4>
             <span class="fas fa-video"></span>
-            <span>{{ training.title }}</span>
+            <span>{{ training.course.title }}</span>
         </h4>
         <p class="status-text">
-            {% if training.status_text %}
-                {{ training.status_text|safe }}
+            {% if training.course.status_text %}
+                {{ training.course.status_text|safe }}
             {% else %}
                 &nbsp;
             {% endif %}
         </p>
 
         <table class="table table-auto rounded border-green-300">
-            {% for tsession in training.computed_trainingcoursesessions %}
+            {% for tsession in training.course.sessions %}
                 <tr class="shadow-lg">
                     <td class="first">&nbsp;</td>
 
@@ -25,33 +25,33 @@
                         title="{{ tsession.status_text }}">
                         {{ forloop.counter }}. {{ tsession.title }}
                     </td>
-                    <td class="status-icon {{ tsession.preparation_name }}"
+                    <td class="status-icon {{ tsession.preparation.name }}"
                         title="Preparation">
-                        {{ tsession.preparation_label }}
+                        {{ tsession.preparation.value }}
                     </td>
-                    <td class="status-icon {{ tsession.course_media_raw_name }}"
+                    <td class="status-icon {{ tsession.course_media_raw.name }}"
                         title="Media: raw">
-                        {{ tsession.course_media_raw_label }}
+                        {{ tsession.course_media_raw.value }}
                     </td>
-                    <td class="status-icon {{ tsession.course_media_final_name }}"
+                    <td class="status-icon {{ tsession.course_media_final.name }}"
                         title="Media: final">
-                        {{ tsession.course_media_final_label }}
+                        {{ tsession.course_media_final.value }}
                     </td>
-                    <td class="status-icon {{ tsession.course_media_validated_name }}"
+                    <td class="status-icon {{ tsession.course_media_validated.name }}"
                         title="Media: validated">
-                        {{ tsession.course_media_validated_label }}
+                        {{ tsession.course_media_validated.value }}
                     </td>
-                    <td class="status-icon {{ tsession.implemented_in_app_name }}"
+                    <td class="status-icon {{ tsession.implemented_in_app.name }}"
                         title="Implemented in app">
-                        {{ tsession.implemented_in_app_label }}
+                        {{ tsession.implemented_in_app.value }}
                     </td>
-                    <td class="status-icon {{ tsession.ready_for_whats_and_gram_name }}"
+                    <td class="status-icon {{ tsession.ready_for_whats_and_gram.name }}"
                         title="Ready for whatsapp and telegram">
-                        {{ tsession.ready_for_whats_and_gram_label }}
+                        {{ tsession.ready_for_whats_and_gram.value }}
                     </td>
-                    <td class="status-icon {{ tsession.in_sales_funnel_name }}"
+                    <td class="status-icon {{ tsession.in_sales_funnel.name }}"
                         title="In sales funnel">
-                        {{ tsession.in_sales_funnel_label }}
+                        {{ tsession.in_sales_funnel.value }}
                     </td>
 
                     <td class="last">&nbsp;</td>

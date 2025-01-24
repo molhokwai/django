@@ -17,8 +17,8 @@
     </ul>
 
     <div id="trainings-dashboard">
-        {% for training in trainings %}
-            {% unicorn 'trainings.table' training=training parent=self %}
+        {% for training in training_courses %}
+            {% unicorn 'trainings.table' training=training key=training.key parent=self %}            
         {% endfor %}
     </div>
 
@@ -55,12 +55,23 @@
             font-size: .9em;
         }
 
+        .course .status-text {
+            padding: .5em 2em;
+            font-size: .85em;
+            letter-spacing: 0.04em;
+            color: sienna;
+        }        
+        .course .status-text a {
+            text-decoration: overline;
+            color: darkgoldenrod;
+        }        
+
         .course table {
             width: 100%;
         }
         .course table td {
             padding: .4em 0;
-            color: purple; # #2c1901; /* #334fb4  */
+            color: #4e0080; /* #4e0080; purple; #2c1901; #334fb4;  */
         }
 
         .course table td.status-icon {
