@@ -1,7 +1,7 @@
 from django_unicorn.components import LocationUpdate, UnicornView, QuerySetType
 from django.shortcuts import redirect
 from django.contrib import messages
-from app.models import Book
+from app.models import Book, Countries
 
 from enum import Enum
 import copy
@@ -20,7 +20,7 @@ class TableView(UnicornView):
 
 
     def mount(self):
-        self.countries = list(zip(Book.Countries.values, Book.Countries.names))
+        self.countries = list(zip(Countries.values, Countries.names))
         self.fields = [f.name for f in Book._meta.get_fields()]
         self.table_fields = copy.copy(self.fields)
         self.table_fields.remove('id')
