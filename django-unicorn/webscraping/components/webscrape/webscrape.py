@@ -12,7 +12,7 @@ class MessageStatus(Enum):
     NOTICE = "Notice"
 
 
-class WebscrapesView(UnicornView):
+class WebscrapeView(UnicornView):
     webscrapes = Webscrape.objects.none()
     us_states = None
     countries = None
@@ -28,18 +28,15 @@ class WebscrapesView(UnicornView):
         self.table_fields = copy.copy(self.fields)
         for val in ('id', 'middle_initials', 'country', 'created_on', 'last_modified'):
             self.table_fields.remove(val)
-        self.load_table()
 
 
-    def load_table(self, force_render=False):
-        self.webscrapes = Webscrape.objects.all().order_by("last_modified")
-        if len(self.webscrapes):
-            self.webscrapes = self.webscrapes[0:10]
+    def load_table(self, webscrape, force_render=False):
+        self.webscrapes = [Webscrape]
         self.force_render = force_render
 
 
     def reload(self):
-        return redirect('webscraping')
+        return redirect('webscrape')
 
 
     def messages_display(self, status:MessageStatus=None, message:str=""):

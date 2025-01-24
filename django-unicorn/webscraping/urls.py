@@ -6,4 +6,5 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name='webscraping'),
+    path("webscrape", views.webscrape, name='webscrape'),
 ]

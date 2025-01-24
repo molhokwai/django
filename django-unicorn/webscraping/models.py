@@ -60,7 +60,7 @@ class USStates(models.TextChoices):
 class Webscrape(models.Model):
     # website
     # -------
-    website_url = models.CharField(max_length=200, default="https://wwww.truthfinder.com/")
+    website_url = models.CharField(max_length=200, default="https://www.truthfinder.com/people-search/")
 
     # metas
     # -----

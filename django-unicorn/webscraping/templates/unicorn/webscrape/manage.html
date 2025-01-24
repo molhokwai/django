@@ -92,7 +92,7 @@
             });
         };
     </script>
-    <input unicorn:model.defer="website_url"      type="text"   id="website_url"   placeholder="website url, ex: https//wwww.truthfinder.com/" value="{{webscrape.website_url}}"    
+    <input unicorn:model.defer="website_url"      type="text"   id="website_url"   placeholder="website url, ex: https://www.truthfinder.com/people-search/" value="{{webscrape.website_url}}"    
     class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" /> *
     <input unicorn:model.defer="title"      type="text"   id="title"   placeholder="title"
      value="{{webscrape.title}}"
@@ -134,14 +134,8 @@
 
 
     <div class="pt-2 mr-10 sm:block sm:mt-5 sm:mb-10">
-        <button id="unique_title" 
-            class="btn btn-outline-primary rounded bg-gray-600 hover:bg-gray-500 p-1 px-4 font-bold shadow-xl duration-1000">Unique title</button>
-        <button unicorn:click="add"
-            class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-2 px-4 text-white font-bold shadow-xl duration-1000">Add</button>
-        <button unicorn:click="delete"
-            class="btn btn-outline-dark rounded bg-orange-400 hover:bg-orange-500 p-2 px-4 text-white font-bold shadow-lg duration-200">Delete</button>
-        <button unicorn:click="delete_all"
-            class="btn btn-outline-danger rounded bg-red-500 hover:bg-red-700 p-2 px-4 text-white font-bold shadow-lg duration-200">Delete All</button>
+        <button unicorn:click="scrape"
+            class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-2 px-4 text-white font-bold shadow-xl duration-1000">Scrape</button>
     </div>
 </div>
 

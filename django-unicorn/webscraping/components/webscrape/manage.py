@@ -56,33 +56,7 @@ class ManageView(UnicornView):
         #     self.__dict__[field] = None
 
 
-    def save_file(self):
-        """
-        DJANGO UNICORN FILE UPLOADS - From https://github.com/adamghill/django-unicorn/discussions/256
-
-        Test Data:
-            Emke – The Threepenny Review
-            Imbolo Mbue
-            2015-05-13
-            /home/nkensa/GDrive-local/Tree/Webscrapes/Imbolo_Mbue_Emke_The_Threepenny_Review.pdf
-        """
-
-        image_data = self.new_media_base64.split(';base64,')[-1]  # Extract the base64 image data
-        decoded_image = b64decode(image_data)
-        if len(decoded_image) > 10 * 1024 * 1024:  # 10MB limit
-            raise "File exceeds the 10mb limit."
-
-        self.new_media_err = None
-        media = Media(
-            name=self.new_media_file_name,
-        )
-        media.src.save(self.generate_unique_media_name(), ContentFile(decoded_image), save=True)
-
-
     def add(self):
-        # ?
-        # -
-        # self.save_file()
 
         print('------------------ | ----------------', str(self.title), str(self.age))
         Webscrape.objects.create(
@@ -97,32 +71,42 @@ class ManageView(UnicornView):
             state = self.state,
         )
         self.clear_fields()
-        return self.parent.reload()
+        return self.parent.load_table(force_render=True)
 
-    def delete(self):
-        Webscrape.objects.filter(title=self.title).delete()
-        self.parent.messages_display(MessageStatus.SUCCESS, "Item deleted.")
-        return self.parent.reload()
+    def scrape(self):
+        self.add()
 
+        from selenium import webdriver
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
 
-    def delete_all(self):
-        Webscrape.objects.all().delete()
-        self.parent.messages_display(MessageStatus.SUCCESS, "All items deleted.")
-        self.update_list()
+        # Initialize WebDriver (e.g., Chrome)
+        driver = webdriver.Chrome() 
 
+        # Navigate to TruthFinder website (replace with the actual URL)
+        driver.get("https://www.truthfinder.com") 
+
+        # Example: Find an element by name 
+        try:
+            # Wait for the element to be clickable (adjust timeout as needed)
+            element = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.NAME, "username_or_email")) 
+            ) 
+
+            # Interact with the element (e.g., send keys)
+            element.send_keys("your_username_or_email") 
+
+        except Exception as e:
+            print(f"Error locating or interacting with element: {e}")
+
+        # ... (Continue with other actions, such as finding and interacting with other elements) ...
+
+        # Close the browser
+        driver.quit()
 
     def update_list(self):
         self.parent.load_table(force_render=True)
-
-
-    def unique_title(self):
-        if self.title:
-            self.title = f"{self.title} | {datetime.now()}"
-
-        elif self.last_name:
-            self.title = f"{self.last_name} | {datetime.now()}" 
-            if self.first_name:
-                self.title = f"{self.first_name} {self.title}" 
 
 
     def clear_fields(self):
