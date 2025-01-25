@@ -46,6 +46,11 @@ class ManageView(UnicornView):
         if settings.DEBUG:
             self.webscrape = Webscrape.objects.first()
 
+        # Instance fields and values: get
+        # ----------------------
+        # from django.forms.models import model_to_dict
+        # print(model_to_dict(self.webscrape))
+
         # @ToDo: Auto set fields - check
         # ----------------------
         # self.fields = [f.name for f in Webscrape._meta.get_fields()]

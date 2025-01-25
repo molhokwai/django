@@ -18,7 +18,8 @@
     </ul>
 
     {% unicorn 'webscraping.filter' parent=self %}
-    <table class="table table-auto rounded border-green-300">
+    <table  id="webscrapes-table"
+            class="table table-auto rounded border-green-300">
         <thead class="p-4 text-gray">
             <tr>
                 <td class="min-w-32">
@@ -32,7 +33,7 @@
                 {% endfor %}
             </tr>
         </thead>
-        <tbody id="webscrape-body">
+        <tbody id="webscrapes-body">
             {% for webscrape in webscrapes %}
                 {% unicorn 'webscraping.row' webscrape=webscrape key=webscrape.id parent=self %}
             {% endfor %}

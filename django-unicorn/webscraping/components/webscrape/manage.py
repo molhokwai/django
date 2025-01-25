@@ -46,15 +46,6 @@ class ManageView(UnicornView):
         if settings.DEBUG:
             self.webscrape = Webscrape.objects.first()
 
-        # @ToDo: Auto set fields - check
-        # ----------------------
-        # self.fields = [f.name for f in Webscrape._meta.get_fields()]
-        # for val in ('id', 'created_on', 'last_modified'):
-        #     self.fields.remove(val)
-
-        # for field in self.fields:
-        #     self.__dict__[field] = None
-
 
     def add(self):
 
@@ -76,34 +67,6 @@ class ManageView(UnicornView):
     def scrape(self):
         self.add()
 
-        from selenium import webdriver
-        from selenium.webdriver.common.by import By
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
-
-        # Initialize WebDriver (e.g., Chrome)
-        driver = webdriver.Chrome() 
-
-        # Navigate to TruthFinder website (replace with the actual URL)
-        driver.get("https://www.truthfinder.com") 
-
-        # Example: Find an element by name 
-        try:
-            # Wait for the element to be clickable (adjust timeout as needed)
-            element = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.NAME, "username_or_email")) 
-            ) 
-
-            # Interact with the element (e.g., send keys)
-            element.send_keys("your_username_or_email") 
-
-        except Exception as e:
-            print(f"Error locating or interacting with element: {e}")
-
-        # ... (Continue with other actions, such as finding and interacting with other elements) ...
-
-        # Close the browser
-        driver.quit()
 
     def update_list(self):
         self.parent.load_table(force_render=True)
