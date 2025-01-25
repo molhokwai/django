@@ -18,6 +18,12 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO
 
+import os
+
+from classes.SequenceManager import SequenceManager
+
+
+
 def example1():
     driver = webdriver.Firefox(
         options=options        
@@ -40,13 +46,14 @@ def example1():
     driver.close()
 
 
+
 def example1_local():
     driver = webdriver.Firefox(
         options=options        
     )
 
     driver.get("http://localhost:8001/")
-    assert  "Webscraping" in driver.page_source
+    assert "Webscraping" in driver.page_source
 
     # Find button/link element and press Enter to navigate
     # ------------------------------------------
@@ -66,10 +73,6 @@ def example1_local():
 
     # Page loaded, Find and fill elements
     # ------------------------------------------
-    elem = driver.find_element(By.ID, "last_name")
-    elem.clear()
-    elem.send_keys("Jonathan")
-
     elem = driver.find_element(By.ID, "last_name")
     elem.clear()
     elem.send_keys("Jonathan")
@@ -101,6 +104,7 @@ def example1_local():
         {text} 
         --------------------------------
     """)
+
     data = StringIO(f"""
         {text} 
     """)
@@ -112,6 +116,19 @@ def example1_local():
     driver.close()
 
 
+
+def example1_local_sequenced():
+    driver = webdriver.Firefox(
+        options=options
+    )
+
+    sequenceManager = SequenceManager(driver, "example1", os.path.abspath("."))
+    sequenceManager.execute_sequences()
+
+    driver.close()
+
+
+
 if __name__ == "__main__":
 
     i = input(
@@ -119,6 +136,7 @@ if __name__ == "__main__":
         --------------------------
         0.        example1()
         1.        example1_local()
+        2.        example1_local_sequences()
         --------------------------
         Enter any other to exit...
         """
@@ -126,7 +144,7 @@ if __name__ == "__main__":
 
     if i:
         i = int(i)
-        f = [example1, example1_local]
+        f = [example1, example1_local, example1_local_sequenced]
         f[i]()
 
 

@@ -1,0 +1,33 @@
+[
+    [
+        { "get": "http://localhost:8001/" },
+        { "assert_in_page_source": "Webscraping"}
+    ],[
+        { "find": "webscraping", "by": "By.ID"  },
+        { "send_keys": "Keys.RETURN" }
+    ],[
+        { "wait": "first_name", "by": "By.ID", "timeout": 10 },
+        { "clear": "" },
+        { "send_keys": "David" }
+    ],[
+        { "find": "last_name", "by": "By.ID"  },
+        { "clear": "" },
+        { "send_keys": "Jonathan" }
+    ],[
+        { "find": "unique_title", "by": "By.ID"  },
+        { "send_keys": "Keys.RETURN" }
+    ],[
+        { "find": "title", "by": "By.ID"  },
+        { "get_attribute": "value" }
+    ],[
+        { "assert_in_input": "David Jonathan" },
+        { "assert_in_input": "GMT" },
+        { "print_OK": "asserts" }
+    ],[
+        { "find": "webscrapes-table", "by": "By.ID"  },
+        { "get_attribute": "innerText" }
+    ],[
+        { "print_TEXT": "input" },
+        { "text_to_csv": "input", "filepath": "data.csv" }
+    ]
+]
