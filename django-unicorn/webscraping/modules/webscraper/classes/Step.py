@@ -16,6 +16,7 @@ else:
 
 
 class Step:
+    outputs = []
     steps_common = {
         "asserts": []
     }
@@ -39,19 +40,19 @@ class Step:
                 text_to_csv
                 wait
         """
-        outputs = []
+        self.outputs = []
 
         for key in step_dict.keys():
             if key in dir(self):
                 print('----------|', key)
-                outputs.append(
+                self.outputs.append(
                     getattr(self, key)(
                         step_dict,
-                        _input if not len(outputs) else outputs[-1]
+                        _input if not len(self.outputs) else self.outputs[-1]
                     )
                 )
 
-        return outputs
+        return self.outputs
 
 
     @staticmethod
@@ -67,10 +68,9 @@ class Step:
     @staticmethod
     def _keys(keys_string):
         """
-            # @ToDo :: Use reflection instead...
-
-            ValueError("keys_string not yet implemented in "
-                    "webscraping.modules.webscraper.classes.Step.keys")
+            @ToDo :: Use reflection instead, with ValueError if Keys.(.*) ...
+                ValueError("keys_string not yet implemented in "
+                        "webscraping.modules.webscraper.classes.Step.keys")
         """
         r = {
             "Keys.RETURN": Keys.RETURN,
@@ -78,13 +78,32 @@ class Step:
         return r
 
 
-    def assert_in_input(self, step_dict, _input):
-        _assert_in_input = step_dict["assert_in_input"]
-        _returned = _input[0]["returned"]
+    def assert_in_driver_title(self, step_dict, _input):
+        _assert_in_driver_title = step_dict["assert_in_driver_title"]
 
-        assert _assert_in_input in _returned
+        assert _assert_in_driver_title in self.driver.title
         self.steps_common["asserts"].append(
-            f"assert {_assert_in_input} in {_returned}"
+            f"assert {_assert_in_driver_title} in self.driver.title"
+        )
+        # new
+        return _input if type(_input) == type({}) else _input[0]
+
+
+    def assert_in_input(self, step_dict, _input, _not=False):
+        _assert = None
+        _input = _input if type(_input) == type({}) else _input[0]
+        _returned = _input["returned"] if "returned" in _input \
+                                            else self.driver.page_source
+
+        if _not:
+            _assert = step_dict["assert_not_in_input"]
+            assert _assert not in _returned
+        else:
+            _assert = step_dict["assert_in_input"]
+            assert _assert in _returned
+
+        self.steps_common["asserts"].append(
+            f"assert {_assert} in {_returned}"
         )
         return { "returned": _returned }
 
@@ -96,10 +115,19 @@ class Step:
         self.steps_common["asserts"].append(
             f"assert {_assert_in_page_source} in self.driver.page_source"
         )
+        # new
+        return _input if type(_input) == type({}) else _input[0]
+
+
+    def assert_not_in_input(self, step_dict, _input):
+        # new
+        _input = _input if type(_input) == type({}) else _input[0]
+        return self.assert_in_input(step_dict, _input, _not=True)
 
 
     def clear(self, step_dict, _input):
-        element = _input[0]["element"]
+        _input = _input if type(_input) == type({}) else _input[0]
+        element = _input["element"]
         element.clear()
         return { "element": element }
 
@@ -128,20 +156,25 @@ class Step:
             {_asserts}
             --------------------------------
         """)
-        return _input[0] if type(_input[0]) == type({}) else _input
+        return _input if type(_input) == type({}) else _input[0]
+
 
     def print_TEXT(self, step_dict, _input):
+        _input = _input if type(_input) == type({}) else _input[0]
         if step_dict["print_TEXT"] == "input":
             print(f"""
                 ------------ TEXT --------------
-                {_input[0]["returned"]}
+                {_input["returned"][200:]}
                 --------------------------------
             """)
-        return _input[0] if type(_input[0]) == type({}) else _input
+        return _input if type(_input) == type({}) else _input[0]
 
 
     def send_keys(self, step_dict, _input):
-        _input[0]["element"].send_keys(Step._keys(step_dict["send_keys"]))
+        _input = _input if type(_input) == type({}) else _input[0]
+        _input["element"].send_keys(Step._keys(step_dict["send_keys"]))
+        # new
+        return _input if type(_input) == type({}) else _input[0]
 
 
     def text_to_csv(self, step_dict, _input):
@@ -152,6 +185,8 @@ class Step:
 
             df = pd.read_table(data)
             df.to_csv(step_dict["filepath"])
+        # new
+        return _input if type(_input) == type({}) else _input[0]
 
 
     def wait(self, step_dict, _input):

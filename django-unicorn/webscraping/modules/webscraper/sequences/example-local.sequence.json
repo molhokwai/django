@@ -28,6 +28,6 @@
         { "get_attribute": "innerText" }
     ],[
         { "print_TEXT": "input" },
-        { "text_to_csv": "input", "filepath": "data.csv" }
+        { "text_to_csv": "input", "filepath": "output/data.csv" }
     ]
 ]

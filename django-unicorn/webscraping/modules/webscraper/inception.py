@@ -24,7 +24,7 @@ from classes.SequenceManager import SequenceManager
 
 
 
-def example1():
+def selenium_docs_example():
     driver = webdriver.Firefox(
         options=options        
     )
@@ -47,7 +47,7 @@ def example1():
 
 
 
-def example1_local():
+def example_local():
     driver = webdriver.Firefox(
         options=options        
     )
@@ -117,12 +117,12 @@ def example1_local():
 
 
 
-def example1_local_sequenced():
+def sequenced(name):
     driver = webdriver.Firefox(
         options=options
     )
 
-    sequenceManager = SequenceManager(driver, "example1", os.path.abspath("."))
+    sequenceManager = SequenceManager(driver, name, os.path.abspath("."))
     sequenceManager.execute_sequences()
 
     driver.close()
@@ -134,9 +134,10 @@ if __name__ == "__main__":
     i = input(
         """
         --------------------------
-        0.        example1()
-        1.        example1_local()
-        2.        example1_local_sequences()
+        0.        selenium_docs_example()
+        1.        example_local()
+        2.        sequenced("selenium-docs-example")
+        3.        sequenced("example-local")
         --------------------------
         Enter any other to exit...
         """
@@ -144,7 +145,18 @@ if __name__ == "__main__":
 
     if i:
         i = int(i)
-        f = [example1, example1_local, example1_local_sequenced]
-        f[i]()
+        f = [
+            selenium_docs_example,
+            example_local,
+            (sequenced, "selenium-docs-example"),
+            (sequenced, "example-local"),
+        ][i]
 
+        if type(f) == type((1,1)):
+            _func = f[0]
+            _arg = f[1]
+            _func(_arg)
+        else:
+            _func = f
+            _func()
 
