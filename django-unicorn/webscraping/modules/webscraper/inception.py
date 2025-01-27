@@ -154,6 +154,16 @@ def execute_input(filepath, n=10):
 
     i = 0
     for line in l:
+        def update_list_file(input_filepath, filetext, 
+                                        line, addtoken=""):
+            # Update list file
+            # ----------------
+            filetext = filetext.replace(line, f"{line} {addtoken}")
+            with open(input_filepath, "w") as f:
+                f.write(filetext)
+            return filetext
+
+
         def _exec(filepath, line, variables):
             print(
                 """
@@ -167,9 +177,8 @@ def execute_input(filepath, n=10):
             
             # Update list file
             # ----------------
-            filetext = filetext.replace(line, f"{line} ✓")
-            with open(input_filepath, "w") as f:
-                f.write(filetext)
+            filetext = update_list_file(input_filepath, filetext, 
+                                        line, addtoken="✓")
 
             print(
                 """
@@ -184,12 +193,19 @@ def execute_input(filepath, n=10):
             "lastName": line.split(" ")[1],
         }
 
-        if line.find("✓") < 0:
+        if line.find("✓") < 0 and line.find("✗") < 0:
             if i < n:
                 try:
                     _exec(filepath, line, variables)
                     i += 1
                 except Exception as err:
+                    print('--------------| Error: ', err)
+                except AssertionError as err:
+                    # Update list file
+                    # ----------------
+                    filetext = update_list_file(input_filepath, filetext, 
+                                                line, addtoken="✗")
+                    i += 1
                     print('--------------| Error: ', err)
             else:
                 break
