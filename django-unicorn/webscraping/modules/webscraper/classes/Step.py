@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from selenium.common.exceptions import TimeoutException
 
 import pandas as pd
 import sys
@@ -14,16 +15,31 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO
 
+from django.utils.text import slugify
+
+import os, datetime, time
 
 class Step:
+    class Config:
+        ui_timeout = 0
+    config: Config = None
+
+    step_dicts = []
     outputs = []
     steps_common = {
         "asserts": []
     }
+    step_dict_keys_excluded = ("config", "step_dicts")
 
-    def __init__(self, driver):
+    variables = {}
+
+    def __init__(self, driver, config_dict=None):
         self.driver = driver
 
+        self.config = Step.Config()
+        if config_dict:
+            for key in config_dict:
+                setattr(self.config, key, config_dict[key])
 
     def execute(self, step_dict, _input=None):
         """
@@ -40,11 +56,12 @@ class Step:
                 text_to_csv
                 wait
         """
+        self.step_dicts.append(step_dict)
         self.outputs = []
 
         for key in step_dict.keys():
-            if key in dir(self):
-                print('----------|', key)
+            if key in dir(self) and not key in self.step_dict_keys_excluded:
+                print('----------|', key, step_dict[key])
                 self.outputs.append(
                     getattr(self, key)(
                         step_dict,
@@ -61,12 +78,23 @@ class Step:
         r = {
             "By.ID": By.ID,
             "By.NAME": By.NAME,
+            "By.CSS_SELECTOR": By.CSS_SELECTOR,
         }.get(by_string, ValueError("by_string not yet implemented in "
                                     "webscraping.modules.webscraper.classes.Step.by"))
         return r
 
     @staticmethod
-    def _keys(keys_string):
+    def dom_get_by(by_string):
+        # @ToDo :: Use reflection instead...
+        r = {
+            "By.ID": "document.getElementById('%s')",
+            "By.NAME": "document.getElementsByName('%s')[0]",
+            "By.CSS_SELECTOR": "document.querySelector('%s')",
+        }.get(by_string)
+        return r
+
+
+    def _keys(self, keys_string):
         """
             @ToDo :: Use reflection instead, with ValueError if Keys.(.*) ...
                 ValueError("keys_string not yet implemented in "
@@ -74,8 +102,29 @@ class Step:
         """
         r = {
             "Keys.RETURN": Keys.RETURN,
+            "Keys.SPACE": Keys.SPACE,
         }.get(keys_string, keys_string)
         return r
+
+    def input_keys(self, keys_string, _key=None):
+        """
+            @ToDo :: Fix [user_input] ... ?
+            Usage:
+                [variable]
+                    { "send_keys": "[variable]", "key": "..." }
+                    ___________
+                    Description:
+                        The variable will be fetched from the
+                        variables dict attribute of the step by 
+                        the key provided in the config line above
+        """
+        r = {
+            "[user_input]": lambda _key: input("Enter value: "),
+            "[variable]": lambda _key: self.variables[_key],
+        }.get(keys_string)(_key)
+        return r
+
+
 
 
     def assert_in_driver_title(self, step_dict, _input):
@@ -126,9 +175,39 @@ class Step:
 
 
     def clear(self, step_dict, _input):
+        time.sleep(self.config.ui_timeout)
+
         _input = _input if type(_input) == type({}) else _input[0]
         element = _input["element"]
         element.clear()
+        return { "element": element }
+
+
+    def click(self, step_dict, _input):
+        time.sleep(self.config.ui_timeout)
+
+        element = None
+
+        _input = _input if type(_input) == type({}) else _input[0] if len(_input) else _input
+        if type(_input) == type({}) and "element" in _input:
+            element = _input["element"]
+
+            if element:
+                element_step_dict = self.step_dicts[-2]
+                element_find = element_step_dict["find"] if "find" in element_step_dict else element_step_dict["wait"]
+                element_by = element_step_dict["by"]
+                element_dom_get_by = Step.dom_get_by(element_by) % element_find
+
+                if "scrollIntoView" in step_dict and step_dict["scrollIntoView"]:
+                    # scrollIntoView()
+                    self.driver.execute_script(f"{element_dom_get_by}.style.zIndex = 1000; {element_dom_get_by}.scrollIntoView();")
+
+                # click()
+                if step_dict["click"] == "Left":
+                    # element.click()
+                    self.driver.execute_script(f"{element_dom_get_by}.click();")
+
+
         return { "element": element }
 
 
@@ -170,30 +249,102 @@ class Step:
         return _input if type(_input) == type({}) else _input[0]
 
 
+    def repeat(self, step_dict, _input):
+        repeat = step_dict["repeat"]
+        step_dicts = step_dict["step_dicts"]
+
+        _io = _input
+        for i in range(repeat):
+            for _step_dict in step_dicts:
+                _io = self.execute(_step_dict, _io)
+
+        return _io
+
+
     def send_keys(self, step_dict, _input):
+        time.sleep(self.config.ui_timeout)
+
         _input = _input if type(_input) == type({}) else _input[0]
-        _input["element"].send_keys(Step._keys(step_dict["send_keys"]))
+
+        _send_keys = step_dict["send_keys"]
+        _keys_value = ""
+        if _send_keys == "[input]":
+            _keys_value = self.input_keys(_send_keys)
+
+        elif step_dict["send_keys"] == "[variable]":
+            _key = step_dict["key"]
+            _keys_value = self.input_keys(_send_keys, _key=_key)
+
+        else:
+            _keys_value = self._keys(_send_keys)
+
+        _input["element"].send_keys(_keys_value)
+        # new
+        return _input if type(_input) == type({}) else _input[0]
+
+
+    def set_var(self, step_dict, _input):
+        time.sleep(self.config.ui_timeout)
+
+        _input = _input if type(_input) == type({}) else _input[0]
+
+        var_name = step_dict["set_var"]
+        self.variables[var_name] = _input["returned"]
+
         # new
         return _input if type(_input) == type({}) else _input[0]
 
 
     def text_to_csv(self, step_dict, _input):
-        if step_dict["text_to_csv"] == "input":
-            data = StringIO(f"""
-                {_input[0]["returned"]}
-            """)
+        _input = _input if type(_input) == type({}) else _input[0]
 
+        text = None
+        if step_dict["text_to_csv"] == "variables":
+            text = ""
+            for var_name in step_dict["variables"]:
+                text += "\n" + self.variables[var_name]
+
+        elif step_dict["text_to_csv"] == "input":
+            text = _input["returned"]
+
+
+        _now = datetime.datetime.now()
+        output_pathname = os.path.join(
+            step_dict["folderpath"],
+            slugify(f'{_now}-{step_dict["filename"]}')
+        )
+
+        data = StringIO(f"""
+            {text}
+        """)
+        try:
             df = pd.read_table(data)
-            df.to_csv(step_dict["filepath"])
+            df.to_csv(f"{output_pathname}.csv")
+
+        except pandas.errors.ParserError as err:
+            print('----------| pandas.errors.ParserError: ', err)
+            with open(f"{output_pathname}.txt", "w") as f:
+                f.write(text)
+
         # new
         return _input if type(_input) == type({}) else _input[0]
 
 
     def wait(self, step_dict, _input):
-        element = WebDriverWait(
-                self.driver, step_dict["timeout"]).until(
-            EC.element_to_be_clickable(
-                    (Step._by(step_dict["by"]), step_dict["wait"])) 
-        )
+        element = None
+
+        try:
+            element = WebDriverWait(
+                    self.driver, step_dict["timeout"]).until(
+                EC.element_to_be_clickable(
+                        (Step._by(step_dict["by"]), step_dict["wait"])) 
+            )
+        except TimeoutException as err:
+            if "optional" in step_dict and step_dict["optional"]:
+                print('----------| Optional field - TimeoutException: ', err)
+            else:
+                print('----------| Non optional field - TimeoutException: ', err)
+                raise err
+
         return { "element": element }
 

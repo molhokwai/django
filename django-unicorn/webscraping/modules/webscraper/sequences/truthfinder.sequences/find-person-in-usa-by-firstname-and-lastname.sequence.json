@@ -1,0 +1,78 @@
+[
+    [
+        { "config": {
+            "ui_timeout": 1
+        }}
+    ],[
+        { "get": "https://www.truthfinder.com/people-search/" },
+        { "assert_in_page_source": "People Search"}
+    ],[
+        { "find": "squaredFour", "by": "By.ID", 
+          "alt": { "wait": "squaredFour", "by": "By.ID", "timeout": 10, "optional": true } },
+        { "click": "Left" }
+    ],[        
+        { "find": "firstName", "by": "By.NAME"  },
+        { "clear": "" },
+        { "send_keys": "[variable]", "key": "firstName" }
+    ],[
+        { "find": "lastName", "by": "By.NAME"  },
+        { "clear": "" },
+        { "send_keys": "[variable]", "key": "lastName" }
+    ],[
+        { "find": "bg-search-submit", "by": "By.NAME"  },
+        { "click": "Left" }
+    ],[
+        { "wait": "#warning-modal .secure button", "by": "By.CSS_SELECTOR", "timeout": 15, "optional": true },
+        { "click": "Left" }
+    ],[{
+        "repeat": 2,
+        "step_dicts": [
+            { "wait": "button.dont-know", "by": "By.CSS_SELECTOR", "timeout": 10 },
+            { "click": "Left", "scrollIntoView": true }
+       ]}
+    ],[
+        { "wait": "button.dont-know", "by": "By.CSS_SELECTOR", "timeout": 10, "optional": true },
+        { "find": "button.dont-know", "by": "By.CSS_SELECTOR" },
+        { "click": "Left", "scrollIntoView": true }
+    ],[
+        { "wait": "button[type='submit'].continue", "by": "By.CSS_SELECTOR", "timeout": 10, "optional": true  },
+        { "click": "Left" }
+    ],[
+        { "wait": "a.skip.mobile", "by": "By.CSS_SELECTOR", "timeout": 30, "optional": true },
+        { "click": "Left" }
+    ],[
+        { "waid": "overlay", "by": "By.ID", "timeout": 5, "optional": true },
+        { "click": "Left", "scrollIntoView": true }
+    ],[
+        { "wait": "fcra-checkbox", "by": "By.ID", "timeout": 120, "optional": true },
+        { "find": "fcra-checkbox", "by": "By.ID" },
+        { "click": "Left", "scrollIntoView": true }
+    ],[
+        { "find": "#fcra-modal .continue button", "by": "By.CSS_SELECTOR" },
+        { "click": "Left" }
+    ],[
+        { "wait": "#submit-button-modal .controls a.skip", "by": "By.CSS_SELECTOR", "timeout": 5, "optional": true },
+        { "click": "Left", "scrollIntoView": true }
+    ],[
+        { "waid": "overlay", "by": "By.ID", "timeout": 10, "optional": true },
+        { "click": "Left", "scrollIntoView": true }
+    ],[
+        { "wait": "results-header", "by": "By.ID", "timeout": 30 },
+        { "get_attribute": "innerText" },
+        { "set_var": "results_header_innertext" }
+    ],[
+        { "find": "paginated-results", "by": "By.ID"  },
+        { "get_attribute": "innerText" },
+        { "set_var": "paginated_results_innertext" }
+    ],[
+        { "assert_in_page_source": "Matches Found - Select Your Result Now" },
+        { "print_OK": "asserts" }
+    ],[
+        { "print_TEXT": "input" },
+        { "text_to_csv": "variables",
+          "variables": ["results_header_innertext", "paginated_results_innertext"], 
+          "folderpath": "output/",
+          "filename": "find-person-in-usa-by-firstname-and-lastname.sequence" 
+        }
+    ]
+]

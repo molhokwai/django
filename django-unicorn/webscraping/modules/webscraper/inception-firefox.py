@@ -21,7 +21,6 @@ import os
 from classes.SequenceManager import SequenceManager
 
 
-
 def selenium_docs_example():
     options = Options()
     options.headless = False
@@ -50,12 +49,6 @@ def selenium_docs_example():
 
 
 def example_local():
-    options = Options()
-    options.headless = False
-
-    driver = webdriver.Firefox(
-        options=options
-    )
 
     driver.get("http://localhost:8001/")
     assert "Webscraping" in driver.page_source
@@ -122,96 +115,15 @@ def example_local():
 
 
 
-def sequenced(name, variables={}):
-    options = Options()
-    options.headless = False
-
-    driver = webdriver.Firefox(
-        options=options
-    )
+def sequenced(name):
 
     sequenceManager = SequenceManager(driver, name, os.path.abspath("."))
-    sequenceManager.execute_sequences(variables=variables)
+    sequenceManager.execute_sequences()
 
     driver.close()
 
-def execute_input(filepath, n=10):
-    print(
-        """
-        --------- COMPLETED ------------
-        Executing "%s"...
-        
-        --------------------------------
-        """ % filepath
-    )
 
-    l = []
-    input_filepath = os.path.join("input", filepath)
-    filetext = ""
-    with open(input_filepath) as f:
-        filetext = f.read()
-        l = filetext.split("\n")
 
-    i = 0
-    for line in l:
-        def exec(filepath, line, variables):
-            print(
-                """
-                --------- EXECUTING ------------
-                sequenced(name, %s)...                
-                --------------------------------
-                """ % str(variables)
-            )
-            sequence_file = name = filepath.replace("txt", "json")
-            sequenced(name, variables=variables)
-            
-            # Update list file
-            # ----------------
-            filetext = filetext.replace(line, f"{line} ✓")
-            with open(input_filepath, "w") as f:
-                f.write(filetext)
-
-            print(
-                """
-                --------- COMPLETED ------------
-                sequenced(name, %s).                
-                --------------------------------
-                """ % str(variables)
-            )
-
-        variables = {
-            "firstName": line.split(" ")[0],
-            "lastName": line.split(" ")[1],
-        }
-
-        if line.find("✓") < 0:
-            if i < n:
-                try:
-                    exec(filepath, line, variables)
-                    i += 1
-                except Exception as err:
-                    print('--------------| Error: ', err)
-            else:
-                break
-        else:
-            print(
-                """
-                ---------- SKIPPING ------------
-                sequenced(name, %s) : Done ✓                
-                --------------------------------
-                """ % str(variables)
-            )
-
-    print(
-        """
-
-        --------- COMPLETED ------------
-
-        %i inputs executed...
-        
-        --------------------------------
-        """ % i
-    )
 
 if __name__ == "__main__":
 
@@ -223,10 +135,6 @@ if __name__ == "__main__":
         2.        sequenced("selenium-docs-example")
         3.        sequenced("example-local")
         4.        truthfinder.sequences
-        5.        execute_input(
-                      "truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.txt",
-                      n=3
-                  )
         --------------------------
         Enter any other to exit...
 
@@ -242,22 +150,12 @@ if __name__ == "__main__":
             (sequenced, "selenium-docs-example"),
             (sequenced, "example-local"),
             (sequenced, "truthfinder.sequences"),
-            (execute_input, 
-                (
-                    ("truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.txt",),
-                    { "n": 3 }
-                )
-            )
         ][i]
 
         if type(f) == type((1,1)):
             _func = f[0]
             _arg = f[1]
-
-            if type(_arg) == type((1,1)):
-                _func(*_arg[0], **_arg[1])
-            else:
-                _func(_arg)
+            _func(_arg)
         else:
             _func = f
             _func()

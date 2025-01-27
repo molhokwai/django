@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf8 -*-
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 from classes.Step import Step
 from classes.Util import Util
 
@@ -21,10 +15,20 @@ class Sequence:
         self.sequence_steps = sequence_steps
 
 
-    def execute(self, _input=None):
+    def execute(self, _input=None, variables={}):
         outputs = []
 
-        stepObj = Step(self.driver)
+        step_config = None
+        for step_dicts in self.sequence_steps:
+            for step_dict in step_dicts:
+                for key in step_dict.keys():
+                    if key == "config":
+                        print('----------| Sequence > ', key)
+                        step_config = step_dict["config"]
+
+
+        stepObj = Step(self.driver, config_dict=step_config)
+        stepObj.variables = variables
         for step_dicts in self.sequence_steps:
             for step_dict in step_dicts:
                 outputs.append(stepObj.execute(
@@ -52,7 +56,15 @@ class SequenceManager:
     @property    
     def sequences(self):
         if not self._sequences:
-            self._sequences = Util.get_sequences_from_name(
+            if self.name.endswith(".sequence.json"):
+                sequence = Util.get_sequence(
+                    self.source_path,
+                    from_path=self.name
+                )
+                self._sequences = [sequence]
+
+            else:
+                self._sequences = Util.get_sequences_from_name(
                     self.source_path,
                     self.name
                 )
@@ -60,11 +72,11 @@ class SequenceManager:
         return self._sequences
 
 
-    def execute_sequences(self):
+    def execute_sequences(self, variables={}):
         sequences = self.sequences
 
         for sequence_steps in sequences:
             sequence = Sequence(self.driver, sequence_steps)
-            sequence.execute()
+            sequence.execute(variables=variables)
 
 

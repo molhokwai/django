@@ -15,7 +15,9 @@ class Util:
 
         if from_path:
             if from_path.endswith(".sequence.json"):
-                filepath = from_path
+                filepath = os.path.join(
+                    source_path, "sequences", from_path
+                )
 
             elif from_path.endswith(".sequences"):
                 raise ValueError("Single sequence file name cannot must end with '.sequence.json'"
@@ -41,9 +43,10 @@ class Util:
             )
             sequences = []
             for f in os.listdir(folderpath):
+                filepath = os.path.join(folderpath, f)
                 sequences.append(
                     Util.get_sequence(source_path, 
-                                from_path=os.path.abspath(f))
+                                from_path=os.path.abspath(filepath))
                 )
             return sequences
 
