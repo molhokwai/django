@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from selenium.common.exceptions import TimeoutException
 
-import pandas as pd
+import pandas
 import sys
 if sys.version_info[0] < 3: 
     from StringIO import StringIO
@@ -29,7 +29,7 @@ class Step:
     steps_common = {
         "asserts": []
     }
-    step_dict_keys_excluded = ("config", "step_dicts")
+    step_dict_keys_excluded = ("config", "step_dicts", "variables")
 
     variables = {}
 
@@ -134,7 +134,7 @@ class Step:
         self.steps_common["asserts"].append(
             f"assert {_assert_in_driver_title} in self.driver.title"
         )
-        # new
+
         return _input if type(_input) == type({}) else _input[0]
 
 
@@ -151,27 +151,45 @@ class Step:
             _assert = step_dict["assert_in_input"]
             assert _assert in _returned
 
+        _not_string = "not" if _not else ""
         self.steps_common["asserts"].append(
-            f"assert {_assert} in {_returned}"
+            f"assert {_assert} {_not_string} in {_returned}"
         )
         return { "returned": _returned }
 
 
-    def assert_in_page_source(self, step_dict, _input):
-        _assert_in_page_source = step_dict["assert_in_page_source"]
+    def assert_in_page_source(self, step_dict, _input, _not=False):
+        _placeholder_variables = {}
+        if "placeholder_variables" in step_dict:            
+            for var_name in step_dict["placeholder_variables"]:
+                _placeholder_variables[var_name] = self.variables[var_name]
 
-        assert _assert_in_page_source in self.driver.page_source
+        _assert = None
+        if _not:
+            _assert = step_dict["assert_not_in_page_source"] \
+                                            % _placeholder_variables
+            assert _assert not in self.driver.page_source
+        else:
+            _assert = step_dict["assert_in_page_source"] \
+                                            % _placeholder_variables
+            assert _assert in self.driver.page_source
+
+        _not_string = "not" if _not else ""
         self.steps_common["asserts"].append(
-            f"assert {_assert_in_page_source} in self.driver.page_source"
+            f"assert {_assert} {_not_string} in self.driver.page_source"
         )
-        # new
+
         return _input if type(_input) == type({}) else _input[0]
 
 
     def assert_not_in_input(self, step_dict, _input):
-        # new
         _input = _input if type(_input) == type({}) else _input[0]
         return self.assert_in_input(step_dict, _input, _not=True)
+
+
+    def assert_not_in_page_source(self, step_dict, _input):
+        _input = _input if type(_input) == type({}) else _input[0]
+        return self.assert_in_page_source(step_dict, _input, _not=True)
 
 
     def clear(self, step_dict, _input):
@@ -279,7 +297,7 @@ class Step:
             _keys_value = self._keys(_send_keys)
 
         _input["element"].send_keys(_keys_value)
-        # new
+
         return _input if type(_input) == type({}) else _input[0]
 
 
@@ -291,7 +309,7 @@ class Step:
         var_name = step_dict["set_var"]
         self.variables[var_name] = _input["returned"]
 
-        # new
+
         return _input if type(_input) == type({}) else _input[0]
 
 
@@ -318,7 +336,7 @@ class Step:
             {text}
         """)
         try:
-            df = pd.read_table(data)
+            df = pandas.read_table(data)
             df.to_csv(f"{output_pathname}.csv")
 
         except pandas.errors.ParserError as err:
@@ -326,7 +344,7 @@ class Step:
             with open(f"{output_pathname}.txt", "w") as f:
                 f.write(text)
 
-        # new
+
         return _input if type(_input) == type({}) else _input[0]
 
 

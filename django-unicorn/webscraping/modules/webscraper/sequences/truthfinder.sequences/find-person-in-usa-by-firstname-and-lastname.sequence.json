@@ -54,7 +54,13 @@
         { "wait": "#submit-button-modal .controls a.skip", "by": "By.CSS_SELECTOR", "timeout": 5, "optional": true },
         { "click": "Left", "scrollIntoView": true }
     ],[
-        { "waid": "overlay", "by": "By.ID", "timeout": 10, "optional": true },
+        
+        { "assert_not_in_page_source":
+                "Your search for <strong>\"%(firstName)s %(lastName)s\"</strong> may be too broad.", 
+          "placeholder_variables": ["firstName", "lastName"] },
+        { "click": "Left", "scrollIntoView": true }
+    ],[
+        { "wait": "overlay", "by": "By.ID", "timeout": 10, "optional": true },
         { "click": "Left", "scrollIntoView": true }
     ],[
         { "wait": "results-header", "by": "By.ID", "timeout": 30 },

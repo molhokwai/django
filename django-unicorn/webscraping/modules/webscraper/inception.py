@@ -154,7 +154,7 @@ def execute_input(filepath, n=10):
 
     i = 0
     for line in l:
-        def exec(filepath, line, variables):
+        def _exec(filepath, line, variables):
             print(
                 """
                 --------- EXECUTING ------------
@@ -187,7 +187,7 @@ def execute_input(filepath, n=10):
         if line.find("✓") < 0:
             if i < n:
                 try:
-                    exec(filepath, line, variables)
+                    _exec(filepath, line, variables)
                     i += 1
                 except Exception as err:
                     print('--------------| Error: ', err)
@@ -224,9 +224,16 @@ if __name__ == "__main__":
         3.        sequenced("example-local")
         4.        truthfinder.sequences
         5.        execute_input(
-                      "truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.txt",
-                      n=3
+                    "truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.txt",
+                    n=3
                   )
+        6.        sequenced(
+                    "truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.json",
+                    variables={
+                        "firstName": input("Enter firstName: "),
+                        "lastName": input("Enter lastName: "),
+                  })
+
         --------------------------
         Enter any other to exit...
 
@@ -247,7 +254,21 @@ if __name__ == "__main__":
                     ("truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.txt",),
                     { "n": 3 }
                 )
-            )
+            ),
+            (sequenced,
+                (
+                    ("truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.json",),
+                    { 
+                        "variables":
+                        { 
+                            "firstName": input(
+                                "        - Enter firstName: "),
+                            "lastName": input(
+                                "        - Enter lastName: ")
+                        }
+                    }
+                )
+            ),
         ][i]
 
         if type(f) == type((1,1)):
