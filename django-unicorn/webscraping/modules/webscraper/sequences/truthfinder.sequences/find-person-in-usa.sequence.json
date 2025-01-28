@@ -19,6 +19,18 @@
         { "clear": "" },
         { "send_keys": "[variable]", "key": "lastName" }
     ],[
+        { "find": "middleName", "by": "By.NAME"  },
+        { "clear": "" },
+        { "send_keys": "[variable]", "key": "middleName" }
+    ],[
+        { "find": "city", "by": "By.NAME"  },
+        { "clear": "" },
+        { "send_keys": "[variable]", "key": "city" }
+    ],[
+        { "find": "age", "by": "By.NAME"  },
+        { "clear": "" },
+        { "send_keys": "[variable]", "key": "age" }
+    ],[
         { "find": "bg-search-submit", "by": "By.NAME"  },
         { "click": "Left" }
     ],[

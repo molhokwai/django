@@ -37,6 +37,9 @@
                 </font>
             {% endif %}
         </td>
+
+
+        {% if not "title" in excluded_fields %}
         <td>
             {% if is_editing %}
                 <input type="text" unicorn:model.defer="webscrape.title" value="{{ webscrape.title }}"
@@ -50,41 +53,85 @@
                 </font>
             {% endif %}
         </td>
+        {% endif %}
+
+        <td class="progressBarCell">
+            {% if is_editing %}
+                <input type="text" unicorn:model.defer="webscrape.task_progress" value="{{ webscrape.task_progress }}"
+                    class="form-control rounded border-green-700 shadow-sm text-green-900
+                           tracking-wider text-xs"/>
+            {% else %}
+                <div id="{{ webscrape.task_id }}"
+                     class="progressBar"
+                     style="width: {{ webscrape.task_progress }}%; height: 20px; background-color: lightblue;"></div>
+                <p id="progressText-{{ webscrape.task_id }}">
+                    {{ webscrape.task_progress }}%</p>
+            {% endif %}
+        </td>
+
+        <td>
+            <p id="taskOutput-{{ webscrape.task_id }}"
+               class="taskOutput">
+                {% if taskOutput %}               
+                    {{ taskOutput|truncatechars:50 }}
+                {% else %}
+                    <small>no output generated</small>
+                {% endif %}               
+                    <small>(click to view)</small>
+            </p>
+        </td>
+
+        {% if not "title" in excluded_fields %}
         <td>
             {% if is_editing %}
-                <input type="text" unicorn:model.defer="webscrape.first_name" value="{{ webscrape.first_name }}" placeholder="ex: David"
+                <input type="text" unicorn:model.defer="webscrape.title" value="{{ webscrape.title }}"
+                    class="form-control rounded border-green-700 shadow-sm text-green-900
+                           tracking-wider text-xs"/>
+            {% else %}
+                <font
+                    class="border-green-700 shadow-sm text-green-900 tracking-wider"
+                    title="{{ webscrape.title }}">
+                    {{ webscrape.title|truncatechars:10 }}
+                </font>
+            {% endif %}
+        </td>
+        {% endif %}
+
+        <td>
+            {% if is_editing %}
+                <input type="text" unicorn:model.defer="webscrape.firstName" value="{{ webscrape.firstName }}" placeholder="ex: David"
 					class="form-control rounded border-green-700 shadow-sm text-green-900
 						   tracking-wider text-xs"/>
             {% else %}
                 <font
                     class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
-                    {{ webscrape.first_name }}
+                    {{ webscrape.firstName }}
                 </font>
             {% endif %}
         </td>
         <td>
             {% if is_editing %}
-                <input type="text" unicorn:model.defer="webscrape.last_name"
-                    value="{{ last_name }}" placeholder="ex: Jonathan"
+                <input type="text" unicorn:model.defer="webscrape.lastName"
+                    value="{{ lastName }}" placeholder="ex: Jonathan"
                     class="form-control rounded border-green-700 shadow-sm text-green-900
                            tracking-wider text-xs"/>
             {% else %}
                 <font
                     class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
-                    {{ webscrape.last_name }}
+                    {{ webscrape.lastName }}
                 </font>
             {% endif %}
         </td>
         <td>
             {% if is_editing %}
-                <input type="text" unicorn:model.defer="webscrape.middle_name"
-                    value="{{ webscrape.middle_name }}" placeholder="ex: Henry"
+                <input type="text" unicorn:model.defer="webscrape.middleName"
+                    value="{{ webscrape.middleName }}" placeholder="ex: Henry"
                     class="form-control rounded border-green-700 shadow-sm text-green-900
                            tracking-wider text-xs"/>
             {% else %}
                 <font
                     class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
-                    {{ webscrape.middle_name }}
+                    {{ webscrape.middleName }}
                 </font>
             {% endif %}
         </td>
@@ -97,7 +144,9 @@
             {% else %}
                 <font
                     class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
-                    {{ webscrape.age }}
+                    {% if webscrape.age %}
+                        {{ webscrape.age }}
+                    {% endif %}
                 </font>
             {% endif %}
         </td>

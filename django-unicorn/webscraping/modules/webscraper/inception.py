@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from selenium.webdriver.firefox.options import Options
 
-import pandas as pd
+import pandas
 import sys
 if sys.version_info[0] < 3: 
     from StringIO import StringIO
@@ -18,7 +18,7 @@ else:
 
 import os
 
-from classes.SequenceManager import SequenceManager
+from modules.webscraper.classes.SequenceManager import SequenceManager
 
 
 
@@ -113,8 +113,13 @@ def example_local():
     data = StringIO(f"""
         {text} 
     """)
-    # df = pd.read_fwf('log.txt')
-    df = pd.read_table(data)
+
+    """
+        read from file
+        --------------
+        df = pandas.read_fwf('log.txt')
+    """
+    df = pandas.read_table(data)
     df.to_csv('data.csv')
 
 
@@ -281,13 +286,13 @@ if __name__ == "__main__":
             (sequenced, "truthfinder.sequences"),
             (execute_input, 
                 (
-                    ("truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.txt",),
+                    ("truthfinder.sequences/find-person-in-usa.sequence.txt",),
                     { "n": 3 }
                 )
             ),
             (sequenced,
                 (
-                    ("truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.json",),
+                    ("truthfinder.sequences/find-person-in-usa.sequence.json",),
                     { 
                         "variables":
                         { 
@@ -301,7 +306,7 @@ if __name__ == "__main__":
             ),
             (sequenced,
                 (
-                    ("truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.json",),
+                    ("truthfinder.sequences/find-person-in-usa.sequence.json",),
                     { 
                         "variables":
                         { 

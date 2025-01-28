@@ -1,6 +1,7 @@
 from django_unicorn.components import UnicornView
 
-from .webscrapes import MessageStatus
+from .webscrape import MessageStatus
+from webscraping.models import Webscrape
 
 
 
@@ -11,11 +12,19 @@ class RowView(UnicornView):
     countries = None
     us_states = None
 
+    excluded_fields = None
+
+    task_output = ''
 
     def mount(self):
         self.us_states = self.parent.us_states
         self.countries = self.parent.countries
 
+        self.excluded_fields = self.parent.excluded_fields
+        if self.webscrape.task_outputs:
+            self.task_output = self.webscrape.task_outputs.split("-------ktou##################outk-------")
+            if len(self.task_output):
+                self.task_output = self.task_output[-1]
 
     def edit(self):
         self.is_editing = True

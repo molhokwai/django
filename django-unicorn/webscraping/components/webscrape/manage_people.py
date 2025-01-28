@@ -1,15 +1,13 @@
 from django_unicorn.components import UnicornView, QuerySetType
 from django.conf import settings
-from django.forms.models import model_to_dict
 
+from datetime import date, datetime
 from datetime import date, datetime
 from webscraping.models import Webscrape, TaskProgress, TaskHandler
 
 from webscraping.views import webscrape_long_running_method
 
-
 from enum import Enum
-from typing import Union
 import copy
 
 class MessageStatus(Enum):
@@ -18,7 +16,7 @@ class MessageStatus(Enum):
     NOTICE = "Notice"
 
 
-class ManageView(UnicornView):
+class ManagePeopleView(UnicornView):
     """
         src: https://www.bugbytes.io/posts/django-unicorn-an-introduction/
     """
@@ -26,30 +24,20 @@ class ManageView(UnicornView):
 
 
     website_url: str = 'https://www.truthfinder.com'
-    """
-        title: str = ''
-        firstName: str = 'David'
-        lastName: str = 'Jonathan'
-        middleName: str = 'Henry'
-        middleInitial: str = 'H.'
-        age: Union[ int, None ] = 51
-        city: str = 'Los Angeles'
-        state: str = 'CA'
-        country: str = 'USA'
-    """
-
     title: str = ''
-    firstName: str = ''
-    lastName: str = ''
-    middleName: str = ''
-    middleInitial: str = ''
-    age: Union[ int, None ] = None
+    first_name: str = ''
+    last_name: str = ''
+    middle_name: str = ''
+    middle_initials: str = ''
+    age: int = None
     city: str = ''
     state: str = ''
     country: str = ''
 
-
-    task_name: str = "truthfinder.sequences/find-person-in-usa.sequence.json"
+    task_name: str = ''
+    task_variables: dict = ''
+    task_id: int = None
+    task_progress: int = None
 
     us_states = None
     countries = None
@@ -72,8 +60,29 @@ class ManageView(UnicornView):
             self.webscrape = Webscrape.objects.first()
 
 
+    def add(self):
+
+        print('------------------ | ----------------', str(self.title), str(self.age))
+        Webscrape.objects.create(
+            website_url = self.website_url,
+            title = self.title,
+            first_name = self.first_name,
+            last_name = self.last_name,
+            middle_name = self.middle_name,
+            middle_initials = self.middle_initials,
+            age = self.age,
+            city = self.city,
+            state = self.state,
+
+            task_name = self.task_name,
+            task_variables = self.task_variables,
+            task_id = self.task_id
+        )
+        self.clear_fields()
+        return self.parent.load_table(force_render=True)
+
     def scrape(self):
-        """
+        """        
             __________________________________________________
             Compute task name and task start url from user filled & chosen fields:
             
@@ -89,36 +98,16 @@ class ManageView(UnicornView):
                 - truthfinder.com
             __________________________________________________
         """        
-        self.webscrape = Webscrape(
-            website_url = self.website_url,
-            title = self.title,
-            firstName = self.firstName,
-            lastName = self.lastName,
-            middleName = self.middleName,
-            middleInitial = self.middleInitial,
-            age = self.age,
-            city = self.city,
-            state = self.state,
+        self.task_name = "..."
 
-            task_name = self.task_name,
-        )
-
-        # Get task variables from user given + model fields
-        self.webscrape.task_variables = model_to_dict(self.webscrape)
-        print('-------------------------| ', self.webscrape.task_variables)
+        # Get task variables from user given fields
+        self.task_variables = "..."
 
         # Get/Generate task id with Task handler
-        self.webscrape.task_id = TaskHandler().start_task(
-            webscrape_long_running_method, [ self.webscrape ] )
+        self.task_id = TaskHandler().start_task( 
+            webscrape_long_running_method, [ _input ] )
 
-        self.save()
-
-
-    def save(self):
-        self.webscrape.save()
-        self.clear_fields()
-        return self.parent.load_table(force_render=True)
-
+        self.add()
 
     def update_list(self):
         self.parent.load_table(force_render=True)
@@ -126,10 +115,11 @@ class ManageView(UnicornView):
 
     def clear_fields(self):
         self.title = ''
-        self.firstName = ''
-        self.lastName = ''
-        self.middleName = ''
-        self.middleInitial = ''
+        self.first_name = ''
+        self.last_name = ''
+        self.middle_name = ''
+        self.middle_initials = ''
+        self.last_name = ''
         self.age = ''
         self.city = ''
         self.state = ''

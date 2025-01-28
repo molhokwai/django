@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf8 -*-
-from classes.Step import Step
-from classes.Util import Util
+from webscraping.modules.webscraper.classes.Step import Step
+from webscraping.modules.webscraper.classes.Util import Util
 
 import os
 

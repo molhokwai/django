@@ -63,51 +63,56 @@
 
         const unique_title = function () {
             let $title = document.querySelector('#title');
-            let $last_name = document.querySelector('#last_name');
-            let $first_name = document.querySelector('#first_name');
+            let $lastName = document.querySelector('#lastName');
+            let $firstName = document.querySelector('#firstName');
             const date_time_str = getCurrentDateTimeStr();
 
             let title = $title.value;
-            let last_name = $last_name.value;
+            let lastName = $lastName.value;
             if(title){
                 title = `${title} | ${date_time_str}`
 
-            } else if(last_name) {
-                title = `${last_name} | ${date_time_str}`
+            } else if(lastName) {
+                title = `${lastName} | ${date_time_str}`
 
-                let first_name = $first_name.value;
-                if(first_name){
-                    title = `${first_name} ${title}`
+                let firstName = $firstName.value;
+                if(firstName){
+                    title = `${firstName} ${title}`
                 }
             }
 
             $title.value = title;
-            Unicorn.call('webscraping.manage', 'setTitle', title);
+            const module_path = document.getElementById('module_path').value;
+            Unicorn.call(module_path, 'setTitle', title);
         };
 
         window.onload = () => {
-            document.querySelector('#unique_title')
-                    .addEventListener('click', (e) => {
+            document.querySelector('#firstName')
+                    .addEventListener('change', (e) => {
+                unique_title();
+            });
+            document.querySelector('#lastName')
+                    .addEventListener('change', (e) => {
                 unique_title();
             });
         };
     </script>
+    <input type="hidden" id="module_path" value="webscraping.manage" /> 
+
     <input unicorn:model.defer="website_url"      type="text"   id="website_url"   placeholder="website url, ex: https://www.truthfinder.com/people-search/" value="{{webscrape.website_url}}"    
-    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" /> *
-    <input unicorn:model.defer="title"      type="text"   id="title"   placeholder="title"
-     value="{{webscrape.title}}"
-     class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider w-4/5" /> *
+
     <span class="block">&nbsp;</span>
 
-    <input unicorn:model.defer="first_name"      type="text"   id="first_name"   placeholder="First name"    value="{{webscrape.first_name}}"
+    <input unicorn:model.defer="firstName"      type="text"   id="firstName"   placeholder="First name"    value="{{webscrape.firstName}}"
     class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
-    <input unicorn:model.defer="last_name"      type="text"   id="last_name"   placeholder="Last name"    value="{{webscrape.last_name}}"
+    <input unicorn:model.defer="lastName"      type="text"   id="lastName"   placeholder="Last name"    value="{{webscrape.lastName}}"
     class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" required /> *
     <input unicorn:model.defer="middle_name"      type="text"   id="middle_name"   placeholder="Middle name"    value="{{webscrape.middle_name}}"
     class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
     <span class="block">&nbsp;</span>
 
-    <input unicorn:model.defer="middle_initials"      type="text"   id="middle_initials"   placeholder="Middle initials"    value="{{webscrape.middle_initials}}"
+    <input unicorn:model.defer="middleInitial"      type="text"   id="middleInitial"   placeholder="Middle initials"    value="{{webscrape.middleInitial}}"
     class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
     <input unicorn:model.defer="age"     type="text"   id="age"  placeholder="Age"   value="{{webscrape.age}}"
     class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
@@ -133,9 +138,9 @@
     <span class="block">&nbsp;</span>
 
 
-    <div class="pt-2 mr-10 sm:block sm:mt-5 sm:mb-10">
+    <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
         <button unicorn:click="scrape"
-            class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-2 px-4 text-white font-bold shadow-xl duration-1000">Scrape</button>
+            class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">Search</button>
     </div>
 </div>
 

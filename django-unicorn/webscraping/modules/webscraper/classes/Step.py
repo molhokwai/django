@@ -279,7 +279,15 @@ class Step:
         return _io
 
 
-    def send_keys(self, step_dict, _input):
+    def select(self, step_dict, _input):
+        """
+            @ToDo
+
+            ],[
+                { "find": "state", "by": "By.NAME"  },
+                { "select": "ALL", "key": "state", "function": "select_state" },
+                { "select": "[variable]", "key": "state", "function": "select_state" }
+        """
         time.sleep(self.config.ui_timeout)
 
         _input = _input if type(_input) == type({}) else _input[0]
@@ -297,6 +305,29 @@ class Step:
             _keys_value = self._keys(_send_keys)
 
         _input["element"].send_keys(_keys_value)
+
+        return _input if type(_input) == type({}) else _input[0]
+
+
+    def send_keys(self, step_dict, _input):
+        time.sleep(self.config.ui_timeout)
+
+        _input = _input if type(_input) == type({}) else _input[0]
+
+        _send_keys = step_dict["send_keys"]
+        _keys_value = ""
+        if _send_keys == "[input]":
+            _keys_value = self.input_keys(_send_keys)
+
+        elif step_dict["send_keys"] == "[variable]":
+            _key = step_dict["key"]
+            _keys_value = self.input_keys(_send_keys, _key=_key)
+
+        else:
+            _keys_value = self._keys(_send_keys)
+
+        if _keys_value:
+            _input["element"].send_keys(_keys_value)
 
         return _input if type(_input) == type({}) else _input[0]
 
