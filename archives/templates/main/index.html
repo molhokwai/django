@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Calendar & Map</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <style>
+            body {
+                display: flex; /* Use flexbox for layout */
+            }
+
+            .column {
+                flex: 1; /* Equal width for both columns initially */
+                min-width: 200px; /* Set a minimum width for each column */
+                border: 1px solid #ccc;
+                padding: 10px;
+            }
+
+            #resizer {
+                width: 5px;
+                background-color: #ccc;
+                cursor: col-resize;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="column">
+            <h2>Column 1</h2>
+            <p>Content of Column 1</p>
+        </div>
+
+        <div id="resizer"></div>
+
+        <div class="column">
+            <h2>Column 2</h2>
+            <p>Content of Column 2</p>
+        </div>
+
+        <script>
+            window.onload = () => {
+                console.log(`111111`);
+
+                const resizer = document.querySelector('#resizer');
+                let x_down = null;
+
+                resizer.addEventListener('mousedown', (e) => {
+                    x_down = e.clientX;
+                    console.log(`x_down: ${x_down}`);
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    console.log(`x_down: ${x_down}`);
+                    if (!x_down) {
+                        return;
+                    }
+
+                    const firstColumn = document.querySelectorAll('.column')[0];
+                    console.log(`firstColumn: ${firstColumn}`);
+                    const newWidth = firstColumn.offsetWidth + (e.clientX - x_down);
+                    console.log(`newWidth: ${newWidth}`);
+
+                    if (newWidth > 200 && newWidth < window.innerWidth - 200) { // Ensure minimum and maximum width
+                        firstColumn.style.width = newWidth + 'px';
+                    }
+                });
+
+                document.addEventListener('mouseup', () => {
+                    x_down = null;
+                    console.log(`x_down: ${x_down}`);
+                });
+            };
+        </script>
+    </body>
+</html>
