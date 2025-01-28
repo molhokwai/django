@@ -126,6 +126,11 @@ def sequenced(name, variables={}):
     options = Options()
     options.headless = False
 
+    for var_name in variables:
+        val = variables[var_name]
+        if type(val) == type(lambda x: x):
+            variables[var_name] = val()
+
     driver = webdriver.Firefox(
         options=options
     )
@@ -198,14 +203,15 @@ def execute_input(filepath, n=10):
                 try:
                     _exec(filepath, line, variables)
                     i += 1
-                except Exception as err:
-                    print('--------------| Error: ', err)
                 except AssertionError as err:
                     # Update list file
                     # ----------------
                     filetext = update_list_file(input_filepath, filetext, 
                                                 line, addtoken="✗")
                     i += 1
+                    print('--------------| Assertion rrror: ', err.args[0])
+
+                except Exception as err:
                     print('--------------| Error: ', err)
             else:
                 break
@@ -249,6 +255,12 @@ if __name__ == "__main__":
                         "firstName": input("Enter firstName: "),
                         "lastName": input("Enter lastName: "),
                   })
+        7.        sequenced(
+                    "truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.json",
+                    variables={
+                        "firstName": "William",
+                        "lastName": "Smith",
+                  })
 
         --------------------------
         Enter any other to exit...
@@ -277,10 +289,22 @@ if __name__ == "__main__":
                     { 
                         "variables":
                         { 
-                            "firstName": input(
+                            "firstName": lambda: input(
                                 "        - Enter firstName: "),
-                            "lastName": input(
+                            "lastName": lambda: input(
                                 "        - Enter lastName: ")
+                        }
+                    }
+                )
+            ),
+            (sequenced,
+                (
+                    ("truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.json",),
+                    { 
+                        "variables":
+                        { 
+                            "firstName": "William",
+                            "lastName": "Smith"
                         }
                     }
                 )

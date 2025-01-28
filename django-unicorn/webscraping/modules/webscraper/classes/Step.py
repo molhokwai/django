@@ -168,11 +168,11 @@ class Step:
         if _not:
             _assert = step_dict["assert_not_in_page_source"] \
                                             % _placeholder_variables
-            assert _assert not in self.driver.page_source
+            assert _assert not in self.driver.page_source, f'Error "{_assert}" in source...'
         else:
             _assert = step_dict["assert_in_page_source"] \
                                             % _placeholder_variables
-            assert _assert in self.driver.page_source
+            assert _assert in self.driver.page_source, f'Error "{_assert}" not in source...'
 
         _not_string = "not" if _not else ""
         self.steps_common["asserts"].append(
