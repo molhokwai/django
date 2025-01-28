@@ -108,7 +108,7 @@ def webscrape_long_running_method( webscrape: Webscrape, task_progress ):
             progress_message=f'Sequence {i} has been processed | Details: {webscrape}' )
 
         if i > 0:
-            webscrape.task_progress = ( i / sequences_len) * 100
+            webscrape.task_progress = int(( i / sequences_len) * 100)
             webscrape.save()
 
     driver.close()
