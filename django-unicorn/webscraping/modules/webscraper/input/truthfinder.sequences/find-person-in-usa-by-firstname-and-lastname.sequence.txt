@@ -1,5 +1,5 @@
 Oliver Jones ✓
-William Smith
+William Smith ✗
 Elijah Jones ✓
 Ethan Miller
 Henry Garcia
@@ -9,8 +9,8 @@ Liam Davis
 Ethan Davis
 Alexander Smith
 Oliver Martinez
-James Johnson
-William Brown
+James Johnson ✗
+William Brown ✗
 Alexander Brown
 Noah Martinez
 Matthew Garcia

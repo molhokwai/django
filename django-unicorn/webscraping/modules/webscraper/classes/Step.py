@@ -331,19 +331,24 @@ class Step:
             step_dict["folderpath"],
             slugify(f'{_now}-{step_dict["filename"]}')
         )
+        output_fullpath = ""
 
         data = StringIO(f"""
             {text}
         """)
         try:
+            output_fullpath = f"{output_pathname}.csv"
             df = pandas.read_table(data)
-            df.to_csv(f"{output_pathname}.csv")
+            df.to_csv(output_fullpath)
 
         except pandas.errors.ParserError as err:
-            print('----------| pandas.errors.ParserError: ', err)
-            with open(f"{output_pathname}.txt", "w") as f:
+            output_fullpath = f"{output_pathname}.txt"
+            with open(output_fullpath, "w") as f:
                 f.write(text)
 
+            print('----------| pandas.errors.ParserError: ', err)
+
+        self.outputs.append(output_fullpath)
 
         return _input if type(_input) == type({}) else _input[0]
 

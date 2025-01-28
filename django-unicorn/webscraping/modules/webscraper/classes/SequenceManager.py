@@ -72,11 +72,20 @@ class SequenceManager:
         return self._sequences
 
 
-    def execute_sequences(self, variables={}):
-        sequences = self.sequences
+    def execute_sequence(self, variables={}, i=0):
+        sequence_steps = self.sequences[i]
+        sequence = Sequence(self.driver, sequence_steps)
+        return sequence.execute(variables=variables)
 
+
+    def execute_sequences(self, variables={}):
+        outputs = []
+
+        sequences = self.sequences
         for sequence_steps in sequences:
             sequence = Sequence(self.driver, sequence_steps)
-            sequence.execute(variables=variables)
+            outputs.append(sequence.execute(variables=variables))
+
+        return outputs
 
 

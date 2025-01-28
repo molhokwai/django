@@ -93,6 +93,7 @@ WSGI_APPLICATION = 'djunicorn.wsgi.application'
 
 
 # Database
+# --------
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
@@ -102,8 +103,17 @@ DATABASES = {
     }
 }
 
+# Cache
+# -----
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+    }
+}
+
 
 # Password validation
+# -------------------
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -123,6 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
+# --------------------
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
