@@ -7,21 +7,30 @@
 
     <!-- div class="grid grid-cols-2 gap-4" -->
 
-        <div class="col-left">
+        <div class="exec-modules col-left">
 
-            <h2 class="mt-5 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
+            <h2 id="exec-custom"
+                class="section-title mt-5 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
+                Scrape, or Test a website process
+            </h2>
+            {% unicorn 'webscrape.manage_custom' parent=self %}
+
+            <h2 id="exec-search"
+                class="section-titlemt-5 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
                 Find a person
             </h2>
             {% unicorn 'webscrape.manage' parent=self %}
 
 
-            <h2 class="mt-8 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
+            <h2 id="exec-reversesearch"
+                class="section-titlemt-8 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
                 Reverse find a person
             </h2>
             {% unicorn 'webscrape.manage_reverse' parent=self %}
 
 
-            <h2 class="mt-8 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
+            <h2 id="exec-batch"
+                class="section-title mt-8 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
                 Find people
             </h2>
             {% unicorn 'webscrape.manage_people' parent=self %}
@@ -41,7 +50,8 @@
 
 
         <div class="col-right">
-            <table class="table table-auto rounded border-green-300">
+            <table id="webscrapes-table"
+                   class="table table-auto rounded border-green-300">
                 <thead class="p-4 text-gray">
                     <tr>
                         <td class="min-w-32">
@@ -178,6 +188,60 @@
                 if (overlay) {
                     overlay.remove();
                 }
+            }
+
+            function scrollToTopOnHover(elementId) {
+                const element = document.getElementById(elementId);
+
+                if (element) {
+                    element.addEventListener('mouseover', () => {
+                        if(true) {
+                            //* Smooth scrolling:
+                            element.scrollTo({
+                              top: 0,
+                              behavior: 'smooth'
+                            });
+                        } else {
+                            //* Direct scroll
+                            element.scrollTop = 0;                             
+                        }
+                    });
+                } else {
+                    console.error(`Element with ID '${elementId}' not found.`);
+                }
+            }
+
+            function preventScrollDownKeepVisible(elementId) {
+                const element = document.getElementById(elementId);
+
+                if (element) {
+                    let initialTop = element.offsetTop; // Store initial position
+
+                    window.addEventListener('scroll', () => {
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                        if (scrollTop > initialTop) {
+                            // Scrolling down: fix the element's position
+                            element.style.position = 'fixed';
+                            element.style.top = '0'; // Or adjust as needed
+                        } else {
+                            // Scrolling up: restore initial position
+                            element.style.position = 'absolute'; // Or 'relative' depending on your layout
+                            element.style.top = `${initialTop}px`;
+                        }
+                    });
+                } else {
+                    console.error(`Element with ID '${elementId}' not found.`);
+                }
+            }
+
+            window.onload = () => {
+                document.querySelectorAll(
+                    ".exec-modules h2.section-title").forEach((h2) => {
+                        scrollToTopOnHover(h2.id);
+                })
+
+                preventScrollDownKeepVisible('webscrapes-table');
             }
 
         </script>

@@ -1,7 +1,7 @@
 from django_unicorn.components import LocationUpdate, UnicornView, QuerySetType
 from django.shortcuts import redirect
 from django.contrib import messages
-from webscraping.models import Webscrape, Countries, USStates
+from webscraping.models import Webscrape, WebscrapeTasks, WebsiteUrls, Countries, USStates
 
 from enum import Enum
 import copy
@@ -14,6 +14,9 @@ class MessageStatus(Enum):
 
 class WebscrapeView(UnicornView):
     webscrapes = Webscrape.objects.none()
+    website_urls = None
+    webscrape_tasks = None
+
     us_states = None
     countries = None
     fields = None
@@ -25,6 +28,8 @@ class WebscrapeView(UnicornView):
     def mount(self):
         self.us_states = list(zip(USStates.values, USStates.names))
         self.countries = list(zip(Countries.values, Countries.names))
+        self.website_urls = list(zip(WebsiteUrls.values, WebsiteUrls.names))
+        self.webscrape_tasks = list(zip(WebscrapeTasks.values, WebscrapeTasks.names))
 
         self.fields = [f.name for f in Webscrape._meta.get_fields()]
         self.table_fields = copy.copy(self.fields)

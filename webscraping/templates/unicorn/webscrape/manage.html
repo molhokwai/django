@@ -1,6 +1,6 @@
 
 
-<!-- books/manage.html -->
+<!-- webscrape/manage.html -->
 <div class="mb-5">
     {% load define_action  %}
 
@@ -123,7 +123,7 @@
     <select  unicorn:model.defer="state" id="state" 
         class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider">
 
-        <option {{ select_state }}>Select a state...</option>
+        <option {{ select_state }}>SELECT A STATE...</option>
         {% for state in us_states %}
 
             {% define '' as state_selected %}

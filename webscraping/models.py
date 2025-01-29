@@ -66,26 +66,52 @@ class USStates(models.TextChoices):
 
 
 
+class WebscrapeTasks(models.TextChoices):
+    """
+        Description
+            Usage
+                view:
+                    ```python
+                        self.webscrape_tasks = list(zip(WebscrapeTasks.values, WebscrapeTasks.names))
+                    ```
+                template:
+                    ```html
+                        <select id="task_name" name="task_name">
+                            <option>Select a webscrape_task...</option>
+                            {% for webscrape_task in webscrape_tasks %}
+                                <option value="{{ webscrape_task.0 }}">{{ webscrape_task.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    ```
+    """
+    TRUTHFINDER_USA_FIND_A_PERSON = 'truthfinder.sequences/find-person-in-usa.sequence.json', \
+                                _('TRUTHFINDER - USA: Find a person')
+    AFRSCIENCE_AUTEUR_SOUMETTRE_UN_ARTICLE = 'afriscience.sequences/auteur-soumettre-un-article.sequence.json', \
+                                _('AFRISCIENCE - AUTEUR: Soumettre un article')
+
+
+
 class WebsiteUrls(models.TextChoices):
     """
         Description
             Usage
                 view:
                     ```python
-                        self.websiteUrls = list(
+                        self.website_urls = list(
                             zip(WebsiteUrls.values, WebsiteUrls.names))
                     ```
                 template:
                     ```html
-                        <select id="state">
+                        <select id="website_url" name="website_url">
                             <option>Select a website...</option>
-                            {% for website in websites %}
-                                <option value="{{ website.0 }}">{{ website.1 }}</option>
+                            {% for website_url in website_urls %}
+                                <option value="{{ website_url.0 }}">{{ website_url.1 }}</option>
                             {% endfor %}
                         </select>
                     ```
     """
-    TRUTHFINDER = 'TRUTHFINDER', _('www.truthfinder.com')
+    TRUTHFINDER = 'https://www.truthfinder.com', 'truthfinder.com'
+    AFRISCIENCE = 'https://app.afriscience.org', 'afriscience.org'
 
 
 class Webscrape(models.Model):
@@ -99,7 +125,8 @@ class Webscrape(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)
 
     task_name = models.CharField(max_length=200, null=False, blank=False,
-                        default="truthfinder.sequences/find-person-in-usa-by-firstname-and-lastname.sequence.json")
+                        choices=WebscrapeTasks.choices,
+                        default="truthfinder.sequences/find-person-in-usa.sequence.json")
     task_variables = models.JSONField(max_length=200, null=True, blank=True)
     task_id = models.CharField(max_length=50, null=True, blank=True)
     task_progress = models.IntegerField(max_length=3, default=0)

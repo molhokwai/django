@@ -10,6 +10,7 @@
 
         <title>{% block title %}Django Unicorn + Tailwind = ❤️{% endblock title %}</title>
 
+        <!-- Tailwind -->
         {% tailwind_preload_css %}
         {% tailwind_css %}
 
@@ -33,14 +34,15 @@
 
     <body class="bg-slate-100 w-full">
 
+        <!--
         <div style="margin: 5em auto; padding: 5em; color: darkred; border: 1px solid darkred; text-align: center; font-size: 1.5em;">
             DISK SPACE IS FULL
             <br/><small>Your app may not function properly...</small>
             <br/><small style="font-size: 0.65em !important;">Layout may be flat, incorrect, or distorted, elements may be missing,<br/> pages, media, elements, modules may crash, dysfunction or be inaccessible...</small>
         </div>
+        -->
 
-
-        <div class="container w-full" style="display: none;">
+        <div class="container w-full">
             {% block content %}
             {% endblock content %}
         </div>
