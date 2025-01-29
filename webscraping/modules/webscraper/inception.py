@@ -9,9 +9,11 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from selenium.webdriver.firefox.options import Options
 
-import pandas
+# -----------------
+# @ToDo :: Fix pandas install on pythonanywhere to restore code (see all "Fix pandas" todos)
+# import pandas
 import sys
-if sys.version_info[0] < 3: 
+if sys.version_info[0] < 3:
     from StringIO import StringIO
 else:
     from io import StringIO
@@ -70,8 +72,8 @@ def example_local():
     # Page load, wait for element to be clickable
     # ------------------------------------------
     elem = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.ID, "first_name")) 
-    ) 
+        EC.element_to_be_clickable((By.ID, "first_name"))
+    )
     elem.clear()
     elem.send_keys("David")
 
@@ -106,12 +108,12 @@ def example_local():
 
     print(f"""
         ------------ TEXT --------------
-        {text} 
+        {text}
         --------------------------------
     """)
 
     data = StringIO(f"""
-        {text} 
+        {text}
     """)
 
     """
@@ -152,7 +154,7 @@ def execute_input(filepath, n=10):
         """
         --------- COMPLETED ------------
         Executing "%s"...
-        
+
         --------------------------------
         """ % filepath
     )
@@ -166,7 +168,7 @@ def execute_input(filepath, n=10):
 
     i = 0
     for line in l:
-        def update_list_file(input_filepath, filetext, 
+        def update_list_file(input_filepath, filetext,
                                         line, addtoken=""):
             # Update list file
             # ----------------
@@ -180,22 +182,22 @@ def execute_input(filepath, n=10):
             print(
                 """
                 --------- EXECUTING ------------
-                sequenced(name, %s)...                
+                sequenced(name, %s)...
                 --------------------------------
                 """ % str(variables)
             )
             sequence_file = name = filepath.replace("txt", "json")
             sequenced(name, variables=variables)
-            
+
             # Update list file
             # ----------------
-            filetext = update_list_file(input_filepath, filetext, 
+            filetext = update_list_file(input_filepath, filetext,
                                         line, addtoken="✓")
 
             print(
                 """
                 --------- COMPLETED ------------
-                sequenced(name, %s).                
+                sequenced(name, %s).
                 --------------------------------
                 """ % str(variables)
             )
@@ -213,7 +215,7 @@ def execute_input(filepath, n=10):
                 except AssertionError as err:
                     # Update list file
                     # ----------------
-                    filetext = update_list_file(input_filepath, filetext, 
+                    filetext = update_list_file(input_filepath, filetext,
                                                 line, addtoken="✗")
                     i += 1
                     print('--------------| Assertion rrror: ', err.args[0])
@@ -226,7 +228,7 @@ def execute_input(filepath, n=10):
             print(
                 """
                 ---------- SKIPPING ------------
-                sequenced(name, %s) : Done ✓                
+                sequenced(name, %s) : Done ✓
                 --------------------------------
                 """ % str(variables)
             )
@@ -237,7 +239,7 @@ def execute_input(filepath, n=10):
         --------- COMPLETED ------------
 
         %i inputs executed...
-        
+
         --------------------------------
         """ % i
     )
@@ -284,7 +286,7 @@ if __name__ == "__main__":
             (sequenced, "selenium-docs-example"),
             (sequenced, "example-local"),
             (sequenced, "truthfinder.sequences"),
-            (execute_input, 
+            (execute_input,
                 (
                     ("truthfinder.sequences/find-person-in-usa.sequence.txt",),
                     { "n": 3 }
@@ -293,9 +295,9 @@ if __name__ == "__main__":
             (sequenced,
                 (
                     ("truthfinder.sequences/find-person-in-usa.sequence.json",),
-                    { 
+                    {
                         "variables":
-                        { 
+                        {
                             "firstName": lambda: input(
                                 "        - Enter firstName: "),
                             "lastName": lambda: input(
@@ -307,9 +309,9 @@ if __name__ == "__main__":
             (sequenced,
                 (
                     ("truthfinder.sequences/find-person-in-usa.sequence.json",),
-                    { 
+                    {
                         "variables":
-                        { 
+                        {
                             "firstName": "William",
                             "lastName": "Smith"
                         }

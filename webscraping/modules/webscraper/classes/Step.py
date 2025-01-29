@@ -8,9 +8,9 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from selenium.common.exceptions import TimeoutException
 
-import pandas
+# import pandas
 import sys
-if sys.version_info[0] < 3: 
+if sys.version_info[0] < 3:
     from StringIO import StringIO
 else:
     from io import StringIO
@@ -115,7 +115,7 @@ class Step:
                     ___________
                     Description:
                         The variable will be fetched from the
-                        variables dict attribute of the step by 
+                        variables dict attribute of the step by
                         the key provided in the config line above
         """
         r = {
@@ -160,7 +160,7 @@ class Step:
 
     def assert_in_page_source(self, step_dict, _input, _not=False):
         _placeholder_variables = {}
-        if "placeholder_variables" in step_dict:            
+        if "placeholder_variables" in step_dict:
             for var_name in step_dict["placeholder_variables"]:
                 _placeholder_variables[var_name] = self.variables[var_name]
 
@@ -231,7 +231,7 @@ class Step:
 
     def find(self, step_dict, _input):
         element = self.driver.find_element(
-            Step._by(step_dict["by"]), 
+            Step._by(step_dict["by"]),
             step_dict["find"]
         )
         return { "element": element }
@@ -364,20 +364,32 @@ class Step:
         )
         output_fullpath = ""
 
-        data = StringIO(f"""
-            {text}
-        """)
-        try:
-            output_fullpath = f"{output_pathname}.csv"
-            df = pandas.read_table(data)
-            df.to_csv(output_fullpath)
-
-        except pandas.errors.ParserError as err:
+        # -----------------
+        # data = StringIO(f"""
+        #     {text}
+        # """)
+        #
+        # try:
+        #     output_fullpath = f"{output_pathname}.csv"
+        #     df = pandas.read_table(data)
+        #     df.to_csv(output_fullpath)
+        #
+        # except pandas.errors.ParserError as err:
+        #
+        #     output_fullpath = f"{output_pathname}.txt"
+        #     with open(output_fullpath, "w") as f:
+        #         f.write(text)
+        #
+        #     print('----------| pandas.errors.ParserError: ', err)
+        #
+        # -----------------
+        # @ToDo :: Fix pandas install on pythonanywhere to restore code (see all "Fix pandas" todos)
+        #          ref: https://stackoverflow.com/questions/30761152/how-to-solve-import-error-for-pandas
+        # -----------------
+        if True:
             output_fullpath = f"{output_pathname}.txt"
             with open(output_fullpath, "w") as f:
                 f.write(text)
-
-            print('----------| pandas.errors.ParserError: ', err)
 
         self.outputs.append(output_fullpath)
 
@@ -391,7 +403,7 @@ class Step:
             element = WebDriverWait(
                     self.driver, step_dict["timeout"]).until(
                 EC.element_to_be_clickable(
-                        (Step._by(step_dict["by"]), step_dict["wait"])) 
+                        (Step._by(step_dict["by"]), step_dict["wait"]))
             )
         except TimeoutException as err:
             if "optional" in step_dict and step_dict["optional"]:

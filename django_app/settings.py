@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-kc45@neob5bj2m#jj5_#^#eqz!htt#bg0hi4v)n1obnsmmy(zn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "nkensa.pythonanywhere.com"]
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -51,6 +51,10 @@ INSTALLED_APPS = [
     'taggit',
     'tinymce',
     'fontawesomefree',
+    # -----------------
+    # @ToDo :: Fix pandas install on pythonanywhere to restore code (see all "Fix pandas" todos)
+    # 'pandas',
+    'selenium',
 
     # apps
     'django_app',
@@ -110,15 +114,23 @@ DATABASES = {
 #         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
 #     }
 # }
+#
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': 'redis://127.0.0.1:6379/1',  # Use the appropriate Redis server URL
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#         }
+#     }
+# }
 CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',  # Use the appropriate Redis server URL
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "my_cache_table",
     }
 }
+
 
 # Optional: This is to ensure Django sessions are stored in Redis
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
