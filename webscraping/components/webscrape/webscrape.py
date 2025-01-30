@@ -1,8 +1,11 @@
 from django_unicorn.components import LocationUpdate, UnicornView, QuerySetType
 from django.shortcuts import redirect
 from django.contrib import messages
-from webscraping.models import Webscrape, WebscrapeTasks, WebsiteUrls, Countries, USStates
-
+from webscraping.models import (
+    Webscrape, WebscrapeTasks, WebsiteUrls,
+    Countries, USStates,
+    TaskHandler
+)
 from enum import Enum
 import copy
 
@@ -51,17 +54,12 @@ class WebscrapeView(UnicornView):
 
 
 
-    def get_task_by_task_id(self, task_id):
-        return Webscrape.objects.get(task_id=task_id)
-
-
     def get_task_progress_by_task_id(self, task_id):
-        webscrape = self.get_task_by_task_id(task_id)
-        return webscrape.task_progress
+        return TaskHandler.get_taskProgress(task_id).value
 
 
     def get_task_outputs_by_task_id(self, task_id):
-        webscrape = self.get_task_by_task_id(task_id)
+        webscrape = Webscrape.objects.get(task_id=task_id)
         return webscrape.task_outputs
 
 

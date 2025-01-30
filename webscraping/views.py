@@ -22,6 +22,14 @@ def index(request):
 
 def webscrape(request):
     context = {}
+
+    from django.core.cache import cache
+    import time
+    print('----------| cache.set(..., ..., 10s): ', cache.set("glouboudrouda", { "gloubou": "drouda" }, 10 ))
+    time.sleep(2)
+    print('----------| 2s → cache.get(...: ', cache.get("glouboudrouda" ))
+    time.sleep(9)
+    print('----------| 11s → cache.get(...: ', cache.get("glouboudrouda" ))
     return render(request, "webscraping/webscrape.html", {})
 
 
@@ -68,10 +76,18 @@ def webscrape_get_details_from_field_choices(webscrape: Webscrape):
 
 
 
-def webscrape_long_running_method( webscrape: Webscrape, task_progress ):
+def webscrape_long_running_method( webscrape: Webscrape, taskProgress ):
+    """
+        -----------
+        Description:
+            See:
+            -    tests.integration.test_longrunning_taskhandler
+            -    models: TaskHandler, TaskProgress
+    """
 
-    task_progress.set( 
-        Status.STARTED, 
+    progress_value = 0
+    taskProgress.set( 
+        Status.STARTED, progress_value,
         progress_message=f'The webscrape "{webscrape}" has been started' )
 
     # input values
@@ -102,16 +118,19 @@ def webscrape_long_running_method( webscrape: Webscrape, task_progress ):
             ---------------------
             for i in range( 20 ):
                 time.sleep( 0.5 )
-                task_progress.set( Status.RUNNING, progress_message=f"{ 5 * i + 1 }% has been processed" )
+                taskProgress.set( Status.RUNNING, progress_message=f"{ 5 * i + 1 }% has been processed" )
         """
         outputs.append(sequenceManager.execute_sequence(variables=webscrape.task_variables, i=0))
-        task_progress.set( 
-            Status.RUNNING,
+
+        progress_value = int(( i / sequences_len) * 100)
+
+        taskProgress.set( 
+            Status.RUNNING, progress_value,
             progress_message=f'Sequence {i} has been processed | Details: {webscrape}' )
 
-        if i > 0:
-            webscrape.task_progress = int(( i / sequences_len) * 100)
-            webscrape.save()
+        webscrape.task_progress = progress_value
+        webscrape.save()
+
 
     driver.close()
 
@@ -124,10 +143,10 @@ def webscrape_long_running_method( webscrape: Webscrape, task_progress ):
         "input": _input,
         "outputs": outputs
     }
-    task_progress.set( Status.SUCCESS, output=output )
+    progress_value = 100
+    taskProgress.set( Status.SUCCESS, progress_value, output=output )
 
-    webscrape.task_progress = 100
+    webscrape.task_progress = progress_value
     webscrape.task_outputs = "-------ktou##################outk-------".join(outputs)
     webscrape.save()
-
 

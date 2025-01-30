@@ -30,7 +30,7 @@ class Image(models.Model):
     description = HTMLField(null=True, blank=True, default='La description ici...')
     image_file = models.ImageField(default=defaults['img'], upload_to='img/unsorted')    
     tags = TaggableManager()
-    date_uploaded  = models.DateTimeField(auto_now_add=False, default=timezone.now())
+    date_uploaded  = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 
     def get_absolute_url(self):
@@ -78,7 +78,7 @@ class Category(models.Model):
     slug = models.SlugField(max_length = 250, null=True, blank=True)
     description = HTMLField(null=True, blank=True)
 
-    date_created = models.DateTimeField(auto_now_add=False, default=timezone.now())
+    date_created = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 
     def get_absolute_url(self):
@@ -103,7 +103,7 @@ class Blog(models.Model):
 
     editors = models.ManyToManyField(User, blank=True, related_name="blog_editors")
 
-    date_created  = models.DateTimeField(auto_now_add=False, default=timezone.now())
+    date_created  = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 
     def get_absolute_url(self):
@@ -134,7 +134,7 @@ class BlogPost(models.Model):
     tags = TaggableManager()
     editors = models.ManyToManyField(User, related_name="blogpost_editors")
 
-    date_created = models.DateTimeField(auto_now_add=False, default=timezone.now())
+    date_created = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 
     def get_absolute_url(self):

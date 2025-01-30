@@ -114,6 +114,13 @@ class WebsiteUrls(models.TextChoices):
     AFRISCIENCE = 'https://app.afriscience.org', 'afriscience.org'
 
 
+
+class StatusTextChoices(models.TextChoices):
+    STARTED = 'STARTED', _('Started')
+    RUNNING = 'RUNNING', _('Running')
+    SUCCESS = 'SUCCESS', _('Success')
+
+
 class Webscrape(models.Model):
     # website
     # -------
@@ -129,7 +136,8 @@ class Webscrape(models.Model):
                         default="truthfinder.sequences/find-person-in-usa.sequence.json")
     task_variables = models.JSONField(max_length=200, null=True, blank=True)
     task_id = models.CharField(max_length=50, null=True, blank=True)
-    task_progress = models.IntegerField(max_length=3, default=0)
+    task_progress = models.IntegerField(default=0)
+    task_status = models.CharField(max_length=20, null=True, blank=True, choices=StatusTextChoices.choices)
     task_outputs = models.TextField(null=True, blank=True)
 
     # identification
@@ -138,7 +146,7 @@ class Webscrape(models.Model):
     lastName = models.CharField(max_length=200, null=False, blank=False)
     middleName = models.CharField(max_length=200, null=True, blank=True)
     middleInitial = models.CharField(max_length=6, null=True, blank=True)
-    age = models.IntegerField(max_length=3, null=True, blank=True)
+    age = models.IntegerField(null=True, blank=True)
 
     # location
     # --------
@@ -154,19 +162,27 @@ class Webscrape(models.Model):
 
 
 class TaskHandler:
+    """
+        -----------
+        Src:
+            "A simple approach for background task in Django"
+            Handle long running task using Threading and Django Cache
+            - https://ivanyu2021.hashnode.dev/a-simple-approach-for-background-task-in-django
+    """
 
     def start_task(self, method, args):
 
-        task_progress = TaskProgress()
-        t = threading.Thread( target=method, args=[ *args, task_progress ] )
+        taskProgress = TaskProgress()
+        t = threading.Thread( target=method, args=[ *args, taskProgress ] )
         t.setDaemon(True)
         t.start()
 
-        return task_progress.get_task_id()
+        return taskProgress.get_task_id()
 
     @staticmethod
-    def get_task_progress( task_id : str ):
+    def get_taskProgress( task_id : str ):
         return cache.get( task_id )
+
 
 
 class Status(Enum):
@@ -174,9 +190,21 @@ class Status(Enum):
     RUNNING = 'RUNNING'
     SUCCESS = 'SUCCESS'
 
-class TaskProgress:
 
-    task_id = str
+class TaskProgress:
+    """
+        -----------
+        Src:
+            "A simple approach for background task in Django"
+            Handle long running task using Threading and Django Cache
+            - https://ivanyu2021.hashnode.dev/a-simple-approach-for-background-task-in-django
+    """
+
+    task_id: Union[ str, None ] = None
+    status: Status = Status.RUNNING
+    value: Union[ int, None ] = None
+    output : Union[ int, None ] = None
+    outputs : list = []
 
     # default constructor
     def __init__(self):
@@ -184,13 +212,18 @@ class TaskProgress:
         cache.set( self.task_id, self, 3600 )
 
     def set( self,
-        status : Enum,
+        status : Status,
+        value : int,
         progress_message : Union[ str, None ] = None,
         output : dict = None ) -> object:
 
         self.status = status.value
+        self.value = value
         self.progress_message = progress_message
+
         self.output = output
+        if output:
+            self.outputs.append(output)
 
         cache.set( self.task_id, self, 3600 )
 
