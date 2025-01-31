@@ -1,13 +1,23 @@
+from django.db.models import Q
+
 from django_unicorn.components import LocationUpdate, UnicornView, QuerySetType
 from django.shortcuts import redirect
 from django.contrib import messages
 from webscraping.models import (
     Webscrape, WebscrapeTasks, WebsiteUrls,
     Countries, USStates,
-    TaskHandler
+    Status, TaskHandler
 )
+
+from webscraping.views import parse_raw_outputs
+
 from enum import Enum
-import copy
+import os, copy, random
+
+
+from django.conf import settings
+
+
 
 class MessageStatus(Enum):
     SUCCESS = "Success"
@@ -25,8 +35,17 @@ class WebscrapeView(UnicornView):
     fields = None
     table_fields = None
 
-    excluded_fields = ('id', 'title', 'task_id', 'task_name', 'task_variables', 'middleInitial', 'middleName', 'country', 'created_on', 'last_modified')
+    excluded_fields = ('id', 'title', 'task_id', 'task_name', 'task_variables',
+                       'middleInitial', 'middleName', 'country', 'created_on',
+                       'last_modified', 'parent', 'webscrape_children')
 
+    previous_outputs = []
+
+    aggregated_results = []
+    aggregated_results_table_fields = [ 
+        "NAME", "AGE", "LOCATION", "POSSIBLE_RELATIVES",
+        "VERIFIED", "CRIMINAL_RECORDS" 
+    ]
 
     def mount(self):
         self.us_states = list(zip(USStates.values, USStates.names))
@@ -39,13 +58,24 @@ class WebscrapeView(UnicornView):
         for val in self.excluded_fields:
             self.table_fields.remove(val)
 
+        self.previous_outputs = self.get_previous_outputs()
+
+        self.aggregated_results = parse_raw_outputs()
+
         self.load_table()
 
 
     def load_table(self, webscrape: Webscrape = None, force_render=False):
+        # self.webscrapes = Webscrape.objects.filter(Q(parent__isnull=True)).order_by("-last_modified")
         self.webscrapes = Webscrape.objects.all().order_by("-last_modified")
-        if len(self.webscrapes):
-            self.webscrapes = self.webscrapes[0:10]
+
+        i = len(self.webscrapes) - 1
+        while i >= 0:
+            self.webscrapes[i].update_task_status()
+            i -= 1
+
+        # if len(self.webscrapes):
+        #     self.webscrapes = self.webscrapes[0:10]
         self.force_render = force_render
 
 
@@ -54,13 +84,45 @@ class WebscrapeView(UnicornView):
 
 
 
-    def get_task_progress_by_task_id(self, task_id):
-        return TaskHandler.get_taskProgress(task_id).value
+    def task_is_running(self, task_id: str) -> int:
+        taskProgress = TaskHandler.get_taskProgress(task_id)
+        if taskProgress:
+            return True
+
+    def get_task_progress_data(self, task_id: str) -> int:
+        task_progress_value = 0
+        task_output = []
+
+        webscrape = Webscrape.objects.get(task_id = task_id)
+        task_progress_value = webscrape.task_progress
+        if webscrape.task_status == Status.SUCCESS.value:
+            task_output = webscrape.task_output
+
+        task_progress_data = {
+            "task_progress_value": task_progress_value,
+            "task_output": task_output
+        }
+        print('---------------| Unicorn.webscrape.webscrape > get_task_progress_data', task_progress_data)
+        return task_progress_data
 
 
-    def get_task_outputs_by_task_id(self, task_id):
-        webscrape = Webscrape.objects.get(task_id=task_id)
-        return webscrape.task_outputs
+    def get_previous_outputs(self):
+        def read_file(file):
+            with open(file) as f:
+                return f.read()
+
+        output_dir = os.path.join(
+            settings.BASE_DIR, settings.WEBSCRAPER_SOURCE_PATH, 'output'
+        )
+        files = list(filter(lambda x: x.endswith('.txt'), os.listdir(output_dir)))
+        l = []
+        for f in files:
+            try:
+                l.append(read_file(os.path.join(output_dir, f)))
+            except Exception as err:
+                print(
+                    '---------------| webscraping/Unicorn.webscrape.webscape > get_previous_outputs :: Error : ', err)
+        return l
 
 
     def messages_display(self, status:MessageStatus=None, message:str=""):

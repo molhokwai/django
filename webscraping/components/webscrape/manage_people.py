@@ -1,13 +1,15 @@
 from django_unicorn.components import UnicornView, QuerySetType
 from django.conf import settings
+from django.forms.models import model_to_dict
 
-from datetime import date, datetime
 from datetime import date, datetime
 from webscraping.models import Webscrape, TaskProgress, TaskHandler
 
-from webscraping.views import webscrape_long_running_method
+from webscraping.views import webscrape_steps_long_running_method
+
 
 from enum import Enum
+from typing import Union
 import copy
 
 class MessageStatus(Enum):
@@ -20,32 +22,41 @@ class ManagePeopleView(UnicornView):
     """
         src: https://www.bugbytes.io/posts/django-unicorn-an-introduction/
     """
-    webscrape: Webscrape = None
-
-
     website_url: str = 'https://www.truthfinder.com'
+    """
+        title: str = ''
+        firstName: str = 'David'
+        lastName: str = 'Jonathan'
+        middleName: str = 'Henry'
+        middleInitial: str = 'H.'
+        age: Union[ int, None ] = 51
+        city: str = 'Los Angeles'
+        state: str = 'CA'
+        country: str = 'USA'
+    """
+
     title: str = ''
-    first_name: str = ''
-    last_name: str = ''
-    middle_name: str = ''
-    middle_initials: str = ''
-    age: int = None
+    firstName: str = ''
+    lastName: str = ''
+    middleName: str = ''
+    middleInitial: str = ''
+    age: Union[ int, None ] = None
     city: str = ''
     state: str = ''
     country: str = ''
 
-    task_name: str = ''
-    task_variables: dict = ''
-    task_id: int = None
-    task_progress: int = None
+
+    task_name: str = "truthfinder.sequences/find-person-in-usa.sequence.json"
 
     us_states = None
     countries = None
 
-    new_media_base64 = None
-    new_media_file_name = None
+    by_list: str = ''
+    names_list: list = []
 
-    webscrapes: QuerySetType[Webscrape] = Webscrape.objects.all()
+    webscrape: Webscrape = None
+    webscrapes: Union[ QuerySetType[Webscrape], None ] = None
+
 
     def setTitle(self, value):
         self.title = value
@@ -54,60 +65,102 @@ class ManagePeopleView(UnicornView):
         self.countries = self.parent.countries
         self.us_states = self.parent.us_states
 
-        # For testing...
-        # --------------
-        if settings.DEBUG:
-            self.webscrape = Webscrape.objects.first()
 
-
-    def add(self):
-
-        print('------------------ | ----------------', str(self.title), str(self.age))
-        Webscrape.objects.create(
-            website_url = self.website_url,
-            title = self.title,
-            first_name = self.first_name,
-            last_name = self.last_name,
-            middle_name = self.middle_name,
-            middle_initials = self.middle_initials,
-            age = self.age,
-            city = self.city,
-            state = self.state,
-
-            task_name = self.task_name,
-            task_variables = self.task_variables,
-            task_id = self.task_id
+    def _exec(self, line, variables, i):
+        print(
+            """
+            --------- EXECUTING ------------
+                name: "%s"...
+            --------------------------------
+            """ % str(variables)
         )
-        self.clear_fields()
-        return self.parent.load_table(force_render=True)
 
-    def scrape(self):
-        """        
-            __________________________________________________
-            Compute task name and task start url from user filled & chosen fields:
-            
-            Webscrape variables: (filled field)
-            ------------------- 
-                - first and last names
-                - first and last names, state
-                - first and last names, state, city
-                - first and last names, state, city
-               
-            Webscrape site: (choice field)
-            --------------
-                - truthfinder.com
-            __________________________________________________
-        """        
-        self.task_name = "..."
+        webscrape = Webscrape(
+            website_url = self.website_url,
+            firstName = variables["firstName"],
+            lastName = variables["lastName"],
+            task_name = self.task_name,
+        )
 
-        # Get task variables from user given fields
-        self.task_variables = "..."
+        if i == 0:
+            webscrape.by_list = self.by_list
+        else:
+            webscrape.parent = self.webscrape
+
+
+        # Get task variables from user given + model fields
+        webscrape.task_variables = model_to_dict(self.webscrape)
+        print('-------------------------| ', webscrape.task_variables)
 
         # Get/Generate task id with Task handler
-        self.task_id = TaskHandler().start_task( 
-            webscrape_long_running_method, [ _input ] )
+        webscrape.task_id = TaskHandler().start_task(
+            webscrape_steps_long_running_method, [ webscrape ] )
 
-        self.add()
+        if i == 0:
+            self.webscrape = webscrape
+            self.save()
+        else:
+            self.save_webscrape(webscrape)
+
+
+
+    def scrape(self):
+        """
+            __________________________________________________
+            1.   Split lines
+            2.   Start scrapes loop
+            2.1  First:
+                 - Create and assign main
+                 - Will hold by_text lines value
+                 - Append to webscrapes list
+            2.2  Others:
+                 - Assign 1st as parent
+                 - Append to main list
+            2.3  All → handled in Webscrape.update_task_status():
+                 - Update corresponding line
+                 - Replace in main by_text
+                 - Save main → Updates ui textarea
+            __________________________________________________
+        """        
+        if not len(self.names_list):
+            self.names_list = self.by_list.split("\n")
+
+        i = 0
+        for line in self.names_list:
+            firstName = line.split(" ")[0]
+            lastName = line.split(" ")[1]
+            variables = {
+                "firstName": firstName,
+                "lastName": lastName,
+            }
+
+            if line.find("✓") < 0 and line.find("✗") < 0:
+                self._exec(line, variables, i)
+                i += 1
+            else:
+                print(
+                    """
+                    ---------- SKIPPING ------------
+                        name: "%s" (Processed %s)
+                    --------------------------------
+                    """ % (
+                        str(variables),
+                        "✓" if line.find("✓") < 0 else "✗"
+                     )
+                )
+
+        return self.parent.load_table(force_render=True)
+
+
+    def save(self):
+        self.webscrape.save()
+        return self.parent.load_table(force_render=True)
+
+
+    def save_webscrape(self, webscrape):
+        webscrape.save()
+        return self.parent.load_table(force_render=True)
+
 
     def update_list(self):
         self.parent.load_table(force_render=True)
@@ -115,11 +168,10 @@ class ManagePeopleView(UnicornView):
 
     def clear_fields(self):
         self.title = ''
-        self.first_name = ''
-        self.last_name = ''
-        self.middle_name = ''
-        self.middle_initials = ''
-        self.last_name = ''
+        self.firstName = ''
+        self.lastName = ''
+        self.middleName = ''
+        self.middleInitial = ''
         self.age = ''
         self.city = ''
         self.state = ''

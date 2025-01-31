@@ -8,10 +8,12 @@
         {% define '' as select_state %}
     {% endif %}
     <tr class="shadow-lg">
+        <!--
         <td class="py-6">
             {% if is_editing %}
                 <button unicorn:click="save"
-                    class="btn btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
+                    class="bt        return self.parent.load_table(force_render=True)
+n btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
 						   text-white shadow-xl duration-500">Save</button>
                 <button unicorn:click.discard="cancel"
                     class="btn btn-outline-gray rounded bg-slate-400 hover:bg-slate-600 p-1 px-2
@@ -25,14 +27,15 @@
 						   text-white shadow-xl duration-500 min-w-16" >Edit</button>
             {% endif %}
         </td>
+        -->
+
         <td>
             {% if is_editing %}
                 <input type="text" unicorn:model.defer="webscrape.website_url" value="{{ webscrape.website_url }}"
-                    class="form-control rounded border-green-700 shadow-sm text-green-900
-                           tracking-wider text-xs"/>
+                    class="form-control rounded border-green-700 shadow-sm text-green-900 tracking-wider text-xs"/>
             {% else %}
                 <font
-                    class="border-green-700 shadow-sm text-green-900 tracking-wider">
+                    class="url border-green-700 shadow-sm text-green-900 tracking-wider">
                     {{ webscrape.website_url }}
                 </font>
             {% endif %}
@@ -70,34 +73,44 @@
         </td>
 
         <td>
-            <p id="taskOutput-{{ webscrape.task_id }}"
-               class="taskOutput">
-                {% if taskOutput %}               
-                    {{ taskOutput|truncatechars:50 }}
-                {% else %}
-                    <small>no output generated</small>
+            <p id="taskStatus-{{ webscrape.task_id }}"
+               class="taskStatus text-center">
+                {% if webscrape.task_status == "SUCCESS" %}
+                    <span class="fas fa-success text-green-900"></span>
+                {% elif  webscrape.task_status == "RUNNING" %}
+                    <span class="fas fa-gear text-yellow-600"></span>
+                {% elif  webscrape.task_status == "STARTED" %}
+                    <span class="fas fa-arrow text-blue-600"></span>
+                {% elif  webscrape.task_status == "FAILED" %}
+                    <span class="fas fa-x text-red-600"></span>
                 {% endif %}               
-                    <small>(click to view)</small>
             </p>
         </td>
 
-        {% if not "title" in excluded_fields %}
         <td>
-            {% if is_editing %}
-                <input type="text" unicorn:model.defer="webscrape.title" value="{{ webscrape.title }}"
-                    class="form-control rounded border-green-700 shadow-sm text-green-900
-                           tracking-wider text-xs"/>
-            {% else %}
-                <font
-                    class="border-green-700 shadow-sm text-green-900 tracking-wider"
-                    title="{{ webscrape.title }}">
-                    {{ webscrape.title|truncatechars:10 }}
-                </font>
-            {% endif %}
+            <p id="taskOutput-{{ webscrape.task_id }}"
+               class="taskOutput">
+                {% if task_output %}               
+                    <small>
+                        <a id="alink-{{ webscrape.task_id }}">(view sample)</a>
+                    </small>
+                    <input type="hidden"
+                           id="output-{{ webscrape.task_id }}"
+                           value="{{task_output}}"/>
+                {% else %}
+                    <small>no output generated</small>
+                    <br/>
+                    <small>
+                        <a id="alink-{{ webscrape.task_id }}">(view sample)</a>
+                    </small>
+                    <input type="hidden"
+                           id="output-{{ webscrape.task_id }}"
+                           value="{{previous_outputs|random}}"/>                    
+                {% endif %}               
+            </p>
         </td>
-        {% endif %}
 
-        <td>
+        <td class="firstName">
             {% if is_editing %}
                 <input type="text" unicorn:model.defer="webscrape.firstName" value="{{ webscrape.firstName }}" placeholder="ex: David"
 					class="form-control rounded border-green-700 shadow-sm text-green-900
@@ -149,6 +162,15 @@
                     {% endif %}
                 </font>
             {% endif %}
+        </td>
+        <td>
+            <font
+                class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
+                {% if webscrape.by_list %}
+                    <span class="fas fa-check text-green-900"></span>
+                {% endif %}
+                &nbsp;
+            </font>
         </td>
         <td>
             {% if is_editing %}

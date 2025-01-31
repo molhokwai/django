@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
 
 from django.core.cache import cache
+from django.conf import settings
 
 import threading
 from typing import Union
@@ -119,6 +120,7 @@ class StatusTextChoices(models.TextChoices):
     STARTED = 'STARTED', _('Started')
     RUNNING = 'RUNNING', _('Running')
     SUCCESS = 'SUCCESS', _('Success')
+    FAILED = 'FAILED', _('Failed')
 
 
 class Webscrape(models.Model):
@@ -138,7 +140,7 @@ class Webscrape(models.Model):
     task_id = models.CharField(max_length=50, null=True, blank=True)
     task_progress = models.IntegerField(default=0)
     task_status = models.CharField(max_length=20, null=True, blank=True, choices=StatusTextChoices.choices)
-    task_outputs = models.TextField(null=True, blank=True)
+    task_output = models.TextField(null=True, blank=True)
 
     # identification
     # --------------
@@ -148,17 +150,63 @@ class Webscrape(models.Model):
     middleInitial = models.CharField(max_length=6, null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
 
+    # list
+    # ----
+    by_list = models.TextField(null=True, blank=True)
+
     # location
     # --------
     city = models.CharField(null=True, blank=True, max_length=200)
     state = models.CharField(null=True, blank=True, max_length=2,  choices=USStates.choices)
     country = models.CharField(null=True, blank=True, max_length=2,  choices=Countries.choices, default="US")
 
+    # parent
+    # ------
+    parent = models.ForeignKey("Webscrape", null=True, blank=True, 
+                            on_delete=models.CASCADE,
+                            related_name="webscrape_children", editable=False)
+
     # crud datetimes
     created_on = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
 
+    def __str__(self):
+        return f"{self.website_url} - {self.title} - task: {self.task_name} - variables: {self.task_variables}"
+
+
+    def update_task_status(self):
+        """
+            Description
+            -----------
+            If the task is not running anymore and not at 100% with SUCCESS status, marked as failed...
+            -    Get webscrape's Taskhandler TaskProgess object
+            -    If existing:
+                 *    Do nothing, task still running, to be updated
+                 *    If not:
+                     +    Check if webscrape at 100% with SUCCESS status
+                         -    If not:
+                             *    Change task_status to FAILED
+        """
+
+        taskProgress = TaskHandler.get_taskProgress(self.task_id)
+        if not taskProgress and not \
+            (self.task_status == Status.SUCCESS.value 
+                            and self.task_progress == 100):
+            self.task_status = Status.FAILED.value
+
+        line = f"{self.firstName} {self.lastName}"
+        token = "✓" if self.task_status == Status.SUCCESS.value else "✗"
+        if self.by_list and \
+            self.task_status in (Status.SUCCESS.value, Status.FAILED.value):
+
+            self.by_list = self.by_list.replace(line, f"{line} {token}")
+
+        self.save()
+
+        if self.parent:
+            self.parent.by_list = self.parent.by_list.replace(line, f"{line} {token}")
+            self.parent.save()
 
 
 class TaskHandler:
@@ -189,6 +237,7 @@ class Status(Enum):
     STARTED = 'STARTED'
     RUNNING = 'RUNNING'
     SUCCESS = 'SUCCESS'
+    FAILED = 'FAILED'
 
 
 class TaskProgress:
@@ -204,7 +253,6 @@ class TaskProgress:
     status: Status = Status.RUNNING
     value: Union[ int, None ] = None
     output : Union[ int, None ] = None
-    outputs : list = []
 
     # default constructor
     def __init__(self):
@@ -214,18 +262,17 @@ class TaskProgress:
     def set( self,
         status : Status,
         value : int,
-        progress_message : Union[ str, None ] = None,
-        output : dict = None ) -> object:
+        progress_message : Union[ str, None ] = None) -> object:
 
         self.status = status.value
         self.value = value
         self.progress_message = progress_message
 
-        self.output = output
-        if output:
-            self.outputs.append(output)
-
-        cache.set( self.task_id, self, 3600 )
+        cache.set( self.task_id, self, settings.WEBSCRAPER_CACHING_DURATION )
 
     def get_task_id( self ):
         return self.task_id
+
+    def __str__(self):
+        return f"{self.task_id} - {self.status} {self.value} {self.outputs}"
+

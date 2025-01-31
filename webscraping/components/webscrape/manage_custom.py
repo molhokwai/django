@@ -5,7 +5,7 @@ from django.forms.models import model_to_dict
 from datetime import date, datetime
 from webscraping.models import Webscrape, TaskProgress, TaskHandler
 
-from webscraping.views import webscrape_long_running_method
+from webscraping.views import webscrape_steps_long_running_method
 
 
 from enum import Enum
@@ -115,7 +115,7 @@ class ManageCustomView(UnicornView):
 
         # Get/Generate task id with Task handler
         self.webscrape.task_id = TaskHandler().start_task(
-            webscrape_long_running_method, [ self.webscrape ] )
+            webscrape_steps_long_running_method, [ self.webscrape ] )
 
         self.save()
 

@@ -33,6 +33,8 @@ class Step:
 
     variables = {}
 
+    source_path = None
+
     def __init__(self, driver, config_dict=None):
         self.driver = driver
 
@@ -359,7 +361,7 @@ class Step:
 
         _now = datetime.datetime.now()
         output_pathname = os.path.join(
-            step_dict["folderpath"],
+            self.source_path, step_dict["folderpath"],
             slugify(f'{_now}-{step_dict["filename"]}')
         )
         output_fullpath = ""

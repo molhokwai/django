@@ -5,7 +5,7 @@ from django.forms.models import model_to_dict
 from datetime import date, datetime
 from webscraping.models import Webscrape, TaskProgress, TaskHandler
 
-from webscraping.views import webscrape_long_running_method
+from webscraping.views import webscrape_steps_long_running_method
 
 
 from enum import Enum
@@ -54,9 +54,6 @@ class ManageView(UnicornView):
     us_states = None
     countries = None
 
-    new_media_base64 = None
-    new_media_file_name = None
-
     webscrapes: QuerySetType[Webscrape] = Webscrape.objects.all()
 
     def setTitle(self, value):
@@ -65,11 +62,6 @@ class ManageView(UnicornView):
     def mount(self):
         self.countries = self.parent.countries
         self.us_states = self.parent.us_states
-
-        # For testing...
-        # --------------
-        if settings.DEBUG:
-            self.webscrape = Webscrape.objects.first()
 
 
     def scrape(self):
@@ -109,7 +101,7 @@ class ManageView(UnicornView):
 
         # Get/Generate task id with Task handler
         self.webscrape.task_id = TaskHandler().start_task(
-            webscrape_long_running_method, [ self.webscrape ] )
+            webscrape_steps_long_running_method, [ self.webscrape ] )
 
         self.save()
 

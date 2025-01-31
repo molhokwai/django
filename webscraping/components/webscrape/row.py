@@ -21,10 +21,13 @@ class RowView(UnicornView):
         self.countries = self.parent.countries
 
         self.excluded_fields = self.parent.excluded_fields
-        if self.webscrape.task_outputs:
-            self.task_output = self.webscrape.task_outputs.split("-------ktou##################outk-------")
-            if len(self.task_output):
-                self.task_output = self.task_output[-1]
+
+        if type(self.webscrape) == type({}):
+            # sep: "-------ktou##################outk-------" ?
+            # ---------------------------
+            self.webscrape = Webscrape.objects.get(task_id=self.webscrape["task_id"])
+            self.task_output = self.webscrape.task_output
+
 
     def edit(self):
         self.is_editing = True
@@ -45,5 +48,6 @@ class RowView(UnicornView):
         self.is_editing = False
         self.parent.messages_display(MessageStatus.SUCCESS, "Item saved.")
         self.parent.load_table(force_render=True)
+
         return self.parent.reload()
 

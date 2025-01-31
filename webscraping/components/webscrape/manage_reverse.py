@@ -5,7 +5,7 @@ from datetime import date, datetime
 from datetime import date, datetime
 from webscraping.models import Webscrape, TaskProgress, TaskHandler
 
-from webscraping.views import webscrape_long_running_method
+from webscraping.views import webscrape_steps_long_running_method
 
 from enum import Enum
 import copy
@@ -105,7 +105,7 @@ class ManageReverseView(UnicornView):
 
         # Get/Generate task id with Task handler
         self.task_id = TaskHandler().start_task( 
-            webscrape_long_running_method, [ _input ] )
+            webscrape_steps_long_running_method, [ _input ] )
 
         self.add()
 

@@ -16,7 +16,7 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+print('--------------| BASE_DIR :: ', BASE_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -25,7 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-kc45@neob5bj2m#jj5_#^#eqz!htt#bg0hi4v)n1obnsmmy(zn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+IS_LIVE = True
+if str(BASE_DIR).find('/home/nkensa/GDrive-local/Tree/') == 0:
+    DEBUG = True
+    IS_LIVE = False
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "nkensa.pythonanywhere.com"]
 
@@ -206,19 +210,37 @@ UNICORN = {
 
 TAILWIND_APP_NAME = 'theme'
 
+# ------------------------
 # Node, npm
-
 # NPM_BIN_PATH = '/home/nkensa/.config/nvm/versions/node/v20.11.0/bin/npm'
+# ------------------------
 NPM_BIN_PATH = which("npm")
 
 
+# ------------------------
+# Taggit
+# ------------------------
 
 TAGGIT_CASE_INSENSITIVE = True
 TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING = True
 
 
+# ------------------------
+# Mimetypes
+# ------------------------
 import mimetypes
 
 mimetypes.add_type("application/javascript", ".js", True)
 mimetypes.add_type("text/css", ".css", True)
+
+
+# ------------------------
+# Webscraper
+#
+# Configuration
+#    Caching duration: 15 mns
+# ------------------------
+
+WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
+WEBSCRAPER_CACHING_DURATION = 3600
 

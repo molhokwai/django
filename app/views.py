@@ -1,7 +1,16 @@
 from django.shortcuts import render
 
+from webscraping.models import (
+    Webscrape, WebscrapeTasks, WebsiteUrls,
+    Countries, USStates,
+    TaskHandler
+)
 
 def index(request):
+
+    taskProgress = TaskHandler.get_taskProgress("feac75b2-df0b-11ef-9114-3db3d945fffd")
+    print('------------| taskProgress :: ', taskProgress)
+
     return render(request, "app/index.html", {})
 
 def start(request):

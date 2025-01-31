@@ -9,11 +9,13 @@
 
         <div class="exec-modules col-left">
 
-            <h2 id="exec-custom"
-                class="section-title mt-5 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
-                Scrape, or Test a website process
-            </h2>
-            {% unicorn 'webscrape.manage_custom' parent=self %}
+            <!--
+                <h2 id="exec-custom"
+                    class="section-title mt-5 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
+                    Scrape, or Test a website process
+                </h2>
+                { % unicorn 'webscrape.manage_custom' parent=self % }
+            -->
 
             <h2 id="exec-search"
                 class="section-titlemt-5 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
@@ -45,18 +47,52 @@
                     &nbsp;
                 {% endif %}
             </ul>
-          
+
+
+            <h2 id="aggregated-results-title"
+                class="section-title mt-10 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
+                Aggregated Results
+            </h2>
+
+            <table id="aggregated-results-table"
+                   class="table table-auto rounded border-green-300 bg-slate-100">
+                <thead class="p-4 text-gray">
+                    <tr>
+                        {% for field in aggregated_results_table_fields %}
+                            <td class="bg-green-600 first:rounded-l-lg last:rounded-r-lg p-2
+                                       text-green-100 tracking-widest border-green-100">
+                                {{ field|title }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="aggregated-results--body">
+                    <!--
+                        {% for aggregated_result in aggregated_resultss %}
+                            {% unicorn 'webscrape.row_aggregated_result' result=aggregated_result parent=self %}
+                        {% endfor %}
+                    -->
+
+                    {% for aggregated_result in aggregated_results %}
+                        {% include 'webscraping/includes/row_aggregated_result.html' %}
+                    {% endfor %}
+                </tbody>
+            </table>          
+
         </div>
 
 
         <div class="col-right">
             <table id="webscrapes-table"
-                   class="table table-auto rounded border-green-300">
+                   class="table table-auto rounded border-green-300 bg-slate-100">
                 <thead class="p-4 text-gray">
                     <tr>
-                        <td class="min-w-32">
-                            &nbsp;
-                        </td>
+                        <!--
+                            <td class="min-w-32">
+                                &nbsp;
+                            </td>
+                        -->
+
                         {% for field in table_fields %}
                             <td class="bg-green-600 first:rounded-l-lg last:rounded-r-lg p-2
                                        text-green-100 tracking-widest border-green-100">
@@ -73,7 +109,6 @@
             </table>
               
         </div>
-
 
         <style>
             .col-left {
@@ -96,6 +131,13 @@
                 }
             }
 
+            thead tr td {
+                font-size: .9em;
+            }
+
+            td font.url {
+                font-size: .9em;
+            }
             td.progressBarCell {
                 padding-left: .75rem;
                 padding-bottom: 1.4em;
@@ -103,7 +145,18 @@
             }
 
             .taskOutput{
-                text-align: center;                
+                text-align: center;
+                line-height: 85%;
+            }
+            .taskOutput a {
+                color: #166534;
+            }
+            .taskOutput a:hover {
+                color: darkcyan;
+            }
+
+            td.firstName {
+                padding-left: 1em;
             }
 
             .overlay {
@@ -119,9 +172,12 @@
             }
 
             .overlay-content {
-                background-color: #fff;
+                background-color: #000;
                 padding: 20px;
                 border-radius: 5px;
+                color: #fff;
+                font-size: .7em;
+                overflow: scroll;
             }
 
             .close-button {
@@ -129,7 +185,31 @@
                 top: 10px;
                 right: 10px;
                 cursor: pointer;
+                font-size: 3em;
+                font-weight: bold;                
             }
+
+            .taskStatus .fa-check {
+                color: #20d035;
+            } 
+            .taskStatus .fa-gear {
+                color: #ebc325;
+            } 
+            .taskStatus .fa-arrow {
+                color: #2563eb;
+            } 
+            .taskStatus .fa-x {
+                color: #eb2525;
+                font-size: .8em;
+            }
+
+            #aggregated-results-title {
+                margin-top: 8em;
+            }  
+
+            body {
+                min-height: 200em;
+            }  
         </style>
 
         <script>
@@ -142,30 +222,33 @@
                  **/
                 let progressBars = document.querySelectorAll('.progressBar');
                 progressBars.forEach(function(progressBar) {
-
                     const task_id = progressBar.id;
-                    Unicorn.call('webscrape.webscrape', 
-                        'get_task_progress_by_task_id', task_id);
 
-                    const task_progress = Unicorn.getReturnValue('webscrape.webscrape');
-                    console.log(`task_progress - ${task_id} : ${task_progress}`);
-                    if(task_progress) {
+                    Unicorn.call('webscrape.webscrape', 'task_is_running', task_id);
+                    const task_is_running = Unicorn.getReturnValue('webscrape.webscrape');
 
-                        progressBar.style.width = `${task_progress}%`;
+                    if(task_is_running){
 
-                        // Optionally, update progress text
-                        const progressText = document.getElementById(`progressText-${task_id}`);
-                        if (progressText) {
-                            progressText.textContent = `${task_progress}%`;
-                        }                        
+                        Unicorn.call('webscrape.webscrape', 
+                            'get_task_progress_data', task_id);
+
+                        const task_progress_data = 
+                                    Unicorn.getReturnValue('webscrape.webscrape');
+
+                        if(task_progress_data && task_progress_data.task_progress_value) {
+                            console.log(`task_progress - ${task_id} : ${task_progress_data.task_progress_value}`);
+
+                            progressBar.style.width = `${task_progress_data.task_progress_value}%`;
+
+                            // Optionally, update progress text
+                            const progressText = document.getElementById(`progressText-${task_id}`);
+                            if (progressText) {
+                                progressText.textContent = `${task_progress_data.task_progress_value}%`;
+                            }                        
+                        } else {
+                            console.log(`task_progress - no value`);
+                        }
                     }
-
-                /**
-                 * --------------- 
-                 * OUTPUTS 
-                 * ---------------
-                 **/
-
                 });
             }
             setInterval(updateTasks, 20000);
@@ -177,7 +260,7 @@
                 overlay.innerHTML = `
                     <div class="overlay-content">
                         <span class="close-button" onclick="closeOverlay()">×</span>
-                        ${content}
+                        <pre>${content}</pre>                        
                     </div>
                 `;
                 document.body.appendChild(overlay);
@@ -235,15 +318,30 @@
                 }
             }
 
-            window.onload = () => {
+
+            addEventListener("DOMContentLoaded", (event) => {
                 document.querySelectorAll(
                     ".exec-modules h2.section-title").forEach((h2) => {
                         scrollToTopOnHover(h2.id);
                 })
 
                 preventScrollDownKeepVisible('webscrapes-table');
-            }
 
+                document.querySelectorAll(".taskOutput").forEach((p) => {
+                    const id = p.id;
+                    console.log(`p.id : #${id}`);
+
+                    document.querySelector(`#${id} a`)
+                        .addEventListener('click', (event) => {
+
+                        const id = event.target.id.replace('alink-', '');
+                        const content = document.querySelector(
+                                `#output-${id}`).value;
+
+                        openOverlay(content);
+                    });
+                })
+            });
         </script>
 
     <!-- /div -->
