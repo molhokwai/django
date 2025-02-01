@@ -27,9 +27,11 @@ SECRET_KEY = 'django-insecure-kc45@neob5bj2m#jj5_#^#eqz!htt#bg0hi4v)n1obnsmmy(zn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 IS_LIVE = True
+IS_LOCAL = False
 if str(BASE_DIR).find('/home/nkensa/GDrive-local/Tree/') == 0:
     DEBUG = True
     IS_LIVE = False
+    IS_LOCAL = True
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "nkensa.pythonanywhere.com"]
 
@@ -52,9 +54,6 @@ INSTALLED_APPS = [
     'django_unicorn',
     'tailwind',
     'theme',
-    'django_browser_reload',
-    'taggit',
-    'tinymce',
     'fontawesomefree',
     # -----------------
     # @ToDo :: Fix pandas install on pythonanywhere to restore code (see all "Fix pandas" todos)
@@ -66,6 +65,15 @@ INSTALLED_APPS = [
     'app',
     'webscraping',
 ]
+if IS_LOCAL:
+    INSTALLED_APPS += [
+        # extensions
+        'django_browser_reload',
+        'taggit',
+        'tinymce',
+    ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
