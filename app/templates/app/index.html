@@ -1,35 +1,9 @@
 {% extends "_base.html" %}
  
 {% block content %}
-    <div class="mt-10 mx-auto">
-        <h1 class="text-3xl text-green-800">
-              Django Unicorn
-        </h1>
-        <h3 class="text-3x1 text-green-800">
-              Django Unicorn
-        </h3>
-        <ul class="text-3x1 text-green-800">
-          <li>
-              | <a href="{% url 'books_demo' %}">Books demo</a>
-          </li>
-          <li>
-              | <a href="{% url 'books_view' %}">Books view</a>
-          </li>
-          <li>
-              | <a href="{% url 'darklight_index' %}">Dark / Light</a>
-          </li>
-          <li>
-              | <a href="{% url 'ourcards_index' %}">Our Cards</a>
-          </li>
-          <li>
-              | <a href="{% url 'trainings_dashboard' %}">Trainings Dashboard</a>
-          </li>         
-          <li>
-              | <a href="{% url 'webscrape' %}" id="webscrape">Webscrape</a>
-          </li>         
-          <li>
-              | <a href="{% url 'webscraping' %}" id="webscraping">Webscraping data</a>
-          </li>         
-        </ul>
-    </div>
+
+        <div style="margin: 5em auto 5em 10em; padding: 5em; color: green; border: 1px solid green; text-align: center; font-size: 1.5em;">
+            <a href="{% url 'webscrape' %}" id="webscrape">WEBSCRAPING</a>
+        </div>
+
 {% endblock content %}

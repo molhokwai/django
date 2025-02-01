@@ -64,8 +64,6 @@ INSTALLED_APPS = [
     # apps
     'django_app',
     'app',
-    'darklight',
-    'ourcards',
     'webscraping',
 ]
 
