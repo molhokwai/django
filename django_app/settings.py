@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 
     # extensions
     'django_unicorn',
+    'django_browser_reload',
     'tailwind',
     'theme',
     'fontawesomefree',
@@ -67,10 +68,6 @@ INSTALLED_APPS = [
 ]
 if IS_LOCAL:
     INSTALLED_APPS += [
-        # extensions
-        'django_browser_reload',
-        'taggit',
-        'tinymce',
     ]
 
 
