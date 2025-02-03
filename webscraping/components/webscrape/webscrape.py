@@ -47,6 +47,13 @@ class WebscrapeView(UnicornView):
         "VERIFIED", "CRIMINAL_RECORDS" 
     ]
 
+    taskHandler: TaskHandler = None
+
+
+    def __init__(self):
+        self.taskHandler = TaskHandler()
+
+
     def mount(self):
         self.us_states = list(zip(USStates.values, USStates.names))
         self.countries = list(zip(Countries.values, Countries.names))
@@ -83,11 +90,11 @@ class WebscrapeView(UnicornView):
         return redirect('webscrape')
 
 
-
     def task_is_running(self, task_id: str) -> int:
         taskProgress = TaskHandler.get_taskProgress(task_id)
         if taskProgress:
             return True
+
 
     def get_task_progress_data(self, task_id: str) -> int:
         task_progress_value = 0
@@ -98,11 +105,16 @@ class WebscrapeView(UnicornView):
         if webscrape.task_status == Status.SUCCESS.value:
             task_output = webscrape.task_output
 
+        if webscrape.task_status in (Status.SUCCESS.value, Status.FAILED.value):
+            self.taskHandler.stop_task(webscrape.task_id)
+
         task_progress_data = {
             "task_progress_value": task_progress_value,
             "task_output": task_output
         }
         print('---------------| Unicorn.webscrape.webscrape > get_task_progress_data', task_progress_data)
+
+
         return task_progress_data
 
 
@@ -134,3 +146,4 @@ class WebscrapeView(UnicornView):
 
     def add_count(self):
         messages.success(self.request, "| %i webscrapes loaded..." % len(self.webscrapes))
+

@@ -89,7 +89,7 @@ def webscrape_sequence_long_running_method( webscrape: Webscrape, taskProgress )
 
 
     progress_value = 0
-    taskProgress.set( 
+    taskProgress.set_unset( 
         Status.STARTED, progress_value,
         progress_message=f'The webscrape "{webscrape}" has been started' )
 
@@ -125,7 +125,7 @@ def webscrape_sequence_long_running_method( webscrape: Webscrape, taskProgress )
         if progress_value >= 100:
             progress_value = 100
 
-        taskProgress.set( 
+        taskProgress.set_unset( 
             Status.RUNNING if progress_value < 100 else Status.SUCCESS,
             progress_value,
             progress_message=f'Sequence {i} has been processed | Details: {webscrape}',
@@ -162,7 +162,13 @@ def webscrape_sequence_long_running_method( webscrape: Webscrape, taskProgress )
 
 def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
     """
+        A long-running method to execute web scraping steps sequentially.
+
         -----------
+        Args:
+            webscrape (Webscrape): The web scraping task model.
+            taskProgress (TaskProgress): The TaskProgress object to track progress.
+
         Description:
             This method executes sequences' steps one bye one, and so 
             it provide task progress handling at step level.
@@ -177,7 +183,7 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
 
 
     progress_value = 0
-    taskProgress.set( 
+    taskProgress.set_unset( 
         Status.STARTED, progress_value,
         progress_message=f'The webscrape "{webscrape}" has been started' )
 
@@ -249,7 +255,7 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
             if progress_value >= 100:
                 progress_value = 100
 
-            taskProgress.set( 
+            taskProgress.set_unset( 
                 Status.RUNNING if progress_value < 100 else Status.SUCCESS,
                 progress_value,
                 progress_message=f'Sequence step {n} of {all_steps_len} has been processed | for: {webscrape}'

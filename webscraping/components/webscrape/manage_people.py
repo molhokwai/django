@@ -93,7 +93,7 @@ class ManagePeopleView(UnicornView):
         print('-------------------------| ', webscrape.task_variables)
 
         # Get/Generate task id with Task handler
-        webscrape.task_id = TaskHandler().start_task(
+        self.parent.taksHandler.queue_task(
             webscrape_steps_long_running_method, [ webscrape ] )
 
         if i == 0:

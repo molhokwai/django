@@ -281,4 +281,5 @@ mimetypes.add_type("text/css", ".css", True)
 
 WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
 WEBSCRAPER_CACHING_DURATION = 3600
+WEBSCRAPER_THREADS_MAX = 3
 
