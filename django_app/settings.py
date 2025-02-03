@@ -14,6 +14,7 @@ from pathlib import Path
 from shutil import which
 import os
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 print('--------------| BASE_DIR :: ', BASE_DIR)
@@ -33,7 +34,9 @@ if str(BASE_DIR).find('/home/nkensa/GDrive-local/Tree/') == 0:
     IS_LIVE = False
     IS_LOCAL = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "nkensa.pythonanywhere.com"]
+# ALLOWED_HOSTS = ["127.0.0.1", "localhost", "nkensa.pythonanywhere.com"]
+# ---------------
+ALLOWED_HOSTS = ["*"]
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -74,6 +77,7 @@ if IS_LOCAL:
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -108,12 +112,37 @@ WSGI_APPLICATION = 'django_app.wsgi.application'
 # --------
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# SQLITE
+# ------
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+# ------
+
+
+# POSTGRES
+# --------
+os.environ.setdefault("PGDATABASE", "webscraper")
+os.environ.setdefault("PGUSER", "postgres")
+os.environ.setdefault("PGPASSWORD", "LeA45Jf~7ZL][e%k")
+os.environ.setdefault("PGHOST", "localhost")
+os.environ.setdefault("PGPORT", "5432")
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get("PGDATABASE", "webscraper"),
+        'USER': os.environ.get("PGUSER", "postgres"),
+        'PASSWORD': os.environ.get("PGPASSWORD", ""),
+        'HOST': os.environ.get("PGHOST", "localhost"),
+        'PORT': os.environ.get("PGPORT", "5432"),
     }
 }
+
 
 # Cache
 # -----
@@ -122,7 +151,8 @@ DATABASES = {
 #         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
 #     }
 # }
-#
+
+
 # CACHES = {
 #     'default': {
 #         'BACKEND': 'django_redis.cache.RedisCache',
@@ -186,12 +216,17 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+# No media folder on Railway
+# --------------------------
+# MEDIA_URL = "/media/"
+# MEDIA_ROOT = BASE_DIR / "media"
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
-    BASE_DIR / 'media'
+    # BASE_DIR / 'media'
 ]
 
 
