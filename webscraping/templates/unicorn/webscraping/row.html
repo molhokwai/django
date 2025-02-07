@@ -1,0 +1,141 @@
+
+
+    <!-- webscrapes/row.html -->
+    {% load define_action %}
+
+    {% define 'selected' as select_state  %}
+    {% if webscrape.state %}
+        {% define '' as select_state %}
+    {% endif %}
+    <tr class="shadow-lg">
+        <td class="py-6">
+            {% if is_editing %}
+                <button unicorn:click="save"
+                    class="btn btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
+						   text-white shadow-xl duration-500">Save</button>
+                <button unicorn:click.discard="cancel"
+                    class="btn btn-outline-gray rounded bg-slate-400 hover:bg-slate-600 p-1 px-2
+						   text-white shadow-xl duration-500" >Cancel</button>
+            {% else %}
+                <button unicorn:click="edit"
+                    class="btn btn-outline-tertiary rounded bg-blue-600 hover:bg-blue-400 p-1 px-4
+						   text-white shadow-xl duration-500">Edit</button>
+                <button unicorn:click="edit"
+                    class="btn btn-outline-gray rounded bg-slate-100 hover:bg-slate-100 p-1 px-2
+						   text-white shadow-xl duration-500 min-w-16" >Edit</button>
+            {% endif %}
+        </td>
+        <td>
+            {% if is_editing %}
+                <input type="text" unicorn:model.defer="webscrape.website_url" value="{{ webscrape.website_url }}"
+                    class="form-control rounded border-green-700 shadow-sm text-green-900
+                           tracking-wider text-xs"/>
+            {% else %}
+                <font
+                    class="border-green-700 shadow-sm text-green-900 tracking-wider">
+                    {{ webscrape.website_url }}
+                </font>
+            {% endif %}
+        </td>
+        <td>
+            {% if is_editing %}
+                <input type="text" unicorn:model.defer="webscrape.title" value="{{ webscrape.title }}"
+                    class="form-control rounded border-green-700 shadow-sm text-green-900
+                           tracking-wider text-xs"/>
+            {% else %}
+                <font
+                    class="border-green-700 shadow-sm text-green-900 tracking-wider"
+                    title="{{ webscrape.title }}">
+                    {{ webscrape.title|truncatechars:10 }}
+                </font>
+            {% endif %}
+        </td>
+        <td>
+            {% if is_editing %}
+                <input type="text" unicorn:model.defer="webscrape.first_name" value="{{ webscrape.first_name }}" placeholder="ex: David"
+					class="form-control rounded border-green-700 shadow-sm text-green-900
+						   tracking-wider text-xs"/>
+            {% else %}
+                <font
+                    class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
+                    {{ webscrape.first_name }}
+                </font>
+            {% endif %}
+        </td>
+        <td>
+            {% if is_editing %}
+                <input type="text" unicorn:model.defer="webscrape.last_name"
+                    value="{{ last_name }}" placeholder="ex: Jonathan"
+                    class="form-control rounded border-green-700 shadow-sm text-green-900
+                           tracking-wider text-xs"/>
+            {% else %}
+                <font
+                    class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
+                    {{ webscrape.last_name }}
+                </font>
+            {% endif %}
+        </td>
+        <td>
+            {% if is_editing %}
+                <input type="text" unicorn:model.defer="webscrape.middle_name"
+                    value="{{ webscrape.middle_name }}" placeholder="ex: Henry"
+                    class="form-control rounded border-green-700 shadow-sm text-green-900
+                           tracking-wider text-xs"/>
+            {% else %}
+                <font
+                    class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
+                    {{ webscrape.middle_name }}
+                </font>
+            {% endif %}
+        </td>
+        <td>
+            {% if is_editing %}
+                <input type="text" unicorn:model.defer="webscrape.age"
+                    value="{{ webscrape.age }}" placeholder="ex: 43"
+                    class="form-control rounded border-green-700 shadow-sm text-green-900
+                           tracking-wider text-xs"/>
+            {% else %}
+                <font
+                    class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
+                    {{ webscrape.age }}
+                </font>
+            {% endif %}
+        </td>
+        <td>
+            {% if is_editing %}
+                <input type="text" unicorn:model.defer="webscrape.city"
+                    value="{{ webscrape.city }}" placeholder="ex: New York"
+                    class="form-control rounded border-green-700 shadow-sm text-green-900
+                           tracking-wider text-xs"/>
+            {% else %}
+                <font
+                    class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
+                    {{ webscrape.city }}
+                </font>
+            {% endif %}
+        </td>
+        <td class="border-green-400">
+            {% if is_editing %}
+                <select  unicorn:model.defer="webscrape.state" id="state"
+                    class="form-select rounded border-green-700 shadow-sm text-green-900
+						   tracking-wider text-sm max-w-20">
+                    <option {{ select_state }}>Select a state...</option>
+                    {% for state in us_states %}
+
+                        {% define '' as state_selected %}
+                        {% if webscrape.state and state.0 == webscrape.state %}
+                            {% define 'selected' as state_selected %}
+                        {% endif %}
+
+                        <option value="{{ state.0 }}"
+                                {{ state_selected }}>{{ state.1 }}</option>
+                    {% endfor %}
+                </select>
+            {% else %}
+                <font
+                    class="border-green-700 shadow-sm text-green-900 tracking-wider text-sm float-right">
+                    {{ webscrape.state }}
+                </font>
+            {% endif %}
+        </td>
+    </tr>

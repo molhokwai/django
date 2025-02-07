@@ -1,0 +1,44 @@
+[
+    [
+        { "config": {
+            "ui_timeout": 0
+        }}
+    ],[
+        { "get": "https://app.afriscience.org/journals/journal/edition/author_article/submit/97" },
+        { "assert_in_page_source": "Entrer vos informations"}
+    ],[
+        { "find": "first_name", "by": "By.NAME"  },
+        { "clear": "" },
+        { "send_keys": "[variable]", "key": "first_name" }
+    ],[
+        { "find": "last_name", "by": "By.NAME"  },
+        { "clear": "" },
+        { "send_keys": "[variable]", "key": "last_name" }
+    ],[
+        { "find": "institutional_affiliation", "by": "By.NAME"  },
+        { "clear": "" },
+        { "send_keys": "[variable]", "key": "institutional_affiliation" }
+    ],[
+        { "find": "email", "by": "By.NAME"  },
+        { "clear": "" },
+        { "send_keys": "[variable]", "key": "email" }
+    ],[
+        { "find": "phone_number", "by": "By.NAME"  },
+        { "clear": "" },
+        { "send_keys": "[variable]", "key": "phone_number" }
+    ],[
+        { "find": "address", "by": "By.NAME"  },
+        { "clear": "" },
+        { "send_keys": "[variable]", "key": "address" }
+    ],[
+        { "find": "country", "by": "By.NAME"  },
+        { "clear": "" },
+        { "select": "[variable]", "key": "country" }
+    ],[
+        { "find": "button[type='submit']", "by": "By.CSS_SELECTOR"  },
+        { "click": "Left" }
+    ],[
+        { "wait": "author", "by": "By.NAME", "timeout": 15, "optional": true },
+        { "assert_in_page_source": "Soumettre un article"}
+    ]
+]

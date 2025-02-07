@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Contact Form</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js"></script>
+    </head>
+    <body>
+        <form id="contact-form">
+            <h2>Contact Form</h2>
+            <p>
+                <label>Nombre<br><input type="text"  name="nombre" value="253"></label><br>
+                <label>Email<br><input type="email" name="email" value="m@mailou.com"></label><br>
+                <label>Commentaires<br></label><textarea name="commentaires" cols=40 rows=5>Mon comitou...</textarea></label>
+            </p>
+            <input id="submit-contact-form" type="submit" value="Submit">
+        </form>
+
+        <div id="result"></div>
+
+        <script>
+            (function() {
+                var $form = $('form#contact-form'),
+                    url = 'https://script.google.com/macros/s/AKfycbxFXOz2QSC8OYbR_YYrN98463-Rc6x3ZgkSUkIXtYskDDmVYqfXi4n-1VtyBTNAk-0FlQ/exec';
+                $('#submit-contact-form').on('click', function(e) {
+                    e.preventDefault();
+                    var jqxhr = $.ajax({
+                        url: url,
+                        method: "POST",
+                        dataType: "json",
+                        data: $form.serializeObject(),
+                        success: function(data) {
+                            console.log(data);
+                            const fontColor = data.success ? 'green' : 'red';
+                            const text = data.success ? `Merci. Contactez-nous...` : `Une erreur s'est produite: ${data.error.message}`;
+                            $('#result').html(
+                                `<p style='color:${fontColor}'>${text}</p>`);
+                        }
+                    });
+                });
+            })();
+        </script>
+    </body>
+</html>

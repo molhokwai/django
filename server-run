@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# -*- coding: utf8 -*-
+python manage.py tailwind start
+python manage.py runserver 127.0.0.1:8001

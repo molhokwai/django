@@ -1,0 +1,46 @@
+
+
+<!-- webscrape/manage.html -->
+<div class="mb-5">
+    {% load define_action  %}
+
+    {% define 'selected' as select_state  %}
+    {% if webscrape.state %}
+        {% define '' as select_state %}
+    {% endif %}
+
+    <input type="hidden" id="module_path" value="webscraping.manage_people" /> 
+
+    <input unicorn:model.defer="website_url"      type="text"   id="website_url"   placeholder="website url, ex: https://www.truthfinder.com/people-search/" value="{{webscrape.website_url}}"    
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider w-4/5" /> *
+
+    <span class="block">&nbsp;</span>
+
+    <textarea unicorn:model.defer="by_list"      type="text"   id="by_list"   placeholder="By List of first and last names..."    value="{{webscrape.by_list}}"
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider w-4/5"
+    rows="10" ></textarea>
+
+    <span class="block">&nbsp;</span>
+
+    <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
+        <button unicorn:click="scrape" 
+            class="btn btn-outline-tertiary rounded bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">Search</button>
+    </div>
+
+    <style>
+        button.search {
+            /*
+            margin: auto !important;
+            display: block;
+            */
+            font-size: 1.6rem;
+        }
+        button.search:before,
+        button.search:after {
+            content: "__";
+            margin-top: -1em;
+        }
+
+    </style>
+</div>
+

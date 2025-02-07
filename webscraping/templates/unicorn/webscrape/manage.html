@@ -1,0 +1,146 @@
+
+
+<!-- webscrape/manage.html -->
+<div class="mb-5">
+    {% load define_action  %}
+
+    {% define 'selected' as select_state  %}
+    {% if webscrape.state %}
+        {% define '' as select_state %}
+    {% endif %}
+
+    <script>
+        (function () {
+            document.addEventListener('input', function (e) {
+                const isFileInput = e.target && e.target.type === 'file';
+                if (!isFileInput) {
+                    return;
+                }
+                const fileInput = e.target;
+
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    console.log('Uploading file', file);
+                    const fileSizeMB = file.size / (1024 * 1024); // Size in MB
+
+                    if (fileSizeMB > 10) {
+                        alert('File size exceeds the limit of 10MB.');
+                        return;
+                    }
+                    const reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        fileInput.parentNode.querySelector('input.file-data').value = event.target.result;
+                        fileInput.parentNode.querySelector('input.file-data').dispatchEvent(new Event('input', {bubbles: true}))
+                        fileInput.parentNode.querySelector('input.file-name').value = file.name;
+                        fileInput.parentNode.querySelector('input.file-name').dispatchEvent(new Event('input', {bubbles: true}))
+                    };
+
+                    // Read the file as a data URL (base64)
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Please select a file');
+                }
+            });
+        })();
+
+
+        function getCurrentDateTimeStr() {
+          const now = new Date();
+          const options = { 
+            year: 'numeric', 
+            month: '2-digit', 
+            day: '2-digit', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit', 
+            hour12: false, 
+            timeZoneName: 'short' 
+          };
+          const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+          return formattedDate;
+        }
+
+        const unique_title = function () {
+            let $title = document.querySelector('#title');
+            let $lastName = document.querySelector('#lastName');
+            let $firstName = document.querySelector('#firstName');
+            const date_time_str = getCurrentDateTimeStr();
+
+            let title = $title.value;
+            let lastName = $lastName.value;
+            if(title){
+                title = `${title} | ${date_time_str}`
+
+            } else if(lastName) {
+                title = `${lastName} | ${date_time_str}`
+
+                let firstName = $firstName.value;
+                if(firstName){
+                    title = `${firstName} ${title}`
+                }
+            }
+
+            $title.value = title;
+            const module_path = document.getElementById('module_path').value;
+            Unicorn.call(module_path, 'setTitle', title);
+        };
+
+        window.onload = () => {
+            document.querySelector('#firstName')
+                    .addEventListener('change', (e) => {
+                unique_title();
+            });
+            document.querySelector('#lastName')
+                    .addEventListener('change', (e) => {
+                unique_title();
+            });
+        };
+    </script>
+    <input type="hidden" id="module_path" value="webscraping.manage" /> 
+
+    <input unicorn:model.defer="website_url"      type="text"   id="website_url"   placeholder="website url, ex: https://www.truthfinder.com/people-search/" value="{{webscrape.website_url}}"    
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider w-4/5" /> *
+
+    <span class="block">&nbsp;</span>
+
+    <input unicorn:model.defer="firstName"      type="text"   id="firstName"   placeholder="First name"    value="{{webscrape.firstName}}"
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <input unicorn:model.defer="lastName"      type="text"   id="lastName"   placeholder="Last name"    value="{{webscrape.lastName}}"
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" required /> *
+    <input unicorn:model.defer="middle_name"      type="text"   id="middle_name"   placeholder="Middle name"    value="{{webscrape.middle_name}}"
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <span class="block">&nbsp;</span>
+
+    <input unicorn:model.defer="middleInitial"      type="text"   id="middleInitial"   placeholder="Middle initials"    value="{{webscrape.middleInitial}}"
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <input unicorn:model.defer="age"     type="text"   id="age"  placeholder="Age"   value="{{webscrape.age}}"
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <span class="block">&nbsp;</span>
+
+    <input unicorn:model.defer="city"   type="text"   id="city"   placeholder="ex: Los angeles"    value="{{webscrape.city}}"
+        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <select  unicorn:model.defer="state" id="state" 
+        class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider">
+
+        <option {{ select_state }}>SELECT A STATE...</option>
+        {% for state in us_states %}
+
+            {% define '' as state_selected %}
+            {% if webscrape.state and state.0 == webscrape.state %}
+                {% define 'selected' as state_selected %}
+            {% endif %}
+
+            <option value="{{ state.0 }}"
+                    {{ state_selected }}>{{ state.1 }}</option>
+        {% endfor %}
+    </select>
+    <span class="block">&nbsp;</span>
+
+
+    <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
+        <button unicorn:click="scrape"
+            class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">Search</button>
+    </div>
+</div>
+

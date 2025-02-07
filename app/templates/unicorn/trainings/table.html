@@ -1,0 +1,128 @@
+
+
+    <!-- trainings/table.html -->
+    {% load define_action %}
+
+    <div class="course">
+        <h4>
+            <span class="fas fa-video"></span>
+            <span>{{ training.title }}</span>
+        </h4>
+        <p class="status-text">
+            {% if training.status_text %}
+                {{ training.status_text|safe }}
+            {% else %}
+                &nbsp;
+            {% endif %}
+        </p>
+
+        <table class="table table-auto rounded border-green-300">
+            {% for tsession in training.computed_trainingcoursesessions %}
+                <tr class="shadow-lg">
+                    <td class="first">&nbsp;</td>
+
+                    <td 
+                        title="{{ tsession.status_text }}">
+                        {{ forloop.counter }}. {{ tsession.title }}
+                    </td>
+                    <td class="status-icon {{ tsession.preparation_name }}"
+                        title="Preparation">
+                        {{ tsession.preparation_label }}
+                    </td>
+                    <td class="status-icon {{ tsession.course_media_raw_name }}"
+                        title="Media: raw">
+                        {{ tsession.course_media_raw_label }}
+                    </td>
+                    <td class="status-icon {{ tsession.course_media_final_name }}"
+                        title="Media: final">
+                        {{ tsession.course_media_final_label }}
+                    </td>
+                    <td class="status-icon {{ tsession.course_media_validated_name }}"
+                        title="Media: validated">
+                        {{ tsession.course_media_validated_label }}
+                    </td>
+                    <td class="status-icon {{ tsession.implemented_in_app_name }}"
+                        title="Implemented in app">
+                        {{ tsession.implemented_in_app_label }}
+                    </td>
+                    <td class="status-icon {{ tsession.ready_for_whats_and_gram_name }}"
+                        title="Ready for whatsapp and telegram">
+                        {{ tsession.ready_for_whats_and_gram_label }}
+                    </td>
+                    <td class="status-icon {{ tsession.in_sales_funnel_name }}"
+                        title="In sales funnel">
+                        {{ tsession.in_sales_funnel_label }}
+                    </td>
+
+                    <td class="last">&nbsp;</td>
+                </tr>
+            {% endfor %}
+        </table>      
+
+
+        <!-- 
+            <td>
+                {% if is_editing %}
+                    <input type="text" unicorn:model.defer="book.title" value="{{ book.title }}"
+                        class="form-control rounded border-green-700 shadow-sm text-green-900
+                               tracking-wider text-xs"/>
+                {% else %}
+                    <font
+                        class="border-green-700 shadow-sm text-green-900 tracking-wider">
+                        {{ book.title }}
+                    </font>
+                {% endif %}
+            </td>
+            <td>
+                {% if is_editing %}
+                    <input type="text" unicorn:model.defer="book.author" value="{{ book.author }}"
+                        class="form-control rounded border-green-700 shadow-sm text-green-900
+                               tracking-wider text-xs"/>
+                {% else %}
+                    <font
+                        class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
+                        {{ book.author }}
+                    </font>
+                {% endif %}
+            </td>
+            <td>
+                {% if is_editing %}
+                    <input type="text" unicorn:model.defer="book.date_published" value="{{ date_pub }}"
+                                                        placeholder="ex: 1997-05-15"
+                        class="form-control rounded border-green-700 shadow-sm text-green-900
+                               tracking-wider text-xs"/>
+                {% else %}
+                    <font
+                        class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
+                        {{ date_pub }}
+                    </font>
+                {% endif %}
+            </td>
+            <td class="border-green-400">
+                {% if is_editing %}
+                    <select  unicorn:model.defer="book.country" id="country"
+                        class="form-select rounded border-green-700 shadow-sm text-green-900
+                               tracking-wider text-sm max-w-20">
+                        <option {{ select_country }}>Select a country...</option>
+                        {% for country in countries %}
+
+                            {% define '' as country_selected %}
+                            {% if book.country and country.0 == book.country %}
+                                {% define 'selected' as country_selected %}
+                            {% endif %}
+
+                            <option value="{{ country.0 }}"
+                                    {{ country_selected }}>{{ country.1 }}</option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <font
+                        class="border-green-700 shadow-sm text-green-900 tracking-wider text-sm">
+                        {{ book.country }}
+                    </font>
+                {% endif %}
+            </td>
+        -->
+
+
+    </div>

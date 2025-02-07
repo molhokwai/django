@@ -1,0 +1,63 @@
+
+
+<!-- books/manage.html -->
+<div class="mb-5">
+    <script>
+        (function () {
+            document.addEventListener('input', function (e) {
+                const isFileInput = e.target && e.target.type === 'file';
+                if (!isFileInput) {
+                    return;
+                }
+                const fileInput = e.target;
+
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    console.log('Uploading file', file);
+                    const fileSizeMB = file.size / (1024 * 1024); // Size in MB
+
+                    if (fileSizeMB > 10) {
+                        alert('File size exceeds the limit of 10MB.');
+                        return;
+                    }
+                    const reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        fileInput.parentNode.querySelector('input.file-data').value = event.target.result;
+                        fileInput.parentNode.querySelector('input.file-data').dispatchEvent(new Event('input', {bubbles: true}))
+                        fileInput.parentNode.querySelector('input.file-name').value = file.name;
+                        fileInput.parentNode.querySelector('input.file-name').dispatchEvent(new Event('input', {bubbles: true}))
+                    };
+
+                    // Read the file as a data URL (base64)
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Please select a file');
+                }
+            });
+        })();
+    </script>
+    <input unicorn:model.defer="title"      type="text"   id="title"   placeholder="title"    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <input unicorn:model.defer="author"     type="text"   id="author"  placeholder="author"   class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <input unicorn:model.defer="date_published"   type="text"   id="date_published"   placeholder="ex: 1997-05-15"   
+        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <select  unicorn:model.defer="country" id="country" 
+        class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider">
+        <option>Select a country...</option>
+        {% for country in countries %}
+            <option value="{{ country.0 }}">{{ country.1 }}</option>
+        {% endfor %}
+    </select>
+    <input type="file" accept="image/*" required/>
+    <input type="hidden" class="file-data" unicorn:model="new_media_base64" />
+    <input type="hidden" class="file-name" unicorn:model="new_media_file_name" />
+    <div class="float-right pt-2 mr-10 sm:block sm:mt-5 sm:mb-10">
+        <button unicorn:click="add"
+            class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-2 px-4 text-white font-bold shadow-xl duration-1000">Add</button>
+        <button unicorn:click="delete"
+            class="btn btn-outline-dark rounded bg-orange-400 hover:bg-orange-500 p-2 px-4 text-white font-bold shadow-lg duration-200">Delete</button>
+        <button unicorn:click="delete_all"
+            class="btn btn-outline-danger rounded bg-red-500 hover:bg-red-700 p-2 px-4 text-white font-bold shadow-lg duration-200">Delete All</button>
+    </div>
+</div>
+

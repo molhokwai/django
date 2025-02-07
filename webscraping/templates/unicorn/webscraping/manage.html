@@ -1,0 +1,147 @@
+
+
+<!-- books/manage.html -->
+<div class="mb-5">
+    {% load define_action  %}
+
+    {% define 'selected' as select_state  %}
+    {% if webscrape.state %}
+        {% define '' as select_state %}
+    {% endif %}
+
+    <script>
+        (function () {
+            document.addEventListener('input', function (e) {
+                const isFileInput = e.target && e.target.type === 'file';
+                if (!isFileInput) {
+                    return;
+                }
+                const fileInput = e.target;
+
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    console.log('Uploading file', file);
+                    const fileSizeMB = file.size / (1024 * 1024); // Size in MB
+
+                    if (fileSizeMB > 10) {
+                        alert('File size exceeds the limit of 10MB.');
+                        return;
+                    }
+                    const reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        fileInput.parentNode.querySelector('input.file-data').value = event.target.result;
+                        fileInput.parentNode.querySelector('input.file-data').dispatchEvent(new Event('input', {bubbles: true}))
+                        fileInput.parentNode.querySelector('input.file-name').value = file.name;
+                        fileInput.parentNode.querySelector('input.file-name').dispatchEvent(new Event('input', {bubbles: true}))
+                    };
+
+                    // Read the file as a data URL (base64)
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Please select a file');
+                }
+            });
+        })();
+
+
+        function getCurrentDateTimeStr() {
+          const now = new Date();
+          const options = { 
+            year: 'numeric', 
+            month: '2-digit', 
+            day: '2-digit', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit', 
+            hour12: false, 
+            timeZoneName: 'short' 
+          };
+          const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+          return formattedDate;
+        }
+
+        const unique_title = function () {
+            let $title = document.querySelector('#title');
+            let $last_name = document.querySelector('#last_name');
+            let $first_name = document.querySelector('#first_name');
+            const date_time_str = getCurrentDateTimeStr();
+
+            let title = $title.value;
+            let last_name = $last_name.value;
+            if(title){
+                title = `${title} | ${date_time_str}`
+
+            } else if(last_name) {
+                title = `${last_name} | ${date_time_str}`
+
+                let first_name = $first_name.value;
+                if(first_name){
+                    title = `${first_name} ${title}`
+                }
+            }
+
+            $title.value = title;
+            Unicorn.call('webscraping.manage', 'setTitle', title);
+        };
+
+        window.onload = () => {
+            document.querySelector('#unique_title')
+                    .addEventListener('click', (e) => {
+                unique_title();
+            });
+        };
+    </script>
+    <input unicorn:model.defer="website_url"      type="text"   id="website_url"   placeholder="website url, ex: https//wwww.truthfinder.com/" value="{{webscrape.website_url}}"    
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" /> *
+    <input unicorn:model.defer="title"      type="text"   id="title"   placeholder="title"
+     value="{{webscrape.title}}"
+     class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <span class="block">&nbsp;</span>
+
+    <input unicorn:model.defer="first_name"      type="text"   id="first_name"   placeholder="First name"    value="{{webscrape.first_name}}"
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <input unicorn:model.defer="last_name"      type="text"   id="last_name"   placeholder="Last name"    value="{{webscrape.last_name}}"
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" required /> *
+    <input unicorn:model.defer="middle_name"      type="text"   id="middle_name"   placeholder="Middle name"    value="{{webscrape.middle_name}}"
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <span class="block">&nbsp;</span>
+
+    <input unicorn:model.defer="middle_initials"      type="text"   id="middle_initials"   placeholder="Middle initials"    value="{{webscrape.middle_initials}}"
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <input unicorn:model.defer="age"     type="text"   id="age"  placeholder="Age"   value="{{webscrape.age}}"
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <span class="block">&nbsp;</span>
+
+    <input unicorn:model.defer="city"   type="text"   id="city"   placeholder="ex: Los angeles"    value="{{webscrape.city}}"
+        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+    <select  unicorn:model.defer="state" id="state" 
+        class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider">
+
+        <option {{ select_state }}>Select a state...</option>
+        {% for state in us_states %}
+
+            {% define '' as state_selected %}
+            {% if webscrape.state and state.0 == webscrape.state %}
+                {% define 'selected' as state_selected %}
+            {% endif %}
+
+            <option value="{{ state.0 }}"
+                    {{ state_selected }}>{{ state.1 }}</option>
+        {% endfor %}
+    </select>
+    <span class="block">&nbsp;</span>
+
+
+    <div class="pt-2 mr-10 sm:block sm:mt-5 sm:mb-10">
+        <button id="unique_title" 
+            class="btn btn-outline-primary rounded bg-gray-600 hover:bg-gray-500 p-1 px-4 font-bold shadow-xl duration-1000">Unique title</button>
+        <button unicorn:click="add"
+            class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-2 px-4 text-white font-bold shadow-xl duration-1000">Add</button>
+        <button unicorn:click="delete"
+            class="btn btn-outline-dark rounded bg-orange-400 hover:bg-orange-500 p-2 px-4 text-white font-bold shadow-lg duration-200">Delete</button>
+        <button unicorn:click="delete_all"
+            class="btn btn-outline-danger rounded bg-red-500 hover:bg-red-700 p-2 px-4 text-white font-bold shadow-lg duration-200">Delete All</button>
+    </div>
+</div>
+

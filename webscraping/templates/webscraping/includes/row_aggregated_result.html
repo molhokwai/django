@@ -1,0 +1,47 @@
+
+
+    <!-- webscraping/includes/row_aggregated_result.html -->
+    <tr class="shadow-lg">
+        <td>
+            <font
+                class="url border-green-700 shadow-sm text-green-900 tracking-wider">
+                {{ aggregated_result.NAME }}
+            </font>
+        </td>
+
+        <td>
+            <font
+                class="url border-green-700 shadow-sm text-green-900 tracking-wider">
+                {{ aggregated_result.AGE }}
+            </font>
+        </td>
+
+        <td>
+            <font
+                class="url border-green-700 shadow-sm text-green-900 tracking-wider">
+                {{ aggregated_result.LOCATION }}
+            </font>
+        </td>
+        <td>
+            <font
+                class="url border-green-700 shadow-sm text-green-900 tracking-wider">
+                {{ aggregated_result.POSSIBLE_RELATIVES }}
+            </font>
+        </td>
+        <td>
+            <font
+                class="url border-green-700 shadow-sm text-green-900 tracking-wider">
+                {% if aggregated_result.VERIFIED %}
+                    <span class="fas fa-check text-green-900"></span>
+                {% endif %}
+            </font>
+        </td>
+        <td>
+            <font
+                class="url border-green-700 shadow-sm text-green-900 tracking-wider">
+                {% if aggregated_result.CRIMINAL_RECORDS %}
+                    <span class="fas fa-x text-red-600"></span>
+                {% endif %}
+            </font>
+        </td>
+    </tr>

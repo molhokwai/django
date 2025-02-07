@@ -1,0 +1,14 @@
+[
+    [
+        { "get": "http://www.python.org" },
+        { "assert_in_driver_title": "Python"}
+    ],[
+        { "find": "q", "by": "By.NAME"  },
+        { "clear": "" },
+        { "send_keys": "pycon" },
+        { "send_keys": "Keys.RETURN" },
+        { "assert_not_in_input": "No results found." }
+    ],[
+        { "print_OK": "asserts" }
+    ]
+]

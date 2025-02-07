@@ -1,0 +1,188 @@
+
+
+<!-- webscrape/manage.html -->
+<div class="mb-5">
+    {% load define_action  %}
+
+    {% define 'selected' as select_website_url  %}
+    {% if webscrape.website_url %}
+        {% define '' as select_website_url %}
+    {% endif %}
+
+    {% define 'selected' as select_task_name  %}
+    {% if webscrape.task_name %}
+        {% define '' as select_task_name %}
+    {% endif %}
+
+    {% define 'selected' as select_country  %}
+    {% if webscrape.country %}
+        {% define '' as select_country %}
+    {% endif %}
+
+    <script>
+        const scrapeOrTestTaskFields = {
+            "truthfinder.sequences/find-person-in-usa.sequence.json": [
+                "firstName", "lastName", "middleName", "city", "age"
+            ],
+            "afriscience.sequences/auteur-soumettre-un-article.sequence.json": [
+                "first_name", "last_name", "institutional_affiliation", "email", "phone_number", "address",
+            ],
+        }
+
+        const onScrapeOrTestTaskChange = (e) => {
+            const value = e.target.value;
+
+            setDropdownBySearchValue("website_url", value.split(".")[0]);
+
+            const values = scrapeOrTestTaskFields[value];
+            let i = 0;
+            document.querySelectorAll("input[name='field']").forEach((input) => {
+                input.value = "";
+                if(i < values.length){ input.value = values[i]; }
+                i += 1;
+            });
+        }
+
+        const setDropdownByValue = (dropdownId, value) => {
+            const dropdown = document.getElementById(dropdownId);
+
+            if (!dropdown) {
+                console.error(`Dropdown with ID '${dropdownId}' not found.`);
+                return;
+            }
+
+            for (let i = 0; i < dropdown.options.length; i++) {
+                if (dropdown.options[i].value === value) {
+                    dropdown.selectedIndex = i;
+                    return; // Exit after setting the option
+                }
+            }
+
+            console.warn(`Option with value '${value}' not found in dropdown '${dropdownId}'.`);
+        }
+
+        const setDropdownBySearchValue = (dropdownId, searchValue) => {
+            const dropdown = document.getElementById(dropdownId);
+
+            if (!dropdown) {
+                console.error(`Dropdown with ID '${dropdownId}' not found.`);
+                return;
+            }
+
+            for (let i = 0; i < dropdown.options.length; i++) {
+                if (dropdown.options[i].value.indexOf(searchValue) >= 0) {
+                    dropdown.selectedIndex = i;
+                    return; // Exit after setting the option
+                }
+            }
+
+            console.warn(`Option with value '${value}' not found in dropdown '${dropdownId}'.`);
+        }
+
+        let module_path;
+        document.addEventListener('DOMContentLoaded', (event) => {
+
+            module_path = document.getElementById('module_path').value;
+
+            document.querySelectorAll('input[name="field"]').forEach(function(field){
+                field.addEventListener('change', (e) => {
+                    Unicorn.call(module_path, 'set_task_variable', (field.id, field.value));
+                });
+            });
+
+            document.querySelectorAll('input[name="value"]').forEach(function(field){
+                field.addEventListener('change', (e) => {
+                    Unicorn.call(module_path, 'set_task_variable', (field.id, field.value));
+                });
+            });
+
+            document.getElementById("task_name")
+                .addEventListener('change', onScrapeOrTestTaskChange);
+
+            ["task_name", "state", "country"].forEach((id) => {
+                document.getElementById(id).selectedIndex = 0;
+            });
+        });
+    </script>
+    <input type="hidden" id="module_path" value="webscraping.manage_custom" /> 
+
+
+    <select unicorn:model.defer="website_url"
+            id="website_url" name="website_url"
+            class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider hidden">
+        <option {{select_website_url}}>Select a website...</option>
+        {% for website_url in website_urls %}
+
+            {% define '' as website_url_selected %}
+            {% if webscrape.website_url == website_url.0 %}
+                {% define 'selected' as website_url_selected %}
+            {% endif %}
+
+            <option value="{{ website_url.0 }}"
+                           {{website_url_selected}}>{{ website_url.1 }}</option>
+
+        {% endfor %}
+    </select>
+
+    <!--
+    <input unicorn:model.defer="website_url"      type="text"   id="website_url"   placeholder="website url, ex: https://www.truthfinder.com/people-search/" value="{{webscrape.website_url}}"    
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider w-4/5" /> *
+    -->
+
+    <select unicorn:model.defer="task_name"
+            id="task_name" name="task_name"
+            class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider">
+        <option {{select_task_name}}> > SELECT A TEST OR WEBSCRAPE TASK...</option>
+        {% for webscrape_task in webscrape_tasks %}
+
+            {% define '' as task_name_selected %}
+            {% if webscrape.task_name == webscrape_task.0 %}
+                {% define 'selected' as task_name_selected %}
+            {% endif %}
+
+            <option value="{{ webscrape_task.0 }}"
+                           {{task_name_selected}}>{{ webscrape_task.1 }}</option>
+
+        {% endfor %}
+    </select>
+
+    <span class="block">&nbsp;</span>
+
+    {% for i in "0123456789" %}
+        {% define "" as required_attr %}
+        {% define "" as required_mark %}
+        {% if forloop.first %}
+            {% define "required" as required_attr %}
+            {% define "*" as required_mark %}
+        {% endif %}
+        <input type="text" id="field-{{forloop.counter.0}}" name="field" placeholder="Field"
+        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+        <input type="text" id="value-{{forloop.counter.0}}" name="value"   placeholder="Value"
+        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" {{required_attr}} /> {{required_mark}}
+        <span class="block">&nbsp;</span>
+    {% endfor %}
+
+    <select  unicorn:model.defer="country" id="country" 
+        class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider">
+
+        <option {{ select_country }}>SELECT A COUNTRY...</option>
+        {% for country in countries %}
+
+            {% define '' as country_selected %}
+            {% if webscrape.country == country.0 %}
+                {% define 'selected' as country_selected %}
+            {% endif %}
+
+            <option value="{{ country.0 }}"
+                    {{ country_selected }}>{{ country.1 }}</option>
+        {% endfor %}
+    </select>
+    <span class="block">&nbsp;</span>
+
+
+    <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
+        <button unicorn:click="scrape"
+            class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">Test</button>
+    </div>
+</div>
+
