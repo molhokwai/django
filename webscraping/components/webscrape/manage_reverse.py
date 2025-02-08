@@ -104,7 +104,7 @@ class ManageReverseView(UnicornView):
         self.task_variables = "..."
 
         # Get/Generate task id with Task handler
-        self.parent.taksHandler.queue_task(
+        self.parent.taskHandler.queue_task(
             webscrape_steps_long_running_method, [ _input ] )
 
         self.add()

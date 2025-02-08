@@ -67,7 +67,7 @@
             let $firstName = document.querySelector('#firstName');
             const date_time_str = getCurrentDateTimeStr();
 
-            let title = $title.value;
+            let title = $title ? $title.value : "";
             let lastName = $lastName.value;
             if(title){
                 title = `${title} | ${date_time_str}`
@@ -81,7 +81,9 @@
                 }
             }
 
-            $title.value = title;
+            if($title){
+                $title.value = title;
+            }
             const module_path = document.getElementById('module_path').value;
             Unicorn.call(module_path, 'setTitle', title);
         };
@@ -97,7 +99,7 @@
             });
         };
     </script>
-    <input type="hidden" id="module_path" value="webscraping.manage" /> 
+    <input type="hidden" id="module_path" value="webscrape.manage" /> 
 
     <input unicorn:model.defer="website_url"      type="text"   id="website_url"   placeholder="website url, ex: https://www.truthfinder.com/people-search/" value="{{webscrape.website_url}}"    
     class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider w-4/5" /> *

@@ -47,11 +47,6 @@ class WebscrapeView(UnicornView):
         "VERIFIED", "CRIMINAL_RECORDS" 
     ]
 
-    taskHandler: TaskHandler = None
-
-
-    def __init__(self):
-        self.taskHandler = TaskHandler()
 
 
     def mount(self):
@@ -68,6 +63,8 @@ class WebscrapeView(UnicornView):
         self.previous_outputs = self.get_previous_outputs()
 
         self.aggregated_results = parse_raw_outputs()
+
+        self.taskHandler = TaskHandler()
 
         self.load_table()
 
