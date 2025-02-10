@@ -1,5 +1,6 @@
 from django_unicorn.components import UnicornView
 
+from django_app.settings import _print
 from .webscrapes import MessageStatus
 
 
@@ -29,8 +30,7 @@ class RowView(UnicornView):
         """
         Description
             @debug
-                print('\n\n----------------- RowView.book: %i, %s, %s, %s, %s -----------------\n\n' \
-                                % (self.book.pk, self.book.title, self.book.author, str(self.book.date_published), self.book.country))
+                _print('...........', VERBOSITY=3)
         """
         self.webscrape.save()
         self.is_editing = False

@@ -76,7 +76,7 @@ n btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
             <p id="taskStatus-{{ webscrape.task_id }}"
                class="taskStatus text-center">
                 {% if webscrape.task_status == "SUCCESS" %}
-                    <span class="fas fa-success text-green-900"></span>
+                    <span class="fas fa-check text-green-900"></span>
                 {% elif  webscrape.task_status == "RUNNING" %}
                     <span class="fas fa-gear text-yellow-600"></span>
                 {% elif  webscrape.task_status == "STARTED" %}
@@ -90,23 +90,35 @@ n btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
         <td>
             <p id="taskOutput-{{ webscrape.task_id }}"
                class="taskOutput">
-                {% if task_output %}               
+                {% if webscrape.task_status == 'SUCCESS' and task_output %}
                     <small>
-                        <a id="alink-{{ webscrape.task_id }}">(view sample)</a>
+                        <a id="alink-{{ webscrape.task_id }}">(view raw output)</a>
                     </small>
                     <input type="hidden"
                            id="output-{{ webscrape.task_id }}"
                            value="{{task_output}}"/>
+
+                    <!-- DOWNLOAD :: See documentation in views.export_data_to_csv -->
+                    <a href="{% url 'webscrape_export_taskoutput_to_csv' webscrape.task_id  %}" download>
+                        <span class="fa fa-download text-green-600"></span>
+                    </a>                    
                 {% else %}
-                    <small>no output generated</small>
-                    <br/>
+                    <!-- small>no output generated yet</small>
+                    <br/ -->
                     <small>
-                        <a id="alink-{{ webscrape.task_id }}">(view sample)</a>
+                        <a id="alink-{{ webscrape.task_id }}">(view raw sample)</a>
                     </small>
                     <input type="hidden"
                            id="output-{{ webscrape.task_id }}"
                            value="{{previous_outputs|random}}"/>                    
-                {% endif %}               
+                {% endif %}
+
+                {% if webscrape.by_list %}
+                    <small><span class="fa fa-list text-blue-600"></span></small>
+                {% endif %}
+                {% if webscrape.task_queue %}
+                    <small><span class="fa fa-list text-green-900"></span></small>
+                {% endif %}
             </p>
         </td>
 
@@ -135,6 +147,8 @@ n btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
                 </font>
             {% endif %}
         </td>
+
+        {% if not "middleName" in excluded_fields %}
         <td>
             {% if is_editing %}
                 <input type="text" unicorn:model.defer="webscrape.middleName"
@@ -148,6 +162,8 @@ n btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
                 </font>
             {% endif %}
         </td>
+        {% endif %}
+
         <td>
             {% if is_editing %}
                 <input type="text" unicorn:model.defer="webscrape.age"
@@ -162,15 +178,6 @@ n btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
                     {% endif %}
                 </font>
             {% endif %}
-        </td>
-        <td>
-            <font
-                class="border-green-700 shadow-sm text-green-900 tracking-wider text-md">
-                {% if webscrape.by_list %}
-                    <span class="fas fa-check text-green-900"></span>
-                {% endif %}
-                &nbsp;
-            </font>
         </td>
         <td>
             {% if is_editing %}
@@ -189,7 +196,7 @@ n btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
             {% if is_editing %}
                 <select  unicorn:model.defer="webscrape.state" id="state"
                     class="form-select rounded border-green-700 shadow-sm text-green-900
-						   tracking-wider text-sm max-w-20">
+                           tracking-wider text-sm max-w-20">
                     <option {{ select_state }}>Select a state...</option>
                     {% for state in us_states %}
 
@@ -208,5 +215,12 @@ n btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
                     {{ webscrape.state }}
                 </font>
             {% endif %}
+        </td>
+        <td class="border-green-400">
+            <font
+                class="border-green-700 shadow-sm text-green-900 tracking-wider text-sm float-right">
+                <span class="fas fa-calendar text-green-900"></span>
+                {{ webscrape.created_on|date:"D d M Y - H:i" }}
+            </font>
         </td>
     </tr>

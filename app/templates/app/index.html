@@ -4,6 +4,13 @@
 
         <div style="margin: 5em auto 5em 10em; padding: 5em; color: green; border: 1px solid green; text-align: center; font-size: 1.5em;">
             <a href="{% url 'webscrape' %}" id="webscrape">WEBSCRAPING</a>
+            <br/><a href="{% url 'webscrape_data' %}" id="webscrape-data">data</a>
         </div>
+
+        <style>
+            a#webscrape-data {
+                font-size: .5em;
+            }
+        </style>
 
 {% endblock content %}

@@ -1,0 +1,59 @@
+
+{% extends "_base.html" %}
+{% load static %}
+{% load i18n %}
+{% load define_action %}
+{% load index %} 
+{% load unicorn %}
+{% csrf_token %}
+
+{% block title %}⚙ Webscraping{% endblock title %}
+
+{% block content %}
+
+    <div class="bg-slate-800 w-full top-0 py-4 px-4">
+        <h1 class="text-3xl text-green-100 text-center">
+              {% trans "Webscraping" %}
+        </h1>
+          <h3 class="text-3x1 text-green-100 text-center">
+              Webscrape execution and data management interface...
+        </h3>
+        <p class="text-gray text-left"></p>
+    </div>
+
+    <main class="relative top-8 mx-auto mb-20 min-w-672-px overscroll-y-auto">
+        <div class="section section-lg mx-auto align-center px-4">
+            <div class="container">
+
+                <!-- row 1 | -->
+                <div class="row justify-content-center mb-5 mb-lg-6">
+
+                  <div class="col-6 col-md-3 text-center">
+                    <div class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle mb-4">
+                      <span class="fas fa-horse-head text-tertiary"></span>
+                    </div>
+                  </div>
+                </div>
+                <!-- /row 1 -->
+
+                <!-- row 2 | -->
+                <div class="row forms mt-10 overflow-auto">
+                    <!-- webscraping/webscrape.html unicorn template --> 
+                    {% unicorn 'webscrape.webscrape_data' %}
+                     
+                </div>
+                <!-- /row 2 -->
+
+            </div>
+            <!-- /.container -->
+        </div>
+        <!-- /.section -->
+    </main>
+
+    <div class="bg-slate-800 w-full fixed bottom-0 py-2 mt-20 text-center text-green-100">
+        <small>
+              @{% trans "inception completed." %}
+        </small>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "_base.html" %}
+ 
+{% block content %}
+
+        <div style="margin: 5em auto 5em 10em; padding: 5em; color: red; border: 1px solid red; text-align: center; font-size: 1.5em;">
+            <a href="#" id="error-title">ERROR</a>
+            <br/><a href="javascript:window.location.history(-1)" id="history-back">An error occured. Please go back and retry, or contact your administrator...</a>
+        </div>
+
+        <style>
+            a#webscrape-data {
+                font-size: .9em;
+            }
+        </style>
+
+{% endblock content %}

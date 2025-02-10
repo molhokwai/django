@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf import settings
 from django.urls import path, include
+from django.views.generic.base import RedirectView
 from django.conf.urls.static import static
 
 
@@ -26,6 +27,19 @@ urlpatterns = [
     path("", include("app.urls")),
     path("webscraping/", include("webscraping.urls")),
     path("__reload__/", include("django_browser_reload.urls")),
+
+    # Route for favicon.ico
+    # ---------------------
+    path(
+        'favicon.ico',
+        RedirectView.as_view(url=settings.STATIC_URL + 'images/favicon.ico', permanent=True)
+    ),
+
+    # Route for site.webmanifest
+    path(
+        'site.webmanifest',
+        RedirectView.as_view(url=settings.STATIC_URL + 'site.webmanifest', permanent=True)
+    ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

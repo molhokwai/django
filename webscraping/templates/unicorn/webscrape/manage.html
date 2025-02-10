@@ -1,8 +1,18 @@
 
 
 <!-- webscrape/manage.html -->
-<div class="mb-5">
+<div class="mb-5 manage-form">
     {% load define_action  %}
+
+    {% define 'selected' as select_website_url  %}
+    {% if webscrape.website_url %}
+        {% define '' as select_website_url %}
+    {% endif %}
+
+    {% define 'selected' as select_state  %}
+    {% if webscrape.state %}
+        {% define '' as select_state %}
+    {% endif %}
 
     {% define 'selected' as select_state  %}
     {% if webscrape.state %}
@@ -10,41 +20,6 @@
     {% endif %}
 
     <script>
-        (function () {
-            document.addEventListener('input', function (e) {
-                const isFileInput = e.target && e.target.type === 'file';
-                if (!isFileInput) {
-                    return;
-                }
-                const fileInput = e.target;
-
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    console.log('Uploading file', file);
-                    const fileSizeMB = file.size / (1024 * 1024); // Size in MB
-
-                    if (fileSizeMB > 10) {
-                        alert('File size exceeds the limit of 10MB.');
-                        return;
-                    }
-                    const reader = new FileReader();
-
-                    reader.onload = function (event) {
-                        fileInput.parentNode.querySelector('input.file-data').value = event.target.result;
-                        fileInput.parentNode.querySelector('input.file-data').dispatchEvent(new Event('input', {bubbles: true}))
-                        fileInput.parentNode.querySelector('input.file-name').value = file.name;
-                        fileInput.parentNode.querySelector('input.file-name').dispatchEvent(new Event('input', {bubbles: true}))
-                    };
-
-                    // Read the file as a data URL (base64)
-                    reader.readAsDataURL(file);
-                } else {
-                    alert('Please select a file');
-                }
-            });
-        })();
-
-
         function getCurrentDateTimeStr() {
           const now = new Date();
           const options = { 
@@ -62,6 +37,10 @@
         }
 
         const unique_title = function () {
+            /********
+             * NOT USED
+             * @ToDo :: Fix used fields clearing issue on execution...
+             ********/
             let $title = document.querySelector('#title');
             let $lastName = document.querySelector('#lastName');
             let $firstName = document.querySelector('#firstName');
@@ -88,61 +67,155 @@
             Unicorn.call(module_path, 'setTitle', title);
         };
 
+
+        let formOpacity = 1;
         window.onload = () => {
             document.querySelector('#firstName')
                     .addEventListener('change', (e) => {
-                unique_title();
+                /********
+                 * COMMENTED OUT - NOT USED
+                 * @ToDo :: Fix used fields clearing issue on execution...
+                 * 
+                 *   `unique_title();`
+                 ********/
             });
             document.querySelector('#lastName')
                     .addEventListener('change', (e) => {
-                unique_title();
+                /********
+                 * COMMENTED OUT - NOT USED
+                 * @ToDo :: Fix used fields clearing issue on execution...
+                 * 
+                 *   `unique_title();`
+                 ********/
             });
+
+            document.querySelector('#website_url')
+                    .addEventListener('change', (e) => {
+
+                console.log(`document.querySelector('#website_url').addEventListener('change', (e))`);
+
+                let dataForms = document.querySelectorAll(".website-data-form");
+                console.log(`dataForms.length: ${dataForms.length}`);
+                document.querySelectorAll(".website-data-form").forEach(function(dataForm){
+
+                    console.log(`e.target.value: ${e.target.value}`);
+                    console.log(`dataForm.dataset.website_url: ${dataForm.dataset.website_url}`);
+
+                    if(dataForm.dataset.website_url == e.target.value){
+                        dataForm.classList.remove("hidden");
+                    } else {
+                        dataForm.classList.add("hidden");                        
+                    }
+                })
+            });
+
+            {% if not webscrape.website_url %}
+                document.querySelector('#website_url').value = 'select';
+            {% endif %}
+
+            document.querySelectorAll('button.search').forEach((button) => {
+                button.addEventListener('click', (e) => {
+                    const interval = setInterval(() => {
+                        console.log(formOpacity);
+                        if (formOpacity > 0) {
+                            formOpacity -= 0.08;
+                            document.querySelectorAll('.manage-form').forEach((form) => {
+                                form.style.opacity = formOpacity;
+                            });
+                        } else {
+                            clearInterval(interval); // Stop the interval when opacity reaches 0
+                            setTimeout(() => {
+                                window.location.reload(); // Reload the page after a delay
+                            }, 1000); // Adjust the delay (in milliseconds) as needed
+                        }
+                    }, 200); // Adjust the interval delay (in milliseconds) as needed
+                });
+            });       
         };
     </script>
     <input type="hidden" id="module_path" value="webscrape.manage" /> 
 
-    <input unicorn:model.defer="website_url"      type="text"   id="website_url"   placeholder="website url, ex: https://www.truthfinder.com/people-search/" value="{{webscrape.website_url}}"    
-    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider w-4/5" /> *
-
-    <span class="block">&nbsp;</span>
-
-    <input unicorn:model.defer="firstName"      type="text"   id="firstName"   placeholder="First name"    value="{{webscrape.firstName}}"
-    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
-    <input unicorn:model.defer="lastName"      type="text"   id="lastName"   placeholder="Last name"    value="{{webscrape.lastName}}"
-    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" required /> *
-    <input unicorn:model.defer="middle_name"      type="text"   id="middle_name"   placeholder="Middle name"    value="{{webscrape.middle_name}}"
-    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
-    <span class="block">&nbsp;</span>
-
-    <input unicorn:model.defer="middleInitial"      type="text"   id="middleInitial"   placeholder="Middle initials"    value="{{webscrape.middleInitial}}"
-    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
-    <input unicorn:model.defer="age"     type="text"   id="age"  placeholder="Age"   value="{{webscrape.age}}"
-    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
-    <span class="block">&nbsp;</span>
-
-    <input unicorn:model.defer="city"   type="text"   id="city"   placeholder="ex: Los angeles"    value="{{webscrape.city}}"
-        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
-    <select  unicorn:model.defer="state" id="state" 
+    <select unicorn:model.defer="website_url" id="website_url" 
         class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider">
 
-        <option {{ select_state }}>SELECT A STATE...</option>
-        {% for state in us_states %}
+        <option value="select" {{ select_website_url }}>Select a website...</option>
 
-            {% define '' as state_selected %}
-            {% if webscrape.state and state.0 == webscrape.state %}
-                {% define 'selected' as state_selected %}
+        {% for website_url in website_urls %}
+
+            {% define '' as website_url_selected %}
+            {% if webscrape.website_url and website_url.0 == webscrape.website_url %}
+                {% define 'selected' as website_url_selected %}
             {% endif %}
 
-            <option value="{{ state.0 }}"
-                    {{ state_selected }}>{{ state.1 }}</option>
+            <option value="{{ website_url.0 }}"
+                    {{ website_url_selected }}>{{ website_url.1 }}</option>
+
         {% endfor %}
-    </select>
+    </select> * 
+
+    <!-- input type="text"   id="website_url"   placeholder="website url, ex: https://www.truthfinder.com/people-search/" value="{{webscrape.website_url}}"    
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider w-4/5" / -->
     <span class="block">&nbsp;</span>
 
+    <div data-website_url="truthfinder.com" class="website-data-form hidden">
+        <span class="block">&nbsp;</span>
 
-    <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
-        <button unicorn:click="scrape"
-            class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">Search</button>
+        <input unicorn:model.defer="firstName"      type="text"   id="firstName"   placeholder="First name"    value="{{webscrape.firstName}}"
+        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+        <input unicorn:model.defer="lastName"      type="text"   id="lastName"   placeholder="Last name"    value="{{webscrape.lastName}}"
+        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" required /> *
+        <input unicorn:model.defer="middle_name"      type="text"   id="middle_name"   placeholder="Middle name"    value="{{webscrape.middle_name}}"
+        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+        <span class="block">&nbsp;</span>
+
+        <input unicorn:model.defer="middleInitial"      type="text"   id="middleInitial"   placeholder="Middle initials"    value="{{webscrape.middleInitial}}"
+        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+        <input unicorn:model.defer="age"     type="text"   id="age"  placeholder="Age"   value="{{webscrape.age}}"
+        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+        <span class="block">&nbsp;</span>
+
+        <input unicorn:model.defer="city"   type="text"   id="city"   placeholder="ex: Los angeles"    value="{{webscrape.city}}"
+            class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
+        <select  unicorn:model.defer="state" id="state" 
+            class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider">
+
+            <option {{ select_state }}>SELECT A STATE...</option>
+            {% for state in us_states %}
+
+                {% define '' as state_selected %}
+                {% if webscrape.state and state.0 == webscrape.state %}
+                    {% define 'selected' as state_selected %}
+                {% endif %}
+
+                <option value="{{ state.0 }}"
+                        {{ state_selected }}>{{ state.1 }}</option>
+            {% endfor %}
+        </select>
+
+
+        <span class="block">&nbsp;</span>
+
+        <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
+            <button unicorn:click="scrape"
+                class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">Search</button>
+        </div>
+
+    </div>
+
+    <div id="locahost-data-form" data-website_url="localhost" class="website-data-form hidden">
+        <heading>Click 'Search' to test scrape local data...</heading>
+
+        <span class="block">&nbsp;</span>
+
+        <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
+            <button unicorn:click="scrape" id="manage-submit"
+                class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">Search</button>
+        </div>
+
+    </div>
+
+    <div data-website_url="afriscience.org" class="website-data-form hidden">
+        <heading>No webscrape implemented...</heading>
     </div>
 </div>
 

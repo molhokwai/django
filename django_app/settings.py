@@ -12,12 +12,24 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from shutil import which
-import os
+import os, logging
+
+
+# Printing
+# Verbosity: 0 | 1 | 2 | 3
+# ------------------------
+PRINT_VERBOSITY = 0
+def _print(val, VERBOSITY=0):
+    if PRINT_VERBOSITY > 0:
+        print(val)
+    elif PRINT_VERBOSITY >= VERBOSITY:
+        print(val)
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-print('--------------| BASE_DIR :: ', BASE_DIR)
+_print('--------------| BASE_DIR :: %s' % BASE_DIR, VERBOSITY=2)
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -117,7 +129,7 @@ WSGI_APPLICATION = 'django_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db/db.sqlite3',
     }
 }
 # ------
@@ -281,6 +293,51 @@ mimetypes.add_type("text/css", ".css", True)
 # ------------------------
 
 WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
+WEBSCRAPER_HEADLESS = True
 WEBSCRAPER_CACHING_DURATION = 3600
 WEBSCRAPER_THREADS_MAX = 3
+
+
+
+# ------------------------
+# Logging, Printing
+#
+# ------------------------
+
+# Create a logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)  # Set the base logger level to DEBUG (captures all levels)
+
+# Create formatters
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Create handlers for each log level
+debug_handler = logging.FileHandler('log/debug.log')
+debug_handler.setLevel(logging.DEBUG)
+debug_handler.setFormatter(formatter)
+
+info_handler = logging.FileHandler('log/info.log')
+info_handler.setLevel(logging.INFO)
+info_handler.setFormatter(formatter)
+
+warning_handler = logging.FileHandler('log/warning.log')
+warning_handler.setLevel(logging.WARNING)
+warning_handler.setFormatter(formatter)
+
+error_handler = logging.FileHandler('log/error.log')
+error_handler.setLevel(logging.ERROR)
+error_handler.setFormatter(formatter)
+
+critical_handler = logging.FileHandler('log/critical.log')
+critical_handler.setLevel(logging.CRITICAL)
+critical_handler.setFormatter(formatter)
+
+# Add handlers to the logger
+logger.addHandler(debug_handler)
+logger.addHandler(info_handler)
+logger.addHandler(warning_handler)
+logger.addHandler(error_handler)
+logger.addHandler(critical_handler)
+
+
 

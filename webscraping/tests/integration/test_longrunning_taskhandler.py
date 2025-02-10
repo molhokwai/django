@@ -37,7 +37,7 @@ class LongRunningTaskHandlerTestCases(TransactionTestCase):
 
         @T ::   Status.STATUS instead of Status.SUCCESS
 
-                :167    taskProgress.set(
+                :167    taskProgress.set_unset(
                             Status.STATUS, progress_value,
                             progress_message=f"{output}% has been processed" )
 
@@ -150,7 +150,7 @@ class LongRunningTaskHandlerTestCases(TransactionTestCase):
         _print = LongRunningTaskHandlerTestCases._print
 
         progress_value = 0
-        taskProgress.set( 
+        taskProgress.set_unset( 
             Status.STARTED, progress_value,
             progress_message=f'The process with object "{processObj}" has been started' )
 
@@ -166,7 +166,7 @@ class LongRunningTaskHandlerTestCases(TransactionTestCase):
                 if progress_value >= 100:
                     progress_value = 100
 
-                taskProgress.set(
+                taskProgress.set_unset(
                     Status.RUNNING if progress_value < 100 else Status.SUCCESS,
                     progress_value,
                     progress_message=f"{output}% has been processed",
@@ -182,7 +182,7 @@ class LongRunningTaskHandlerTestCases(TransactionTestCase):
         final_output = f"[{ datetime.datetime.now() }] input::{ processObj }, outputs::{taskProgress.outputs}"
 
         progress_value = 100
-        taskProgress.set(
+        taskProgress.set_unset(
             Status.SUCCESS, progress_value,
             progress_message=f"{final_output}% have been processed" )
 

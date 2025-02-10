@@ -19,7 +19,7 @@
 
             <h2 id="exec-search"
                 class="section-titlemt-5 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
-                Search
+                Search for data
             </h2>
             {% unicorn 'webscrape.manage' parent=self %}
 
@@ -54,14 +54,6 @@
                 Aggregated Results
             </h2>
 
-            <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
-                <a  href="{% url 'webscrape_export_dataoutput_to_csv' webscrape_data_id  %}"
-                    class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 
-                           p-2 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">
-                       Download
-                </a>
-            </div>
-
             <table id="aggregated-results-table"
                    class="table table-auto rounded border-green-300 bg-slate-100">
                 <thead class="p-4 text-gray">
@@ -91,7 +83,31 @@
 
 
         <div class="col-right">
-            {% unicorn 'webscrape.table' webscrapes=webscrapes parent=view %}
+            <table id="webscrapes-table"
+                   class="table table-auto rounded border-green-300 bg-slate-100">
+                <thead class="p-4 text-gray">
+                    <tr>
+                        <!--
+                            <td class="min-w-32">
+                                &nbsp;
+                            </td>
+                        -->
+
+                        {% for field in table_fields %}
+                            <td class="bg-green-600 first:rounded-l-lg last:rounded-r-lg p-2
+                                       text-green-100 tracking-widest border-green-100">
+                                {{ field|title }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="webscrape-body">
+                    {% for webscrape in webscrapes %}
+                        {% unicorn 'webscrape.row' webscrape=webscrape key=webscrape.id parent=self %}
+                    {% endfor %}
+                </tbody>
+            </table>
+              
         </div>
 
         <style>
@@ -213,20 +229,6 @@
 
                 /**
                  * --------------- 
-                 * DO NOT UPDATE DURING SEARCH... 
-                 * ---------------
-                 **/
-                let firstName = document.getElementById("firstName").value;
-                let lastName = document.getElementById("lastName").value;
-
-                if(firstName || lastName){
-                    console.log('updateTasks interrupted during search...');
-                    return;
-                }
-
-
-                /**
-                 * --------------- 
                  * PROGRESS BARS 
                  * ---------------
                  **/
@@ -271,18 +273,6 @@
                 });
             }
             setInterval(updateTasks, 20000);
-
-
-            function clear_fields() {
-                document.getElementById('title').value = '';
-                document.getElementById('firstName').value = '';
-                document.getElementById('lastName').value = '';
-                document.getElementById('middleName').value = '';
-                document.getElementById('middleInitial').value = '';
-                document.getElementById('age').value = '';
-                document.getElementById('city').value = '';
-                document.getElementById('state').value = '';
-            }
 
 
             function openOverlay(content) {

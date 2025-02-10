@@ -7,4 +7,5 @@ from . import views
 urlpatterns = [
     path("", views.index, name='app_index'),
     path("index/", views.index, name='app_index'),
+    path("error/", views.error, name='error'),
 ]

@@ -1,12 +1,11 @@
 from django_unicorn.components import UnicornView, QuerySetType
 from django.conf import settings
 
-from datetime import date, datetime
+from django_app.settings import _print
 from webscraping.models import Webscrape
-
-
 from .webscrapes import MessageStatus
 
+from datetime import date, datetime
 
 class ManageView(UnicornView):
     """
@@ -89,7 +88,10 @@ class ManageView(UnicornView):
         # -
         # self.save_file()
 
-        print('------------------ | ----------------', str(self.title), str(self.age))
+        _print(
+            '------------------ | ---------------- %s, %s' % str(self.title), str(self.age), 
+            VERBOSITY=3
+        )
         Webscrape.objects.create(
             website_url = self.website_url,
             title = self.title,

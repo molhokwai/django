@@ -2,12 +2,12 @@ from django_unicorn.components import UnicornView, QuerySetType
 from django.conf import settings
 from django.forms.models import model_to_dict
 
-from datetime import date, datetime
+from django_app.settings import _print
 from webscraping.models import Webscrape, TaskProgress, TaskHandler
-
 from webscraping.views import webscrape_steps_long_running_method
 
 
+from datetime import date, datetime
 from enum import Enum
 from typing import Union
 import copy
@@ -67,12 +67,13 @@ class ManagePeopleView(UnicornView):
 
 
     def _exec(self, line, variables, i):
-        print(
+        _print(
             """
             --------- EXECUTING ------------
                 name: "%s"...
             --------------------------------
-            """ % str(variables)
+            """ % str(variables),
+            VERBOSITY=0
         )
 
         webscrape = Webscrape(
@@ -90,9 +91,12 @@ class ManagePeopleView(UnicornView):
 
         # Get task variables from user given + model fields
         webscrape.task_variables = model_to_dict(self.webscrape)
-        print('-------------------------| ', webscrape.task_variables)
+        _print(
+            '-------------------------| %s' % webscrape.task_variables,
+            VERBOSITY=3
+        )
 
-        # Get/Generate task id with Task handler
+        # Queue task with Task handler
         self.parent.taskHandler.queue_task(
             webscrape_steps_long_running_method, [ webscrape ] )
 
@@ -138,7 +142,7 @@ class ManagePeopleView(UnicornView):
                 self._exec(line, variables, i)
                 i += 1
             else:
-                print(
+                _print(
                     """
                     ---------- SKIPPING ------------
                         name: "%s" (Processed %s)
@@ -146,7 +150,8 @@ class ManagePeopleView(UnicornView):
                     """ % (
                         str(variables),
                         "✓" if line.find("✓") < 0 else "✗"
-                     )
+                    ),
+                    VERBOSITY=0
                 )
 
         return self.parent.load_table(force_render=True)
