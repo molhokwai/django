@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from shutil import which
 import os, logging
+from datetime import timedelta
 
 
 # Printing
@@ -296,6 +297,8 @@ WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
 WEBSCRAPER_HEADLESS = True
 WEBSCRAPER_CACHING_DURATION = 3600
 WEBSCRAPER_THREADS_MAX = 3
+WEBSCRAPER_THREAD_TIMEOUT = timedelta(seconds=10)  # Stop after 10 minutes
+WEBSCRAPER_TASK_MAX_ATTEMPTS = 3
 
 
 

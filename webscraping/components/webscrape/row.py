@@ -67,5 +67,3 @@ class RowView(UnicornView):
         self.parent.messages_display(MessageStatus.SUCCESS, "Item saved.")
         self.parent.load_table()
 
-        return self.parent.reload()
-

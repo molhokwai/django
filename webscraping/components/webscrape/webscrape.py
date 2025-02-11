@@ -8,9 +8,10 @@ from django.contrib import messages
 from django_app.settings import _print
 from webscraping.models import (
     Webscrape, WebscrapeData,
-    WebscrapeTasks, WebsiteUrls,
+    WebscrapeTasks, WebscrapeTaskNameChoices,
+    WebsiteUrls,
     Countries, USStates,
-    Status, TaskHandler
+    Status,
 )
 from webscraping.views import (
     parse_raw_outputs,
@@ -63,18 +64,13 @@ class WebscrapeView(UnicornView):
         WebscrapeData.periodic_save_aggregated_results(self.aggregated_results)
         self.webscrape_data_id = WebscrapeData.objects.first().id
 
-        self.taskHandler = TaskHandler()
-
         self.load_table()
 
 
     def load_table(self, webscrape: Webscrape = None, force_render=False):
 
-        print(self.children)
         for child in self.children:
-            print(child.__dict__)
             if str(child).find('TableView') >= 0:
-                print('----------------| child.load_table()')
                 child.load_table()
 
         self.force_render = force_render
@@ -85,7 +81,7 @@ class WebscrapeView(UnicornView):
 
 
 
-    def scrape_by(self, 
+    def queue_task(self, 
                     webscrape: Union[ Webscrape, None ]  = None,
                     task_id: Union[ str, None ] = None) -> Webscrape:
         """
@@ -111,10 +107,11 @@ class WebscrapeView(UnicornView):
             _webscrape = Webscrape.objects.get(task_id=task_id)
 
         else:
-            raise ValueError("webscraping:unicorn :: webscrape.WebscrapeView.scrape_by: "
+            raise ValueError("webscraping:unicorn :: webscrape.WebscrapeView.queue_task: "
                              "One of <webscrape:Webscrape> or <task_id: str> must be provided...")
 
         # Get task variables from user given + model fields
+        # -------------------------------------------------
         if not _webscrape.task_variables:
             _webscrape.task_variables = model_to_dict(_webscrape)
             _print(
@@ -122,9 +119,11 @@ class WebscrapeView(UnicornView):
                 VERBOSITY=3
             )
 
-        # Queue task with Task handler
-        self.taskHandler.queue_task(
-            webscrape_steps_long_running_method, [ _webscrape ] )
+        # Set task to be picked and queued
+        # --------------------------------
+        _webscrape.task_todo = WebscrapeTaskNameChoices.WEBSCRAPE_STEPS.value
+        _webscrape.task_attempts = _webscrape.task_attempts + 1
+        _webscrape.save()
 
         return webscrape
 

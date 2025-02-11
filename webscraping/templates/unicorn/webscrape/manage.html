@@ -68,8 +68,13 @@
         };
 
 
-        let formOpacity = 1;
-        window.onload = () => {
+        let formsOpacity = {
+            "manageForm": 1,
+            "manageCustomForm": 1,
+            "managePeopleForm": 1,
+        };
+        document.addEventListener('DOMContentLoaded', (event) => {
+
             document.querySelector('#firstName')
                     .addEventListener('change', (e) => {
                 /********
@@ -89,54 +94,68 @@
                  ********/
             });
 
-            document.querySelector('#website_url')
-                    .addEventListener('change', (e) => {
 
-                console.log(`document.querySelector('#website_url').addEventListener('change', (e))`);
+            document.querySelectorAll('.website-url').forEach(function(select){
 
-                let dataForms = document.querySelectorAll(".website-data-form");
-                console.log(`dataForms.length: ${dataForms.length}`);
-                document.querySelectorAll(".website-data-form").forEach(function(dataForm){
+                select.addEventListener('change', (e) => {
+                    console.log(`document.querySelector('#website_url').addEventListener('change', (e))`);
 
-                    console.log(`e.target.value: ${e.target.value}`);
-                    console.log(`dataForm.dataset.website_url: ${dataForm.dataset.website_url}`);
+                    let dataForms = document.querySelectorAll(`.${select.dataset.formclass} .website-data-form`);
+                    console.log(`dataForms.length: ${dataForms.length}`);
+                    dataForms.forEach(function(dataForm){
 
-                    if(dataForm.dataset.website_url == e.target.value){
-                        dataForm.classList.remove("hidden");
-                    } else {
-                        dataForm.classList.add("hidden");                        
-                    }
-                })
+                        console.log(`e.target.value: ${e.target.value}`);
+                        console.log(`dataForm.dataset.website_url: ${dataForm.dataset.website_url}`);
+
+                        if(dataForm.dataset.website_url == e.target.value){
+                            dataForm.classList.remove("hidden");
+                        } else {
+                            dataForm.classList.add("hidden");                        
+                        }
+                    })
+                });
             });
 
             {% if not webscrape.website_url %}
-                document.querySelector('#website_url').value = 'select';
+                document.querySelector('.manage-form #website_url').value = 'select';
             {% endif %}
 
-            document.querySelectorAll('button.search').forEach((button) => {
+            document.querySelectorAll('button.submit').forEach((button) => {
                 button.addEventListener('click', (e) => {
                     const interval = setInterval(() => {
+                        let formOpacity = formsOpacity[button.dataset.form];                        
                         console.log(formOpacity);
+
                         if (formOpacity > 0) {
                             formOpacity -= 0.08;
-                            document.querySelectorAll('.manage-form').forEach((form) => {
+                            document.querySelectorAll(`.${button.dataset.formclass}`).forEach((form) => {
                                 form.style.opacity = formOpacity;
                             });
                         } else {
                             clearInterval(interval); // Stop the interval when opacity reaches 0
                             setTimeout(() => {
-                                window.location.reload(); // Reload the page after a delay
-                            }, 1000); // Adjust the delay (in milliseconds) as needed
+                                // ! DO NOT RELOAD - Parent children windows references must be kept...
+                                //   window.location.reload(); // Reload the page after a delay
+                                // ----------------------------------------------------------
+
+                                // Restore the form after a delay
+                                document.querySelectorAll(`.${button.dataset.formclass}`).forEach((form) => {
+                                    form.style.opacity = 1;
+                                });
+                                formsOpacity[button.dataset.form] = 1;
+                            }, 3000); // Adjust the delay (in milliseconds) as needed
                         }
+
+                        formsOpacity[button.dataset.form] = formOpacity;
                     }, 200); // Adjust the interval delay (in milliseconds) as needed
                 });
             });       
-        };
+        });
     </script>
     <input type="hidden" id="module_path" value="webscrape.manage" /> 
 
-    <select unicorn:model.defer="website_url" id="website_url" 
-        class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider">
+    <select unicorn:model.defer="website_url" id="website_url" data-formclass="manage-form" 
+        class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider website-url">
 
         <option value="select" {{ select_website_url }}>Select a website...</option>
 
@@ -196,8 +215,8 @@
         <span class="block">&nbsp;</span>
 
         <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
-            <button unicorn:click="scrape"
-                class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">Search</button>
+            <button unicorn:click="scrape" data-form="manageForm"
+                class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search submit">Search</button>
         </div>
 
     </div>
@@ -208,8 +227,8 @@
         <span class="block">&nbsp;</span>
 
         <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
-            <button unicorn:click="scrape" id="manage-submit"
-                class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">Search</button>
+            <button unicorn:click="scrape" data-form="manageForm" data-formclass="manage-form"
+                class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search submit">Search</button>
         </div>
 
     </div>

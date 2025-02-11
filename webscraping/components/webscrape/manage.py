@@ -3,8 +3,7 @@ from django.conf import settings
 from django.forms.models import model_to_dict
 
 from django_app.settings import _print
-from webscraping.models import Webscrape, TaskProgress, TaskHandler
-from webscraping.views import Xwebscrape_steps_long_running_method
+from webscraping.models import Webscrape
 
 from datetime import date, datetime
 from enum import Enum
@@ -105,18 +104,13 @@ class ManageView(UnicornView):
         _print('-------------------------| %s' % self.webscrape.task_variables, VERBOSITY=3)
 
         # Scrape: Start / Queue task
-        # Xwebscrape_steps_long_running_method(self.webscrape)
-        self.webscrape = self.parent.scrape_by( webscrape = self.webscrape )
+        self.webscrape = self.parent.queue_task( webscrape = self.webscrape )
 
         self.save()
 
 
     def save(self):
         self.webscrape.save()
-        return self.parent.reload()
-
-
-    def update_list(self):
         self.parent.load_table()
 
 

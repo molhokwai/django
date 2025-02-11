@@ -11,7 +11,8 @@ import threading
 from time import sleep
 from typing import Union
 
-import uuid, copy, datetime, json
+from datetime import datetime, timedelta
+import uuid, copy, json
 from uuid import uuid1
 
 from enum import Enum
@@ -128,6 +129,11 @@ class StatusTextChoices(models.TextChoices):
     FAILED = 'FAILED', _('Failed')
 
 
+class WebscrapeTaskNameChoices(models.TextChoices):
+    WEBSCRAPE_STEPS = 'webscrape_steps_long_running_method', \
+                      'Webscrape detailed process steps long running method...'
+
+
 class Webscrape(models.Model):
     # website
     # -------
@@ -146,6 +152,10 @@ class Webscrape(models.Model):
     task_progress = models.IntegerField(default=0)
     task_status = models.CharField(max_length=20, null=True, blank=True, choices=StatusTextChoices.choices)
     task_output = models.TextField(null=True, blank=True)
+    task_todo = models.CharField(max_length=100, null=True, blank=True, choices=WebscrapeTaskNameChoices.choices,
+                                 help_text="The task to be performed for this web scraping job.")
+    task_attempts = models.IntegerField(default=0)
+
 
     # identification
     # --------------
@@ -507,7 +517,7 @@ class WebscrapeData(models.Model):
 
         # Step 3: Calculate the time difference
         # -------------------------------------------------
-        _now = datetime.datetime.now()
+        _now = datetime.now()
         _delta = _now - webscrapeData.last_modified.replace(tzinfo=None)  # Remove timezone info for comparison
 
 
@@ -537,12 +547,24 @@ class StoppableThread(threading.Thread):
 
     task_id: Union[str, None] = None  # Unique ID for the task
 
-    def __init__(self, *args, **kwargs):
-        taskProgress = kwargs["args"][1]
-        self.task_id = taskProgress.get_task_id()
+    def __init__(
+            self, 
+            timeout: timedelta = settings.WEBSCRAPER_THREAD_TIMEOUT,
+            *args, **kwargs
+        ):
+
+        if "args" in kwargs and len(kwargs["args"]) > 1:
+            taskProgress = kwargs["args"][1]
+            self.task_id = taskProgress.get_task_id()
+        else:
+            raise ValueError("Missing or invalid 'args' in kwargs")
 
         super().__init__(*args, **kwargs)
         self._stop_event = threading.Event()  # Flag to signal thread to stop
+
+        self.timeout = timeout  # Timeout duration
+        self.start_time = None  # Track when the thread starts
+
 
     def stop(self):
         """
@@ -564,13 +586,41 @@ class StoppableThread(threading.Thread):
         """
         Override the run method to periodically check the stop flag.
         """
-        super().run()
+        try:
+            super().run()
 
-        while not self.stopped():
-            print("Thread with task_id '%s' is RUNNING..." % self.task_id)
-            sleep(5)  # Sleep between checks...
-        print("Thread stopped gracefully.")
+            if self.start_time is None:
+                self.start_time = datetime.now()  # Record the start time
 
+            while not self.stopped():
+                # Check if the timeout has been reached
+                _now = datetime.now()
+                logger.debug("StoppableThread.run with task_id '%s' - "
+                             "NOW / START_TIME : %s / %s" \
+                             % (self.task_id, _now, self.start_time))
+
+                if _now - self.start_time > self.timeout:
+
+                    logger.debug("Thread with task_id '%s' stopping due to timeout..." % (self.task_id))
+                    print(f"Thread w task_id '{self.task_id}' stopping due to timeout...")
+
+                    self.stop()  # Signal the thread to stop
+                    break
+                else:
+                    # Simulate work
+                    print("Thread with task_id '%s' is RUNNING..." % self.task_id)
+                    sleep(5)  # Sleep between checks...
+
+            print("Thread stopped gracefully.")
+
+        except Exception as e:
+            msg = f"Error in thread {self.task_id}: {e}"
+            logger.debug(msg)
+            logger.error(msg)
+
+            self.stop()
+
+            print("Thread stopped gracefully due to an error.")
 
 
 
@@ -690,8 +740,8 @@ class TaskHandler:
             Start the next task in the queue if any tasks are waiting.
         """
         n = settings.WEBSCRAPER_THREADS_MAX
-        logger.debug("Taskhandler.start_next_tasks - settings.WEBSCRAPER_THREADS_MAX > : %i" % n)
-        logger.debug("Taskhandler.start_next_tasks - len(self.tasks.keys()) > : %i" % len(self.tasks.keys()))
+        logger.debug("Taskhandler.start_next_tasks - settings.WEBSCRAPER_THREADS_MAX :: %i" % n)
+        logger.debug("Taskhandler.start_next_tasks - len(self.tasks.keys()) :: %i" % len(self.tasks.keys()))
 
         while len(self.tasks.keys()) <= n:
             if len(self.tasks_queue):
@@ -758,7 +808,8 @@ class TaskHandler:
 
                 self.start_next_tasks()
 
-            # Remove the task from the tracking dictionary
+            # Nullify the thread, and remove the task from the tracking dictionary
+            self.tasks[task_id] = None
             del self.tasks[task_id]
 
 

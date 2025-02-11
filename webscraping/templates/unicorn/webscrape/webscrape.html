@@ -11,29 +11,29 @@
 
             <!--
                 <h2 id="exec-custom"
-                    class="section-title mt-5 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
+                    class="section-title mt-5 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
                     Scrape, or Test a website process
                 </h2>
                 { % unicorn 'webscrape.manage_custom' parent=self % }
             -->
 
             <h2 id="exec-search"
-                class="section-titlemt-5 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
+                class="section-titlemt-5 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
                 Search
             </h2>
             {% unicorn 'webscrape.manage' parent=self %}
 
 
             <h2 id="exec-reversesearch"
-                class="section-titlemt-8 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
-                Reverse find a person
+                class="section-titlemt-8 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
+                Reverse find
             </h2>
             {% unicorn 'webscrape.manage_reverse' parent=self %}
 
 
             <h2 id="exec-batch"
-                class="section-title mt-8 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
-                Find people
+                class="section-title mt-8 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
+                Search list
             </h2>
             {% unicorn 'webscrape.manage_people' parent=self %}
 
@@ -91,7 +91,7 @@
 
 
         <div class="col-right">
-            {% unicorn 'webscrape.table' webscrapes=webscrapes parent=view %}
+            {% unicorn 'webscrape.table' webscrapes=webscrapes parent=self %}
         </div>
 
         <style>
@@ -213,6 +213,18 @@
 
                 /**
                  * --------------- 
+                 * GET FORM FIELD VALUES TO RESTORE... 
+                 * ---------------
+                 **/
+                let formFielValues = {};
+                const getFormFieldValues = () => {
+                    document.querySelectorAll("input, select, textarea").forEach((field) => {
+                        formFielValues[field.id] = field.value;
+                    });
+                }
+
+                /**
+                 * --------------- 
                  * DO NOT UPDATE DURING SEARCH... 
                  * ---------------
                  **/
@@ -236,6 +248,7 @@
 
                     Unicorn.call('webscrape.webscrape', 'task_is_running', task_id);
                     const task_is_running = Unicorn.getReturnValue('webscrape.webscrape');
+                    console.log(1111111111);
 
                     if(!(task_id in tasksProgress)){
                         tasksProgress[task_id] = { 'has_succeeded': false };
@@ -243,6 +256,7 @@
 
                     if(task_is_running && !tasksProgress[task_id]['has_succeeded']){
 
+                        console.log(22222222222);
                         Unicorn.call('webscrape.webscrape', 
                             'get_task_progress_data', task_id);
 
@@ -251,6 +265,7 @@
                         const task_progress_value = task_progress_data.task_progress_value;
 
                         if(task_progress_data && task_progress_value) {
+                            console.log(333333333333);
                             console.log(`task_progress - ${task_id} : ${task_progress_value}`);
 
                             progressBar.style.width = `${task_progress_value}%`;
@@ -258,6 +273,7 @@
                             // Optionally, update progress text
                             const progressText = document.getElementById(`progressText-${task_id}`);
                             if (progressText) {
+                                console.log(4444444444);
                                 progressText.textContent = `${task_progress_value}%`;
                             }
 
@@ -269,8 +285,20 @@
                         }
                     }
                 });
+
+
+                /**
+                 * --------------- 
+                 * RESTORE FORM FIELD VALUES... 
+                 * ---------------
+                 **/
+                const restoreFormFieldValues = () => {
+                    document.querySelectorAll("input, select, textarea").forEach((field) => {
+                        field.value = formFielValues[field.id];
+                    });
+                }
             }
-            setInterval(updateTasks, 20000);
+            // setInterval(updateTasks, 1000*20);
 
 
             function clear_fields() {
@@ -372,6 +400,30 @@
                         openOverlay(content);
                     });
                 })
+
+                setInterval(() => {
+                    if(false){
+                        // ! DO NOT RELOAD - Parent children windows references must be kept...
+                        //   window.location.reload(); // Reload the page after a delay
+                        // ----------------------------------------------------------                        
+                        let to = setTimeout(window.location.reload, 1000*10);
+                        let b = prompt("Window reloading... press 'Cancel' to abort..");
+                        if(b){
+                            clearTimeount(to);
+                        }                        
+                    }
+                }, 1000*60*5)
+
+
+                /**
+                 * --------------- 
+                 * RELOAD TABLE... 
+                 * ---------------
+                 **/
+                function reloadTable() {
+                    Unicorn.call('webscrape.table', 'load_table', "true");
+                }
+                setInterval(reloadTable, 1000*20);
             });
         </script>
 

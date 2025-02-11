@@ -51,6 +51,7 @@ class ManageCustomView(UnicornView):
 
     task_name: str = ""
 
+    website_urls = None
     us_states = None
     countries = None
 
@@ -67,6 +68,7 @@ class ManageCustomView(UnicornView):
         _print('---------------| self.task_variables: %s' % self.task_variables, VERBOSITY=3)
 
     def mount(self):
+        self.website_urls = self.parent.website_urls
         self.countries = self.parent.countries
         self.us_states = self.parent.us_states
         self.webscrape_tasks = self.parent.webscrape_tasks       
@@ -125,9 +127,6 @@ class ManageCustomView(UnicornView):
         self.clear_fields()
         return self.parent.load_table(force_render=True)
 
-
-    def update_list(self):
-        self.parent.load_table(force_render=True)
 
 
     def clear_fields(self):

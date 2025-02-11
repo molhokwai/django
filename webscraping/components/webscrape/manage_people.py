@@ -3,8 +3,7 @@ from django.conf import settings
 from django.forms.models import model_to_dict
 
 from django_app.settings import _print
-from webscraping.models import Webscrape, TaskProgress, TaskHandler
-from webscraping.views import webscrape_steps_long_running_method
+from webscraping.models import Webscrape
 
 
 from datetime import date, datetime
@@ -46,8 +45,9 @@ class ManagePeopleView(UnicornView):
     country: str = ''
 
 
-    task_name: str = "truthfinder.sequences/find-person-in-usa.sequence.json"
+    task_name: str = "truthfinder.sequences/find-person-in-usa-new.sequence.json"
 
+    website_urls = None
     us_states = None
     countries = None
 
@@ -62,17 +62,18 @@ class ManagePeopleView(UnicornView):
         self.title = value
 
     def mount(self):
+        self.website_urls = self.parent.website_urls
         self.countries = self.parent.countries
         self.us_states = self.parent.us_states
 
 
     def _exec(self, line, variables, i):
         _print(
-            """
+            f"""
             --------- EXECUTING ------------
-                name: "%s"...
+                name: "{variables["firstName"]} {variables["lastName"]}"...
             --------------------------------
-            """ % str(variables),
+            """,
             VERBOSITY=0
         )
 
@@ -96,15 +97,11 @@ class ManagePeopleView(UnicornView):
             VERBOSITY=3
         )
 
-        # Queue task with Task handler
-        self.parent.taskHandler.queue_task(
-            webscrape_steps_long_running_method, [ webscrape ] )
+        # Scrape: Start / Queue task
+        webscrape = self.parent.queue_task( webscrape = webscrape )
 
         if i == 0:
             self.webscrape = webscrape
-            self.save()
-        else:
-            self.save_webscrape(webscrape)
 
 
 
@@ -140,6 +137,17 @@ class ManagePeopleView(UnicornView):
 
             if line.find("✓") < 0 and line.find("✗") < 0:
                 self._exec(line, variables, i)
+                _print(
+                    """
+                    ---------- PROCESSING ----------
+                        name: "%s" (Processed %s)
+                    --------------------------------
+                    """ % (
+                        f"{variables["firstName"]} {variables["lastName"]}",
+                        "✓" if line.find("✓") < 0 else "✗"
+                    ),
+                    VERBOSITY=0
+                )
                 i += 1
             else:
                 _print(
@@ -148,27 +156,12 @@ class ManagePeopleView(UnicornView):
                         name: "%s" (Processed %s)
                     --------------------------------
                     """ % (
-                        str(variables),
+                        f"{variables["firstName"]} {variables["lastName"]}",
                         "✓" if line.find("✓") < 0 else "✗"
                     ),
                     VERBOSITY=0
                 )
 
-        return self.parent.load_table(force_render=True)
-
-
-    def save(self):
-        self.webscrape.save()
-        return self.parent.load_table(force_render=True)
-
-
-    def save_webscrape(self, webscrape):
-        webscrape.save()
-        return self.parent.load_table(force_render=True)
-
-
-    def update_list(self):
-        self.parent.load_table(force_render=True)
 
 
     def clear_fields(self):
