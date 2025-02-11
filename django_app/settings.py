@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
 from shutil import which
-import os, logging
+import os, logging, sys
 from datetime import timedelta
 
 
@@ -31,21 +33,31 @@ def _print(val, VERBOSITY=0):
 BASE_DIR = Path(__file__).resolve().parent.parent
 _print('--------------| BASE_DIR :: %s' % BASE_DIR, VERBOSITY=2)
 
+sys.path.append(BASE_DIR) 
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-kc45@neob5bj2m#jj5_#^#eqz!htt#bg0hi4v)n1obnsmmy(zn'
+
+# Security
+# WARNING: keep the secret key used in production secret!
+# --------
+SECRET_KEY = str(os.getenv('SECRET_KEY'))
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 IS_LIVE = True
 IS_LOCAL = False
+IS_HEROKU = os.environ.get('DYNO') is not None
+
 if str(BASE_DIR).find('/home/nkensa/GDrive-local/Tree/') == 0:
     DEBUG = True
     IS_LIVE = False
     IS_LOCAL = True
+
+
 
 # ALLOWED_HOSTS = ["127.0.0.1", "localhost", "nkensa.pythonanywhere.com"]
 # ---------------
@@ -118,7 +130,10 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'django_app.wsgi.application'
+if IS_HEROKU:
+    WSGI_APPLICATION = 'django_app.wsgi.app'
 
 
 # Database
@@ -138,12 +153,6 @@ WSGI_APPLICATION = 'django_app.wsgi.application'
 
 # POSTGRES
 # --------
-os.environ.setdefault("PGDATABASE", "webscraper")
-os.environ.setdefault("PGUSER", "postgres")
-os.environ.setdefault("PGPASSWORD", "LeA45Jf~7ZL][e%k")
-os.environ.setdefault("PGHOST", "localhost")
-os.environ.setdefault("PGPORT", "5432")
-
 
 DATABASES = {
     'default': {
@@ -155,6 +164,13 @@ DATABASES = {
         'PORT': os.environ.get("PGPORT", "5432"),
     }
 }
+
+if WHICH_ENV != 'LOCAL' or IS_HEROKU:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600)  # Optional connection pooling
+    }
+
 # ------
 
 
@@ -233,15 +249,18 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
-# No media folder on Railway
-# --------------------------
-# MEDIA_URL = "/media/"
-# MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
-    # BASE_DIR / 'media'
+    BASE_DIR / 'media'
 ]
+
+
+if IS_HEROKU:
+    STATIC_URL = 'https://webscraper-automat-d453797748a5.herokuapp.com/static/'
+    MEDIA_URL = 'https://webscraper-automat-d453797748a5.herokuapp.com/media/'
 
 
 
