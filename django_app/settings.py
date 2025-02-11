@@ -45,13 +45,15 @@ sys.path.append(BASE_DIR)
 SECRET_KEY = 'django-insecure-kc45@neob5bj2m#jj5_#^#eqz!htt#bg0hi4v)n1obnsmmy(zn'
 
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 IS_LIVE = True
 IS_LOCAL = False
 IS_HEROKU = os.environ.get('DYNO') is not None
 
-if str(BASE_DIR).find('/home/nkensa/GDrive-local/Tree/') == 0:
+WHICH_ENV = 'LOCAL' if str(BASE_DIR).find('/home/nkensa/GDrive-local/Tree/') == 0 else 'LIVE'
+if WHICH_ENV == 'LOCAL' :
     DEBUG = True
     IS_LIVE = False
     IS_LOCAL = True
