@@ -1,6 +1,9 @@
+from django.db.models import Q
 from django.core.management.base import BaseCommand
 from webscraping.models import Webscrape
 from django_app.task_dispatcher import task_dispatch
+
+import datetime
 
 
 class Command(BaseCommand):
@@ -13,7 +16,10 @@ class Command(BaseCommand):
 
         # Fetch Webscrape objects where task_todo is not null
         # ---------------------------------------------------
-        tasks = Webscrape.objects.filter(task_todo__isnull=False)
+        tasks = Webscrape.objects.filter(
+            Q(task_todo__isnull=False)
+            & Q(created_on__gt=datetime.datetime(2025,2,11))
+        )
 
         for task in tasks:
             # Dispatch the task based on the value of task_todo

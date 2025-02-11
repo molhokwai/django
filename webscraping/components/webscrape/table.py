@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django_unicorn.components import LocationUpdate, UnicornView, QuerySetType
 from django.shortcuts import redirect
 
@@ -11,7 +12,7 @@ from webscraping.models import (
 
 from enum import Enum
 from typing import Union
-import copy
+import copy, datetime
 
 
 
@@ -35,7 +36,6 @@ class TableView(UnicornView):
                        'last_modified', 'parent', 'webscrape_children')
 
 
-
     def mount(self):
         if self.parent:
             self.us_states = self.parent.us_states
@@ -51,11 +51,17 @@ class TableView(UnicornView):
 
     def load_table(self, force_render=False):
         # self.webscrapes = Webscrape.objects.filter(Q(parent__isnull=True)).order_by("-last_modified")
-        self.webscrapes = Webscrape.objects.all().order_by("-created_on")[:50]
+        self.webscrapes = Webscrape.objects.filter(
+                Q(created_on__gt=datetime.datetime(2025,2,11))
+        ).order_by("-created_on")[:20]
 
         # Start scrape task for webscrape for which not done yet
         if False: # Debugging, cancelled...
             for webscrape in self.webscrapes:
+                if not webscrape.task_attempts:
+                    webscrape.task_attempts = 0
+                    webscrape.save()
+
                 if webscrape.task_status != Status.SUCCESS.value and not webscrape.task_id:
                     if webscrape.task_attempts < WEBSCRAPER_TASK_MAX_ATTEMPTS:
                         self.parent.queue_task(webscrape = webscrape)

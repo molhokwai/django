@@ -122,6 +122,8 @@ class WebscrapeView(UnicornView):
         # Set task to be picked and queued
         # --------------------------------
         _webscrape.task_todo = WebscrapeTaskNameChoices.WEBSCRAPE_STEPS.value
+        if not _webscrape.task_attempts:
+            _webscrape.task_attempts = 0
         _webscrape.task_attempts = _webscrape.task_attempts + 1
         _webscrape.save()
 
