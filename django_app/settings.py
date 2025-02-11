@@ -11,8 +11,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from dotenv import load_dotenv
-load_dotenv()
 from shutil import which
 import os, logging, sys
 from datetime import timedelta
@@ -43,7 +41,8 @@ sys.path.append(BASE_DIR)
 # Security
 # WARNING: keep the secret key used in production secret!
 # --------
-SECRET_KEY = str(os.getenv('SECRET_KEY'))
+# SECRET_KEY = str(os.getenv('SECRET_KEY'))
+SECRET_KEY = 'django-insecure-kc45@neob5bj2m#jj5_#^#eqz!htt#bg0hi4v)n1obnsmmy(zn'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -151,8 +150,17 @@ if IS_HEROKU:
 # ------
 
 
+
+
+
 # POSTGRES
 # --------
+os.environ.setdefault("PGDATABASE", "webscraper")
+os.environ.setdefault("PGUSER", "postgres")
+os.environ.setdefault("PGPASSWORD", "LeA45Jf~7ZL][e%k")
+os.environ.setdefault("PGHOST", "localhost")
+os.environ.setdefault("PGPORT", "5432")
+
 
 DATABASES = {
     'default': {
@@ -360,6 +368,3 @@ logger.addHandler(info_handler)
 logger.addHandler(warning_handler)
 logger.addHandler(error_handler)
 logger.addHandler(critical_handler)
-
-
-
