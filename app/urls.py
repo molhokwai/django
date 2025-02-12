@@ -6,9 +6,8 @@ from . import views
 
 urlpatterns = [
     # pages
-    path("", views.index, name='app_index'),
-    path("", views.index, name='home'),
-    path("index/", views.index, name='app_index'),
+    path("", views.journal, name='home'),
+    path("index/", views.journal, name='index'),
     path("journal/", views.journal, name='journal'),
     # auth
     path("login/", views.login_view, name="login"),

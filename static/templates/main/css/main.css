@@ -93,7 +93,6 @@ body {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
-    border-bottom: 1px solid #000000; /* Black border */
     min-height: 20em;
 }
 
@@ -218,6 +217,42 @@ body {
     text-decoration: overline;
 }
 
+button.loading {
+    opacity: .5;
+}
+
+
+.date {
+    display: block;
+    margin-top: 1.5em;
+    text-decoration: overline;
+}
+
+.wait {
+    font-style: italic;
+    color: #787878;
+    font-size: .95em;
+    padding-left: 2em;    
+}
+
+.chat_rows {
+    max-height: 10em;
+}
+
+.paginator {
+    display: flex;
+    padding: 1em;
+}
+.paginator button {
+    width: 50%;
+}
+.paginator button.previous {
+    text-align: left;
+}
+.paginator button.next {
+    text-align: right;
+}
+
 
 /*****
  * UTILITIES
@@ -274,3 +309,14 @@ body {
     margin-top: 1em;
 }
 
+
+/* --- display ---  */
+.hide {
+    display: none !important;
+}
+.block {
+    display: block !important;
+}
+.clear {
+    clear: both !important;
+}

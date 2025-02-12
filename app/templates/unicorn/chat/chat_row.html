@@ -1,0 +1,39 @@
+<div>
+    {% load unicorn %}
+
+    <div class="message user-message">
+
+        <strong>You</strong>:
+
+        <span class="text">{{ chat.prompt }}</span>
+
+        <small class="date muted-medium">
+            <span class="fa fa-calendar"></span>
+            {{ chat.created_on|date:"D d M Y - H:i" }}
+        </small>
+
+    </div>
+    <div class="message bot-message">
+
+        <strong>Ollama</strong>:
+
+        {% if chat.response %}
+
+            <span class="text">{{ chat.response }}</span>
+
+        {% else %}
+
+            <span class="text">...</span>                    
+
+        {% endif %}        
+
+        <br>
+
+        <small class="date muted-medium">
+            <span class="fa fa-calendar"></span>
+            {{ chat.last_modified|date:"D d M Y - H:i" }}
+        </small>
+
+    </div>
+    <div class="clear">&nbsp;</div>
+</div>

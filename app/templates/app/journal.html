@@ -1,6 +1,6 @@
 {% extends "_base.html" %}
 
-{% load static %}
+{% load unicorn %}
 
 {% block title %} 📰 Journal & Guidance {% endblock title %}
  
@@ -10,14 +10,8 @@
     <h3 class="muted-max text-center b-bottom-muted-max">Journal &amp; Guidance</h3>
 
     <div id="chat-container">
-        <!-- Chat messages will appear here -->
+        <!-- Chat messages appear here -->
+        {% unicorn 'chat.chat_rows' %}
     </div>
-    <div id="input-container">
-        <input type="text" id="prompt-input" placeholder="Type your message...">
-        <button id="send-button">Send</button>
-    </div>
-
-    <script src="{% static 'templates/main/js/journal.js' %}"></script>
 
 {% endblock content %}
-

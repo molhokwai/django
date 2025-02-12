@@ -1,0 +1,12 @@
+
+<div id="input-container">
+    {% load unicorn %}
+
+    <textarea unicorn:model.defer="prompt" id="prompt-input"
+              placeholder="Type your message..."></textarea>
+    <!-- input type="text" id="prompt-input" placeholder="Type your message..." -->
+    <button id="send-button"
+            unicorn:click="save_prompt"
+            unicorn:loading.attr="disabled" unicorn:loading.class="loading"
+            >Send</button>
+</div>
