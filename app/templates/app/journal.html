@@ -38,6 +38,16 @@
             min-width: 400px;
         }
 
+        #footer {
+            margin: 15em auto 0;
+            width: 60%;
+            min-width: 400px;
+            border-top: 1px solid #ababab;
+            text-align: center;
+            color: #ababab;
+            padding: 1em;
+        }
+
         #chat-container {
             flex: 1;
             overflow-y: auto;
@@ -108,6 +118,10 @@
         .text-center {
             text-align: center;            
         }
+        .icon-text {
+            letter-spacing: .001em;
+            font-size: 0.8em;            
+        }
     </style>
 
 
@@ -120,6 +134,19 @@
         <div id="input-container">
             <input type="text" id="prompt-input" placeholder="Type your message...">
             <button id="send-button">Send</button>
+        </div>
+
+        <div id="footer">
+            <p>
+                @Copyleft - 
+                <a href="mailto:mansa.trainings@gmail.com">MANSA</a> 
+                | <a href="calllto:237674410489">
+                    <!-- i class="fa fa-whatsapp" aria-hidden="true"></i -->
+                    <span class="fa fa-phone" aria-hidden="true"></span>
+                    <span class="icon-text">(whatsapp)</span>
+                    +237 674 41 04 89
+                  </a>
+            </p>
         </div>
         
     </div>
