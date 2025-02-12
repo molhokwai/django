@@ -1,0 +1,31 @@
+{% extends "_base.html" %}
+
+{% load static %}
+
+{% block title %} 🧍 Login {% endblock title %}
+
+ 
+{% block content %}
+
+    <h3 class="muted-max text-center b-bottom-muted-max">Login</h3>
+
+    <div id="input-container">
+
+        <form method="post" class="m-aut p-2">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Login</button>
+        </form>
+
+    </div>
+
+{% endblock content %}
+
+{% block auth %}
+
+    <div id="auth" class="muted-medium m-aut text-center">
+        <p class="mt-1">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+    </div>
+
+{% endblock auth %}
+

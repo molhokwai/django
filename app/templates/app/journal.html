@@ -1,195 +1,23 @@
 {% extends "_base.html" %}
 
+{% load static %}
+
 {% block title %} 📰 Journal & Guidance {% endblock title %}
  
+
 {% block content %}
 
-    <style>
-        /*****
-         * OVERRIDES
-         *****/
-        .w-full {
-          width: 100%;
-          margin: auto;
-        }
-        h3 {
-          font-size: 1.5em;
-        }
+    <h3 class="muted-max text-center b-bottom-muted-max">Journal &amp; Guidance</h3>
 
-
-        /*****
-         * THIS PAGE
-         *****/
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #ffffff; /* White background */
-            color: #000000; /* Black text */
-            margin: 0;
-            padding: 0;
-            /**
-            display: flex;
-            flex-direction: column;
-            **/
-            height: 100vh;
-        }
-        #wrapper {
-            margin: 5em auto;
-            width: 90%;
-            min-width: 400px;
-        }
-
-        #footer {
-            margin: 15em auto 0;
-            width: 60%;
-            min-width: 400px;
-            border-top: 1px solid #ababab;
-            text-align: center;
-            color: #ababab;
-            padding: 1em;
-        }
-
-        #chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            border-bottom: 1px solid #000000; /* Black border */
-            min-height: 20em;
-        }
-
-        #input-container {
-            display: flex;
-            padding: 10px;
-            background-color: #f0f0f0; /* Light gray background */
-            border-top: 1px solid #000000; /* Black border */
-        }
-
-        #prompt-input {
-            flex: 1;
-            padding: 10px;
-            font-size: 1.2em;
-            border: 1px solid #000000; /* Black border */
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-
-        #send-button {
-            padding: 10px 20px;
-            font-size: 1.1em;
-            background-color: #000000; /* Black background */
-            color: #ffffff; /* White text */
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #send-button:hover {
-            background-color: #333333; /* Dark gray on hover */
-        }
-
-        .message {
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-
-        .user-message {
-            text-align: right;
-            color: #000000; /* Black text */
-            background-color: #fafafa;
-            padding: 1em;
-            width: 60%;
-            min-width: 380px;
-            float: right;
-        }
-
-        .bot-message {
-            text-align: left;
-            color: #000000; /* Black text */
-            background-color: #fbfbf7;
-            padding: 1em;
-            clear: both;
-        }
-
-        .muted-max {
-            color: #ababab;            
-        }
-        .b-bottom-muted-max {
-            border-bottom: 1px solid #ababab;            
-        }
-        .text-center {
-            text-align: center;            
-        }
-        .icon-text {
-            letter-spacing: .001em;
-            font-size: 0.8em;            
-        }
-    </style>
-
-
-    <div id="wrapper">
-
-        <h3 class="muted-max text-center b-bottom-muted-max">Journal &amp; Guidance</h3>
-        <div id="chat-container">
-            <!-- Chat messages will appear here -->
-        </div>
-        <div id="input-container">
-            <input type="text" id="prompt-input" placeholder="Type your message...">
-            <button id="send-button">Send</button>
-        </div>
-
-        <div id="footer">
-            <p>
-                @Copyleft - 
-                <a href="mailto:mansa.trainings@gmail.com">MANSA</a> 
-                | <a href="calllto:237674410489">
-                    <!-- i class="fa fa-whatsapp" aria-hidden="true"></i -->
-                    <span class="fa fa-phone" aria-hidden="true"></span>
-                    <span class="icon-text">(whatsapp)</span>
-                    +237 674 41 04 89
-                  </a>
-            </p>
-        </div>
-        
+    <div id="chat-container">
+        <!-- Chat messages will appear here -->
+    </div>
+    <div id="input-container">
+        <input type="text" id="prompt-input" placeholder="Type your message...">
+        <button id="send-button">Send</button>
     </div>
 
-    <script>
-        // JavaScript to handle sending messages and displaying responses
-        document.getElementById('send-button').addEventListener('click', function() {
-            const promptInput = document.getElementById('prompt-input');
-            const chatContainer = document.getElementById('chat-container');
-
-            // Get the user's message
-            const userMessage = promptInput.value.trim();
-            if (userMessage === '') return;
-
-            // Display the user's message
-            const userMessageElement = document.createElement('div');
-            userMessageElement.className = 'message user-message';
-            userMessageElement.textContent = `You: ${userMessage}`;
-            chatContainer.appendChild(userMessageElement);
-
-            // Clear the input
-            promptInput.value = '';
-
-            // Simulate a bot response (replace with actual API call)
-            setTimeout(() => {
-                const botMessage = `Bot: You said "${userMessage}"`;
-                const botMessageElement = document.createElement('div');
-                botMessageElement.className = 'message bot-message';
-                botMessageElement.textContent = botMessage;
-                chatContainer.appendChild(botMessageElement);
-
-                // Scroll to the bottom of the chat container
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }, 1000);
-        });
-
-        // Allow pressing Enter to send the message
-        document.getElementById('prompt-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('send-button').click();
-            }
-        });
-    </script>
+    <script src="{% static 'templates/main/js/journal.js' %}"></script>
 
 {% endblock content %}
 

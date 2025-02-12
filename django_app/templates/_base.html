@@ -43,8 +43,49 @@
         -->
 
         <div class="container w-full">
-            {% block content %}
-            {% endblock content %}
+            <div id="wrapper">
+
+                {% block content %}
+                {% endblock content %}
+
+                {% block auth %}
+                    <div id="auth" class="muted-medium m-aut text-center">
+                        <iframe name="auth-iframe"></iframe>
+
+                        {% if user.is_authenticated %}
+
+                            <p>Hello, {{ user.email|default:user.username }}!</p>
+                            <a href="{% url 'logout' %}">Logout</a>
+
+                        {% else %}
+
+                            <p>
+                                <a href="{% url 'login' %}">Login</a>
+                                or <a href="{% url 'register' %}">Register</a>.</p>
+
+                        {% endif %}
+                    </div>
+                {% endblock auth %}
+
+                {% block footer %}
+                    <div id="footer">
+                        <p>
+                            @Copyleft - 
+                            <a href="mailto:mansa.trainings@gmail.com">MANSA</a> 
+                            | <a href="calllto:237674410489">
+                                <!-- i class="fa fa-whatsapp" aria-hidden="true"></i -->
+                                <span class="fa fa-phone" aria-hidden="true"></span>
+                                <span class="icon-text">(whatsapp)</span>
+                                +237 674 41 04 89
+                              </a>
+                        </p>
+                    </div>
+                {% endblock footer %}
+
+            </div>
+
         </div>
     </body>
 </html>
+
+

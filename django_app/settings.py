@@ -235,6 +235,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_REDIRECT_URL = "journal"  # Redirect after login
+LOGOUT_REDIRECT_URL = "journal"  # Redirect after logout
+
 
 # Internationalization
 # --------------------
