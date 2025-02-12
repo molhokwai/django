@@ -5,3 +5,6 @@ def index(request):
 
 def error(request):
     return render(request, "app/error.html", {})
+
+def journal(request):
+    return render(request, "app/journal.html", {})
