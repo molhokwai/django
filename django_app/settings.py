@@ -335,6 +335,15 @@ WEBSCRAPER_TASK_MAX_ATTEMPTS = 3
 
 
 # ------------------------
+# AI Journal Guidance
+#
+# Configuration
+# ------------------------
+
+AI_JOURNAL_GUIDANCE_CHAT_HISTORY_RECALL = 50
+
+
+# ------------------------
 # Logging, Printing
 #
 # ------------------------
