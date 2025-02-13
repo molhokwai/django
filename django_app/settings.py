@@ -143,12 +143,12 @@ if IS_HEROKU:
 
 # SQLITE
 # ------
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db/db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db/db.sqlite3',
+    }
+}
 # ------
 
 
@@ -157,30 +157,29 @@ if IS_HEROKU:
 
 # POSTGRES
 # --------
-os.environ.setdefault("PGDATABASE", "webscraper")
-os.environ.setdefault("PGUSER", "postgres")
-os.environ.setdefault("PGPASSWORD", "LeA45Jf~7ZL][e%k")
-os.environ.setdefault("PGHOST", "localhost")
-os.environ.setdefault("PGPORT", "5432")
+# os.environ.setdefault("PGDATABASE", "webscraper")
+# os.environ.setdefault("PGUSER", "postgres")
+# os.environ.setdefault("PGPASSWORD", "LeA45Jf~7ZL][e%k")
+# os.environ.setdefault("PGHOST", "localhost")
+# os.environ.setdefault("PGPORT", "5432")
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get("PGDATABASE", "webscraper"),
-        'USER': os.environ.get("PGUSER", "postgres"),
-        'PASSWORD': os.environ.get("PGPASSWORD", ""),
-        'HOST': os.environ.get("PGHOST", "localhost"),
-        'PORT': os.environ.get("PGPORT", "5432"),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ.get("PGDATABASE", "webscraper"),
+#         'USER': os.environ.get("PGUSER", "postgres"),
+#         'PASSWORD': os.environ.get("PGPASSWORD", ""),
+#         'HOST': os.environ.get("PGHOST", "localhost"),
+#         'PORT': os.environ.get("PGPORT", "5432"),
+#     }
+# }
 
-if WHICH_ENV != 'LOCAL' or IS_HEROKU:
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600)  # Optional connection pooling
-    }
-
+# if WHICH_ENV != 'LOCAL' or IS_HEROKU:
+#     import dj_database_url
+#     DATABASES = {
+#         'default': dj_database_url.config(conn_max_age=600)  # Optional connection pooling
+#     }
 # ------
 
 
