@@ -9,6 +9,7 @@ class ChatPromptAndResponse(models.Model):
     """
     prompt = models.TextField()  # Required field
     response = models.TextField(blank=True, null=True)  # Optional field
+    think = models.TextField(blank=True, null=True)  # Optional field
     user = models.ForeignKey(User, null=True, blank=True, 
                             on_delete=models.CASCADE,
                             related_name="user_chatpromptresponses", editable=False)

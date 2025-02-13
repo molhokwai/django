@@ -1,5 +1,5 @@
 
-{% extends "_base.html" %}
+{% extends "webscraping/_base_webscrape.html" %}
 {% load static %}
 {% load i18n %}
 {% load define_action %}
@@ -49,11 +49,5 @@
         </div>
         <!-- /.section -->
     </main>
-
-    <div class="bg-slate-800 w-full fixed bottom-0 py-2 mt-20 text-center text-green-100">
-        <small>
-              @{% trans "inception completed." %}
-        </small>
-    </div>
 
 {% endblock %}

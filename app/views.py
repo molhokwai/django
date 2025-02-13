@@ -81,3 +81,9 @@ def error(request):
     return render(request, "app/error.html", {})
 
 
+
+
+
+def test_ollama_raw(request):
+    return render(request, "app/test_ollama.raw.html", {})
+

@@ -1,0 +1,71 @@
+{% load static %}
+{% load i18n %}
+{% load static tailwind_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>{% block title %} ⚙ Webscraping + Tests & Process Automation{% endblock title %}</title>
+
+        <!-- Tailwind -->
+        {% tailwind_preload_css %}
+        {% tailwind_css %}
+
+        <style>
+            .w-full, .container {
+                max-width: inherit;
+            }
+        </style>
+
+        <!-- Fontawesome -->
+        <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'fontawesomefree/css/regular.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+
+
+        {% load unicorn %}
+        <script defer src="https://unpkg.com/@alpinejs/morph@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        {% unicorn_scripts %}
+
+        <script type="text/javascript" src="{% static 'templates/main/js/main.js' %}"></script>
+    </head>
+
+    <body class="bg-slate-100 w-full">
+
+        <!--
+        <div style="margin: 5em auto; padding: 5em; color: darkred; border: 1px solid darkred; text-align: center; font-size: 1.5em;">
+            DISK SPACE IS FULL
+            <br/><small>Your app may not function properly...</small>
+            <br/><small style="font-size: 0.65em !important;">Layout may be flat, incorrect, or distorted, elements may be missing,<br/> pages, media, elements, modules may crash, dysfunction or be inaccessible...</small>
+        </div>
+        -->
+
+        <div class="container w-full">
+
+                {% block content %}
+                {% endblock content %}
+
+                {% block auth %}
+                {% endblock auth %}
+
+                {% block footer %}
+
+                    <div class="bg-slate-800 w-full fixed bottom-0 py-2 mt-20 text-center text-green-100">
+                        <small>
+                              @{% trans "inception completed." %}
+                        </small>
+                    </div>
+
+                {% endblock footer %}
+
+        </div>
+    </body>
+</html>
+
+

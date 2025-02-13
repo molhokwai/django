@@ -51,7 +51,7 @@
 
             <h2 id="aggregated-results-title"
                 class="section-title mt-10 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
-                Aggregated Results
+                {{aggregated_results_nr}} Aggregated Results
             </h2>
 
             <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
@@ -97,7 +97,7 @@
         <style>
             .col-left {
                 float: left;
-                width: 50%;
+                width: 30%;
                 min-width: 300px;
             }
             .col-right {
@@ -110,8 +110,53 @@
                 .col-right {
                     position: fixed !important;
                     top: 190px;
-                    left: 800px;
+                    left: 55%;
                     width: 10%;
+                }
+            }
+            @media screen and (min-width: 1350px) {
+                .col-right {
+                    left: 50%;
+                }
+            }
+            @media screen and (min-width: 1500px) {
+                .col-right {
+                    left: 45%;
+                }
+            }
+            @media screen and (min-width: 1650px) {
+                .col-right {
+                    left: 40%;
+                }
+            }
+            @media screen and (min-width: 1800px) {
+                .col-right {
+                    left: 35%;
+                }
+            }
+            @media screen and (min-width: 1950px) {
+                .col-right {
+                    /* nope... */
+                }
+            }
+            @media screen and (min-width: 2100px) {
+                .col-right {
+                    /* nope... */
+                }
+            }
+            @media screen and (min-width: 2250px) {
+                .col-right {
+                    /* nope... */
+                }
+            }
+            @media screen and (min-width: 2400px) {
+                .col-right {
+                    /* nope... */
+                }
+            }
+            @media screen and (min-width: 2550px) {
+                .col-right {
+                    /*  */
                 }
             }
 

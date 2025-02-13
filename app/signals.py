@@ -14,3 +14,4 @@ def set_username(sender, instance, **kwargs):
             instance.username = instance.phone_number
         else:
             raise ValidationError("Either an email or phone number must be provided to set a username.")
+

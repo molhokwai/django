@@ -1,7 +1,7 @@
 <div>
     {% load unicorn %}
 
-    <div class="message user-message">
+    <div class="message user-message" data-id="{{chat.id}}">
 
         <strong>You</strong>:
 
@@ -13,7 +13,7 @@
         </small>
 
     </div>
-    <div class="message bot-message">
+    <div class="message bot-message" data-id="{{chat.id}}">
 
         <strong>Ollama</strong>:
 
@@ -21,18 +21,18 @@
 
             <span class="text">{{ chat.response }}</span>
 
+            <br>
+
+            <small class="date muted-medium">
+                <span class="fa fa-calendar"></span>
+                {{ chat.last_modified|date:"D d M Y - H:i" }}
+            </small>
+
         {% else %}
 
             <span class="text">...</span>                    
 
-        {% endif %}        
-
-        <br>
-
-        <small class="date muted-medium">
-            <span class="fa fa-calendar"></span>
-            {{ chat.last_modified|date:"D d M Y - H:i" }}
-        </small>
+        {% endif %}
 
     </div>
     <div class="clear">&nbsp;</div>

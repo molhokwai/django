@@ -4,10 +4,12 @@
     {% load define_action %}
     {% load unicorn %}
 
-    <div class="message bot-message wait text hide">
-        <span>
-            <!-- promptInput.value = "Veuillez patienter, la requête peut prendre jusqu'à 1 mn..."; -->
-            Please wait while up to one minute, while I'm carefully analyzing...
+    <div class="message bot-message">
+        <span class="wait text">
+            <!-- fr: Veuillez patienter, la requête peut prendre jusqu'à 1 mn... -->            
+            Please wait up to one minute, while I'm carefully analyzing...
+        </span>
+        <span class="feedback">
         </span>
     </div>
 

@@ -149,6 +149,9 @@ body {
     float: right;
 }
 
+#chat-container .wait.text {
+    opacity: 0;
+}
 
 
 /*****

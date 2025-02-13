@@ -44,6 +44,7 @@ class WebscrapeView(UnicornView):
     previous_outputs = []
 
     aggregated_results = []
+    aggregated_results_nr = None
     aggregated_results_table_fields = [ 
         "NAME", "AGE", "LOCATION", "POSSIBLE_RELATIVES",
         "VERIFIED", "CRIMINAL_RECORDS" 
@@ -61,6 +62,7 @@ class WebscrapeView(UnicornView):
         self.previous_outputs = self.get_previous_outputs()
 
         self.aggregated_results = parse_raw_outputs()
+        self.aggregated_results_nr = len(self.aggregated_results)
         WebscrapeData.periodic_save_aggregated_results(self.aggregated_results)
         self.webscrape_data_id = WebscrapeData.objects.first().id
 

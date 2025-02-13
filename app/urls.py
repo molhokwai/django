@@ -15,5 +15,7 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     # handlers
     path("error/", views.error, name='error'),
+    # tests
+    path("test_ollama_raw/", views.test_ollama_raw, name='test_ollama_raw'),
 ]
 
