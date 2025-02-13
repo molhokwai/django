@@ -3,21 +3,32 @@
     {% load unicorn %}
 
     <input type="hidden" id="chatPromptAndResponseId"
-           unicorn:model="chatPromptAndResponse.id" 
+           unicorn:model.defer="chatPromptAndResponse.id" 
            value="{{chatPromptAndResponse.id}}" />
     <input type="hidden" id="chatPromptAndResponseResponse"
-           unicorn:model="chatPromptAndResponse.response" 
+           unicorn:model.defer="chatPromptAndResponse.response" 
            value="{{chatPromptAndResponse.response}}" />
     <input type="hidden" id="chatPromptAndResponseThink" 
-           unicorn:model="chatPromptAndResponse.think" 
+           unicorn:model.defer="chatPromptAndResponse.think" 
            value="{{chatPromptAndResponse.think}}" />
 
+    {% if request.user.is_authenticated %}
+    <div class="field" style="display:block; margin-right: 1em;">
+        <label for="chatPromptAndResponseAddHistory">
+            Add history
+        </label>
+        <input type="checkbox" id="chatPromptAndResponseAddHistory"
+               unicorn:model.defer="add_history" 
+               value="{{chatPromptAndResponse.add_history}}" />
+    </div>
+    {% endif %}
+
+    <!-- promptInput sample value = "Peux-tu, s'il-te-plaît générer des examples de questions à t'envoyer ?"; -->
     <textarea unicorn:model.defer="prompt" id="prompt-input"
               placeholder="Type your message..."></textarea>
 
-    <!-- promptInput sample value = "Peux-tu, s'il-te-plaît générer des examples de questions à t'envoyer ?"; -->
     <button id="send-button"
-            unicorn:click="save_prompt"
+            unicorn:click="create_prompt"
             unicorn:loading.attr="disabled" unicorn:loading.class="loading"
             >Send</button>
 </div>

@@ -4,6 +4,8 @@
     {% load define_action %}
     {% load unicorn %}
 
+    {% unicorn 'chat.chat_prompt' parent=self %}
+
     <div class="message bot-message">
         <span class="wait text">
             <!-- fr: Veuillez patienter, la requête peut prendre jusqu'à 1 mn... -->            
@@ -42,10 +44,10 @@
         </button>
     </div>
 
-    {% unicorn 'chat.chat_prompt' parent=self %}
-
     <script>
         const chatContainerJsUpdate = false;
     </script>
-    <script src="{% static 'templates/main/js/journal.js' %}"></script>
+    <script src="{% static 'templates/main/js/utilities.js' %}"></script>
+    <script src="{% static 'templates/main/js/ai.journal.guidance.js' %}"></script>
 </div>
+

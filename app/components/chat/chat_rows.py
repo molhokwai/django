@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 from django_unicorn.components import UnicornView
 from app.models import ChatPromptAndResponse
 
-import math
+import math, markdown
 
 class ChatRowsView(UnicornView):
     """
@@ -13,12 +13,19 @@ class ChatRowsView(UnicornView):
     nr_of_pages = None
     items_per_page = 3
 
-    def mount(self):
+    def mount(self):        
         self.load_chats()
 
     def load_chats(self, force_render=False):
         # Load the last 10 chats
         rows = ChatPromptAndResponse.objects.all()
+        if False:
+            for row in rows:
+                row.prompt = markdown.markdown(row.prompt)
+                row.response = markdown.markdown(row.response)
+                row.think = markdown.markdown(row.think)
+                row.save()
+
         paginator = Paginator(rows, self.items_per_page)
 
         self.nr_of_pages = int(math.ceil(len(rows) / self.items_per_page))
