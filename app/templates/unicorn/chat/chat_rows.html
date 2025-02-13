@@ -1,0 +1,51 @@
+
+<div>
+    {% load static %}
+    {% load define_action %}
+    {% load unicorn %}
+
+    <div class="message bot-message">
+        <span class="wait text">
+            <!-- fr: Veuillez patienter, la requête peut prendre jusqu'à 1 mn... -->            
+            Please wait up to one minute, while I'm carefully analyzing...
+        </span>
+        <span class="feedback">
+        </span>
+    </div>
+
+    {% for chat in chats %}
+        {% unicorn 'chat.chat_row' chat key=chat.id parent=self %}
+    {% endfor %}
+
+    <div class="paginator">
+
+        {% define '' as prv_disabled %}
+        {% define '' as prv_cssclass %}
+        {% if page_number == 1 %}
+            {% define 'disabled' as prv_disabled %}
+            {% define 'muted-max' as prv_cssclass %}
+        {% endif %}
+        <button unicorn:click="previous_page"
+                class="previous {{prv_cssclass}}" {{prv_disabled}}>
+            &lt; Previous
+        </button>
+
+        {% define '' as nxt_disabled  %}
+        {% define '' as nxt_cssclass %}
+        {% if page_number >= nr_of_pages %}
+            {% define 'disabled' as nxt_disabled  %}
+            {% define 'muted-max' as nxt_cssclass %}
+        {% endif %}        
+        <button unicorn:click="next_page"
+                class="next {{nxt_cssclass}}" {{nxt_disabled}}>
+            Next &gt;
+        </button>
+    </div>
+
+    {% unicorn 'chat.chat_prompt' parent=self %}
+
+    <script>
+        const chatContainerJsUpdate = false;
+    </script>
+    <script src="{% static 'templates/main/js/journal.js' %}"></script>
+</div>

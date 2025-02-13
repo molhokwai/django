@@ -1,0 +1,17 @@
+{% extends "_base.html" %}
+
+{% load unicorn %}
+
+{% block title %} 📰 Journal & Guidance {% endblock title %}
+ 
+
+{% block content %}
+
+    <h3 class="muted-max text-center b-bottom-muted-max">Journal &amp; Guidance</h3>
+
+    <div id="chat-container">
+        <!-- Chat messages appear here -->
+        {% unicorn 'chat.chat_rows' %}
+    </div>
+
+{% endblock content %}

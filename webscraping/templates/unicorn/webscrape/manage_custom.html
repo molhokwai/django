@@ -1,7 +1,7 @@
 
 
 <!-- webscrape/manage.html -->
-<div class="mb-5">
+<div class="mb-5" class="manage-custom-form">
     {% load define_action  %}
 
     {% define 'selected' as select_website_url  %}
@@ -82,6 +82,11 @@
         let module_path;
         document.addEventListener('DOMContentLoaded', (event) => {
 
+            {% if not webscrape.website_url %}
+                document.querySelector('.manage-custom-form #website_url').value = 'select';
+            {% endif %}
+
+
             module_path = document.getElementById('module_path').value;
 
             document.querySelectorAll('input[name="field"]').forEach(function(field){
@@ -104,12 +109,12 @@
             });
         });
     </script>
-    <input type="hidden" id="module_path" value="webscraping.manage_custom" /> 
+    <input type="hidden" id="module_path" value="webscrape.manage_custom" /> 
 
 
     <select unicorn:model.defer="website_url"
-            id="website_url" name="website_url"
-            class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider hidden">
+            id="website_url" name="website_url" data-formclass="manage-custom-form" 
+        class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider website-url hidden">
         <option {{select_website_url}}>Select a website...</option>
         {% for website_url in website_urls %}
 
@@ -181,8 +186,8 @@
 
 
     <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
-        <button unicorn:click="scrape"
-            class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">Test</button>
+        <button unicorn:click="scrape" data-form="manageCustomForm" data-formclass="manage-custom-form"
+            class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 test submit">Test</button>
     </div>
 </div>
 

@@ -1,17 +1,26 @@
 from django.db.models import Q
+from django.forms.models import model_to_dict
 
 from django_unicorn.components import LocationUpdate, UnicornView, QuerySetType
 from django.shortcuts import redirect
 from django.contrib import messages
-from webscraping.models import (
-    Webscrape, WebscrapeTasks, WebsiteUrls,
-    Countries, USStates,
-    Status, TaskHandler
-)
 
-from webscraping.views import parse_raw_outputs
+from django_app.settings import _print
+from webscraping.models import (
+    Webscrape, WebscrapeData,
+    WebscrapeTasks, WebscrapeTaskNameChoices,
+    WebsiteUrls,
+    Countries, USStates,
+    Status,
+)
+from webscraping.views import (
+    parse_raw_outputs,
+    webscrape_steps_long_running_method
+)
+from webscraping.components.webscrape.table import TableView
 
 from enum import Enum
+from typing import Union
 import os, copy, random
 
 
@@ -26,26 +35,23 @@ class MessageStatus(Enum):
 
 
 class WebscrapeView(UnicornView):
-    webscrapes = Webscrape.objects.none()
     website_urls = None
     webscrape_tasks = None
 
     us_states = None
     countries = None
-    fields = None
-    table_fields = None
-
-    excluded_fields = ('id', 'title', 'task_id', 'task_name', 'task_variables',
-                       'middleInitial', 'middleName', 'country', 'created_on',
-                       'last_modified', 'parent', 'webscrape_children')
 
     previous_outputs = []
 
     aggregated_results = []
+    aggregated_results_nr = None
     aggregated_results_table_fields = [ 
         "NAME", "AGE", "LOCATION", "POSSIBLE_RELATIVES",
         "VERIFIED", "CRIMINAL_RECORDS" 
     ]
+
+    webscrape_data_id: int = None
+
 
     def mount(self):
         self.us_states = list(zip(USStates.values, USStates.names))
@@ -53,29 +59,22 @@ class WebscrapeView(UnicornView):
         self.website_urls = list(zip(WebsiteUrls.values, WebsiteUrls.names))
         self.webscrape_tasks = list(zip(WebscrapeTasks.values, WebscrapeTasks.names))
 
-        self.fields = [f.name for f in Webscrape._meta.get_fields()]
-        self.table_fields = copy.copy(self.fields)
-        for val in self.excluded_fields:
-            self.table_fields.remove(val)
-
         self.previous_outputs = self.get_previous_outputs()
 
         self.aggregated_results = parse_raw_outputs()
+        self.aggregated_results_nr = len(self.aggregated_results)
+        WebscrapeData.periodic_save_aggregated_results(self.aggregated_results)
+        self.webscrape_data_id = WebscrapeData.objects.first().id
 
         self.load_table()
 
 
     def load_table(self, webscrape: Webscrape = None, force_render=False):
-        # self.webscrapes = Webscrape.objects.filter(Q(parent__isnull=True)).order_by("-last_modified")
-        self.webscrapes = Webscrape.objects.all().order_by("-last_modified")
 
-        i = len(self.webscrapes) - 1
-        while i >= 0:
-            self.webscrapes[i].update_task_status()
-            i -= 1
+        for child in self.children:
+            if str(child).find('TableView') >= 0:
+                child.load_table()
 
-        # if len(self.webscrapes):
-        #     self.webscrapes = self.webscrapes[0:10]
         self.force_render = force_render
 
 
@@ -84,10 +83,60 @@ class WebscrapeView(UnicornView):
 
 
 
+    def queue_task(self, 
+                    webscrape: Union[ Webscrape, None ]  = None,
+                    task_id: Union[ str, None ] = None) -> Webscrape:
+        """
+            Description
+                Starts/queues scrape tak by Webscrape object or task°id
+
+            Args
+                webscrape: Union[ Webscrape, None ]
+                task_id: Union[ str, None ]
+                One of thwo arguments must be provided
+
+            Raises
+                ValueError if none of the both arguments are provided
+
+            Returns
+                Webscrape
+        """
+        _webscrape = None
+        if webscrape:
+            _webscrape = webscrape
+
+        elif task_id:
+            _webscrape = Webscrape.objects.get(task_id=task_id)
+
+        else:
+            raise ValueError("webscraping:unicorn :: webscrape.WebscrapeView.queue_task: "
+                             "One of <webscrape:Webscrape> or <task_id: str> must be provided...")
+
+        # Get task variables from user given + model fields
+        # -------------------------------------------------
+        if not _webscrape.task_variables:
+            _webscrape.task_variables = model_to_dict(_webscrape)
+            _print(
+                '-------------------------| %s ' % str(_webscrape.task_variables),
+                VERBOSITY=3
+            )
+
+        # Set task to be picked and queued
+        # --------------------------------
+        _webscrape.task_todo = WebscrapeTaskNameChoices.WEBSCRAPE_STEPS.value
+        if not _webscrape.task_attempts:
+            _webscrape.task_attempts = 0
+        _webscrape.task_attempts = _webscrape.task_attempts + 1
+        _webscrape.save()
+
+        return webscrape
+
+
     def task_is_running(self, task_id: str) -> int:
         taskProgress = TaskHandler.get_taskProgress(task_id)
         if taskProgress:
             return True
+
 
     def get_task_progress_data(self, task_id: str) -> int:
         task_progress_value = 0
@@ -98,11 +147,20 @@ class WebscrapeView(UnicornView):
         if webscrape.task_status == Status.SUCCESS.value:
             task_output = webscrape.task_output
 
+        if webscrape.task_status in (Status.SUCCESS.value, Status.FAILED.value):
+            self.taskHandler.end_task_start_next(webscrape.task_id)
+
         task_progress_data = {
             "task_progress_value": task_progress_value,
             "task_output": task_output
         }
-        print('---------------| Unicorn.webscrape.webscrape > get_task_progress_data', task_progress_data)
+        _print(
+            '---------------| Unicorn.webscrape.webscrape > get_task_progress_data %s' \
+            % str(task_progress_data),
+            VERBOSITY=3
+        )
+
+
         return task_progress_data
 
 
@@ -120,8 +178,11 @@ class WebscrapeView(UnicornView):
             try:
                 l.append(read_file(os.path.join(output_dir, f)))
             except Exception as err:
-                print(
-                    '---------------| webscraping/Unicorn.webscrape.webscape > get_previous_outputs :: Error : ', err)
+                _print(
+                    '---------------| webscraping/Unicorn.webscrape.webscape >'
+                    ' get_previous_outputs :: Error : %s' % str(err), 
+                    VERBOSITY=0
+                )
         return l
 
 
@@ -134,3 +195,4 @@ class WebscrapeView(UnicornView):
 
     def add_count(self):
         messages.success(self.request, "| %i webscrapes loaded..." % len(self.webscrapes))
+

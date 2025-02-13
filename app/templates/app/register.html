@@ -1,0 +1,62 @@
+{% extends "_base.html" %}
+
+{% load static %}
+
+{% block title %} 🧍 Register {% endblock title %}
+ 
+{% block content %}
+
+    <h3 class="muted-max text-center b-bottom-muted-max">Register</h3>
+
+    <div id="input-container">
+        <form method="post" class="m-aut p-2">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <p>
+                    {{ field.label_tag }}
+                                            
+                    {{ field }}
+
+                    {% if field.name == "password1" %}
+                        <span class="tooltip"><span class="f-bold f-medium muted-medium">?</span>
+                            <span class="tooltip-text">
+                                - Your password can’t be too similar to your other personal information.
+                                <br/>- Your password must contain at least 8 characters.
+                                <br/>- Your password can’t be a commonly used password.
+                                <br/>- Your password can’t be entirely numeric.                                    
+                                <!-- ul>
+                                    <li>Your password can’t be too similar to your other personal information.</li>
+                                    <li>Your password must contain at least 8 characters.</li>
+                                    <li>Your password can’t be a commonly used password.</li>
+                                    <li>Your password can’t be entirely numeric.</li>
+                                </ul -->
+
+                            </span>
+                        </span>
+                    {% endif %}
+
+                    {% if field.errors %}
+                        <span class="error-message">
+                            {% for error in field.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </span>
+                    {% endif %}
+                </p>
+            {% endfor %}
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+{% endblock content %}
+
+{% block auth %}
+
+    <div id="auth" class="muted-medium m-aut text-center">
+        <p class="mt-1">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+    </div>
+
+{% endblock auth %}
+

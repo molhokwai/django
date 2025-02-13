@@ -1,0 +1,325 @@
+/*****
+ * OVERRIDES
+ *****/
+.w-full {
+  width: 100%;
+  margin: auto;
+}
+
+
+/*****
+ * GLOBAL
+ *****/
+h3 {
+  font-size: 1.5em;
+}
+
+a:hover {
+    text-decoration: overline;
+}
+
+form p label {
+    width: 20%;
+    min-width: 250px;
+    max-width: 400px;
+    float: left;
+}
+
+form p label {
+    width: 20%;
+    min-width: 250px;
+    max-width: 400px;
+    float: left;
+}
+
+form button[type="submit"],
+form button.submit {
+    /***
+     *   @ToDo: 
+     *      [Duplicate1]: 
+     *          form button[type="submit"] & #send-button
+     *      Refactor (scss, sass)... 
+    ***/
+    padding: 10px 20px;
+    font-size: 1.1em;
+    background-color: #000000; /* Black background */
+    color: #ffffff; /* White text */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    /*** /@ToDo  ***/
+    float: right;
+    margin-top: 1em;
+}
+
+form button[type="submit"]:hover,
+form button.submit:hover {
+    /*** See @ToDo [Duplicate1]  ***/
+    background-color: #333333; /* Dark gray on hover */
+}
+
+/*****
+ * PAGE
+ *****/
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text */
+    margin: 0;
+    padding: 0;
+    /**
+    display: flex;
+    flex-direction: column;
+    **/
+    height: 100vh;
+}
+#wrapper {
+    margin: 5em auto;
+    width: 90%;
+    min-width: 400px;
+}
+
+#footer {
+    margin: 15em auto 0;
+    width: 60%;
+    min-width: 400px;
+    border-top: 1px solid #ababab;
+    text-align: center;
+    color: #ababab;
+    padding: 1em;
+}
+
+#chat-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    min-height: 20em;
+}
+
+#input-container {
+    display: flex;
+    padding: 10px;
+    background-color: #f0f0f0; /* Light gray background */
+    border-top: 1px solid #000000; /* Black border */
+}
+
+#prompt-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 1.2em;
+    border: 1px solid #000000; /* Black border */
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+#send-button {
+    /***
+     *   @ToDo: 
+     *      [Duplicate1]: 
+     *          form button[type="submit"] & #send-button
+     *      Refactor (scss, sass)... 
+    ***/
+    padding: 10px 20px;
+    font-size: 1.1em;
+    background-color: #000000; /* Black background */
+    color: #ffffff; /* White text */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    /*** /@ToDo  ***/
+}
+
+#send-button:hover {
+    /*** See @ToDo [Duplicate1]  ***/
+    background-color: #333333; /* Dark gray on hover */
+}
+
+.message {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.user-message {
+    text-align: right;
+    color: #000000; /* Black text */
+    background-color: #fafafa;
+    padding: 1em;
+    width: 60%;
+    min-width: 380px;
+    float: right;
+}
+
+#chat-container .wait.text {
+    opacity: 0;
+}
+
+
+/*****
+ * ELEMENTS
+ *****/
+.icon-text {
+    letter-spacing: .001em;
+    font-size: 0.8em;            
+}
+
+
+.tooltip {
+    position: relative;
+    cursor: pointer;
+    margin-left: .1em;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    width: 20%;
+    min-width: 400px;
+    background-color: #000;
+    color: #dedede;
+    text-align: left;
+    padding: 1em;
+    border-radius: 5px;
+    
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 1%;
+    transform: translateX(-1%);
+    
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+.bot-message {
+    text-align: left;
+    color: #000000; /* Black text */
+    background-color: #fbfbf7;
+    padding: 1em;
+    clear: both;
+}
+
+.errorlist {
+    padding: 1em;
+    background: whitesmoke;
+    border: 1px solid #590707;
+    margin-bottom: 2em;
+    border-radius: 5px;
+    color: #590707;
+}
+
+.error-message {
+    color: #590707;
+    font-size: 0.9em;
+    margin-top: .8em;
+    display: block;
+    text-align: right;
+    padding-right: 2em;
+    text-decoration: overline;
+}
+
+button.loading {
+    opacity: .5;
+}
+
+
+.date {
+    display: block;
+    margin-top: 1.5em;
+    text-decoration: overline;
+}
+
+.wait {
+    font-style: italic;
+    color: #787878;
+    font-size: .95em;
+    padding-left: 2em;    
+}
+
+.chat_rows {
+    max-height: 10em;
+}
+
+.paginator {
+    display: flex;
+    padding: 1em;
+}
+.paginator button {
+    width: 50%;
+}
+.paginator button.previous {
+    text-align: left;
+}
+.paginator button.next {
+    text-align: right;
+}
+
+
+/*****
+ * UTILITIES
+ *****/
+
+
+/* --- paddings ---  */
+.p-2 {
+    padding: 2em;
+}
+
+
+/* --- alignment ---  */
+.text-center {
+    text-align: center;            
+}
+
+
+/* --- text colors ---  */
+.muted-max {
+    color: #ababab;            
+}
+.muted-medium {
+    color: #787878;            
+}
+.muted-min {
+    color: #343434;            
+}
+
+
+/* --- fonts ---  */
+.f-bold {
+    font-weight: bold;
+}
+.f-medium {
+    font-size: 1.2em;
+}
+
+
+/* --- borders ---  */
+.b-bottom-muted-max {
+    border-bottom: 1px solid #ababab;            
+}
+
+
+/* --- margins ---  */
+.m-aut, .m-auto {
+    margin: auto;
+}
+.mt-2 {
+    margin-top: 2em;
+}
+.mt-1 {
+    margin-top: 1em;
+}
+
+
+/* --- display ---  */
+.hide {
+    display: none !important;
+}
+.block {
+    display: block !important;
+}
+.clear {
+    clear: both !important;
+}

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf8 -*-
+from django_app.settings import _print
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
@@ -63,7 +64,7 @@ class Step:
 
         for key in step_dict.keys():
             if key in dir(self) and not key in self.step_dict_keys_excluded:
-                print('----------|', key, step_dict[key])
+                _print('----------| %s %s ' % (key, step_dict[key]), VERBOSITY=3)
                 self.outputs.append(
                     getattr(self, key)(
                         step_dict,

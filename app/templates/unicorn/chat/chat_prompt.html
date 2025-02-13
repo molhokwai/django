@@ -1,0 +1,23 @@
+
+<div id="input-container">
+    {% load unicorn %}
+
+    <input type="hidden" id="chatPromptAndResponseId"
+           unicorn:model="chatPromptAndResponse.id" 
+           value="{{chatPromptAndResponse.id}}" />
+    <input type="hidden" id="chatPromptAndResponseResponse"
+           unicorn:model="chatPromptAndResponse.response" 
+           value="{{chatPromptAndResponse.response}}" />
+    <input type="hidden" id="chatPromptAndResponseThink" 
+           unicorn:model="chatPromptAndResponse.think" 
+           value="{{chatPromptAndResponse.think}}" />
+
+    <textarea unicorn:model.defer="prompt" id="prompt-input"
+              placeholder="Type your message..."></textarea>
+
+    <!-- promptInput sample value = "Peux-tu, s'il-te-plaît générer des examples de questions à t'envoyer ?"; -->
+    <button id="send-button"
+            unicorn:click="save_prompt"
+            unicorn:loading.attr="disabled" unicorn:loading.class="loading"
+            >Send</button>
+</div>

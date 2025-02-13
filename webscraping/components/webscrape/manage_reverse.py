@@ -1,12 +1,11 @@
 from django_unicorn.components import UnicornView, QuerySetType
 from django.conf import settings
 
-from datetime import date, datetime
-from datetime import date, datetime
-from webscraping.models import Webscrape, TaskProgress, TaskHandler
+from django_app.settings import _print
+from webscraping.models import Webscrape
 
-from webscraping.views import webscrape_steps_long_running_method
 
+from datetime import date, datetime
 from enum import Enum
 import copy
 
@@ -39,6 +38,7 @@ class ManageReverseView(UnicornView):
     task_id: int = None
     task_progress: int = None
 
+    website_urls = None
     us_states = None
     countries = None
 
@@ -51,6 +51,7 @@ class ManageReverseView(UnicornView):
         self.title = value
 
     def mount(self):
+        self.website_urls = self.parent.website_urls
         self.countries = self.parent.countries
         self.us_states = self.parent.us_states
 
@@ -62,7 +63,11 @@ class ManageReverseView(UnicornView):
 
     def add(self):
 
-        print('------------------ | ----------------', str(self.title), str(self.age))
+        _print(
+            '------------------ | ----------------  %s - %s' \
+            % str(self.title), str(self.age),
+            VERBOSITY=3
+        )
         Webscrape.objects.create(
             website_url = self.website_url,
             title = self.title,
@@ -103,14 +108,10 @@ class ManageReverseView(UnicornView):
         # Get task variables from user given fields
         self.task_variables = "..."
 
-        # Get/Generate task id with Task handler
-        self.task_id = TaskHandler().start_task( 
-            webscrape_steps_long_running_method, [ _input ] )
+        # Scrape: Start / Queue task
+        webscrape = self.parent.queue_task( webscrape = webscrape )
 
         self.add()
-
-    def update_list(self):
-        self.parent.load_table(force_render=True)
 
 
     def clear_fields(self):

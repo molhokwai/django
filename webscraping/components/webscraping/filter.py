@@ -1,6 +1,9 @@
 from django_unicorn.components import UnicornView
 from webscraping.models import Webscrape
 
+from django_app.settings import _print
+
+
 class FilterView(UnicornView):
     search = ""
 
@@ -16,7 +19,7 @@ class FilterView(UnicornView):
             fulltext = ""
             for f in self.fields:                
                 fulltext = f"{fulltext} {str(entity.__dict__[f.name])}"
-            print(fulltext)
+            _print(fulltext, VERBOSITY=3)
             return fulltext
 
         if query:

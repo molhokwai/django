@@ -11,29 +11,29 @@
 
             <!--
                 <h2 id="exec-custom"
-                    class="section-title mt-5 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
+                    class="section-title mt-5 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
                     Scrape, or Test a website process
                 </h2>
                 { % unicorn 'webscrape.manage_custom' parent=self % }
             -->
 
             <h2 id="exec-search"
-                class="section-titlemt-5 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
-                Find a person
+                class="section-titlemt-5 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
+                Search
             </h2>
             {% unicorn 'webscrape.manage' parent=self %}
 
 
             <h2 id="exec-reversesearch"
-                class="section-titlemt-8 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
-                Reverse find a person
+                class="section-titlemt-8 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
+                Reverse find
             </h2>
             {% unicorn 'webscrape.manage_reverse' parent=self %}
 
 
             <h2 id="exec-batch"
-                class="section-title mt-8 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
-                Find people
+                class="section-title mt-8 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
+                Search list
             </h2>
             {% unicorn 'webscrape.manage_people' parent=self %}
 
@@ -51,8 +51,16 @@
 
             <h2 id="aggregated-results-title"
                 class="section-title mt-10 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
-                Aggregated Results
+                {{aggregated_results_nr}} Aggregated Results
             </h2>
+
+            <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
+                <a  href="{% url 'webscrape_export_dataoutput_to_csv' webscrape_data_id  %}"
+                    class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 
+                           p-2 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">
+                       Download
+                </a>
+            </div>
 
             <table id="aggregated-results-table"
                    class="table table-auto rounded border-green-300 bg-slate-100">
@@ -83,37 +91,13 @@
 
 
         <div class="col-right">
-            <table id="webscrapes-table"
-                   class="table table-auto rounded border-green-300 bg-slate-100">
-                <thead class="p-4 text-gray">
-                    <tr>
-                        <!--
-                            <td class="min-w-32">
-                                &nbsp;
-                            </td>
-                        -->
-
-                        {% for field in table_fields %}
-                            <td class="bg-green-600 first:rounded-l-lg last:rounded-r-lg p-2
-                                       text-green-100 tracking-widest border-green-100">
-                                {{ field|title }}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody id="webscrape-body">
-                    {% for webscrape in webscrapes %}
-                        {% unicorn 'webscrape.row' webscrape=webscrape key=webscrape.id parent=self %}
-                    {% endfor %}
-                </tbody>
-            </table>
-              
+            {% unicorn 'webscrape.table' webscrapes=webscrapes parent=self %}
         </div>
 
         <style>
             .col-left {
                 float: left;
-                width: 50%;
+                width: 30%;
                 min-width: 300px;
             }
             .col-right {
@@ -126,8 +110,53 @@
                 .col-right {
                     position: fixed !important;
                     top: 190px;
-                    left: 800px;
+                    left: 55%;
                     width: 10%;
+                }
+            }
+            @media screen and (min-width: 1350px) {
+                .col-right {
+                    left: 50%;
+                }
+            }
+            @media screen and (min-width: 1500px) {
+                .col-right {
+                    left: 45%;
+                }
+            }
+            @media screen and (min-width: 1650px) {
+                .col-right {
+                    left: 40%;
+                }
+            }
+            @media screen and (min-width: 1800px) {
+                .col-right {
+                    left: 35%;
+                }
+            }
+            @media screen and (min-width: 1950px) {
+                .col-right {
+                    /* nope... */
+                }
+            }
+            @media screen and (min-width: 2100px) {
+                .col-right {
+                    /* nope... */
+                }
+            }
+            @media screen and (min-width: 2250px) {
+                .col-right {
+                    /* nope... */
+                }
+            }
+            @media screen and (min-width: 2400px) {
+                .col-right {
+                    /* nope... */
+                }
+            }
+            @media screen and (min-width: 2550px) {
+                .col-right {
+                    /*  */
                 }
             }
 
@@ -209,11 +238,49 @@
 
             body {
                 min-height: 200em;
+            }
+
+            .website-data-form {
+                margin: 3em 1em;
+            }
+            .website-data-form heading {
+                background-color: #fefefe;
+                border-color: lightgreen;
+                padding: 3em;
+                font-size: 1.2em;
+                letter-spacing: .1em;
             }  
         </style>
 
         <script>
+            let tasksProgress = {};
             function updateTasks() {
+
+                /**
+                 * --------------- 
+                 * GET FORM FIELD VALUES TO RESTORE... 
+                 * ---------------
+                 **/
+                let formFielValues = {};
+                const getFormFieldValues = () => {
+                    document.querySelectorAll("input, select, textarea").forEach((field) => {
+                        formFielValues[field.id] = field.value;
+                    });
+                }
+
+                /**
+                 * --------------- 
+                 * DO NOT UPDATE DURING SEARCH... 
+                 * ---------------
+                 **/
+                let firstName = document.getElementById("firstName").value;
+                let lastName = document.getElementById("lastName").value;
+
+                if(firstName || lastName){
+                    console.log('updateTasks interrupted during search...');
+                    return;
+                }
+
 
                 /**
                  * --------------- 
@@ -226,32 +293,69 @@
 
                     Unicorn.call('webscrape.webscrape', 'task_is_running', task_id);
                     const task_is_running = Unicorn.getReturnValue('webscrape.webscrape');
+                    console.log(1111111111);
 
-                    if(task_is_running){
+                    if(!(task_id in tasksProgress)){
+                        tasksProgress[task_id] = { 'has_succeeded': false };
+                    }
 
+                    if(task_is_running && !tasksProgress[task_id]['has_succeeded']){
+
+                        console.log(22222222222);
                         Unicorn.call('webscrape.webscrape', 
                             'get_task_progress_data', task_id);
 
                         const task_progress_data = 
                                     Unicorn.getReturnValue('webscrape.webscrape');
+                        const task_progress_value = task_progress_data.task_progress_value;
 
-                        if(task_progress_data && task_progress_data.task_progress_value) {
-                            console.log(`task_progress - ${task_id} : ${task_progress_data.task_progress_value}`);
+                        if(task_progress_data && task_progress_value) {
+                            console.log(333333333333);
+                            console.log(`task_progress - ${task_id} : ${task_progress_value}`);
 
-                            progressBar.style.width = `${task_progress_data.task_progress_value}%`;
+                            progressBar.style.width = `${task_progress_value}%`;
 
                             // Optionally, update progress text
                             const progressText = document.getElementById(`progressText-${task_id}`);
                             if (progressText) {
-                                progressText.textContent = `${task_progress_data.task_progress_value}%`;
-                            }                        
+                                console.log(4444444444);
+                                progressText.textContent = `${task_progress_value}%`;
+                            }
+
+                            if(task_progress_value >= 100){
+                                tasksProgress[task_id]['has_succeeded'] = true;
+                            }
                         } else {
                             console.log(`task_progress - no value`);
                         }
                     }
                 });
+
+
+                /**
+                 * --------------- 
+                 * RESTORE FORM FIELD VALUES... 
+                 * ---------------
+                 **/
+                const restoreFormFieldValues = () => {
+                    document.querySelectorAll("input, select, textarea").forEach((field) => {
+                        field.value = formFielValues[field.id];
+                    });
+                }
             }
-            setInterval(updateTasks, 20000);
+            // setInterval(updateTasks, 1000*20);
+
+
+            function clear_fields() {
+                document.getElementById('title').value = '';
+                document.getElementById('firstName').value = '';
+                document.getElementById('lastName').value = '';
+                document.getElementById('middleName').value = '';
+                document.getElementById('middleInitial').value = '';
+                document.getElementById('age').value = '';
+                document.getElementById('city').value = '';
+                document.getElementById('state').value = '';
+            }
 
 
             function openOverlay(content) {
@@ -341,6 +445,30 @@
                         openOverlay(content);
                     });
                 })
+
+                setInterval(() => {
+                    if(false){
+                        // ! DO NOT RELOAD - Parent children windows references must be kept...
+                        //   window.location.reload(); // Reload the page after a delay
+                        // ----------------------------------------------------------                        
+                        let to = setTimeout(window.location.reload, 1000*10);
+                        let b = prompt("Window reloading... press 'Cancel' to abort..");
+                        if(b){
+                            clearTimeount(to);
+                        }                        
+                    }
+                }, 1000*60*5)
+
+
+                /**
+                 * --------------- 
+                 * RELOAD TABLE... 
+                 * ---------------
+                 **/
+                function reloadTable() {
+                    Unicorn.call('webscrape.table', 'load_table', "true");
+                }
+                setInterval(reloadTable, 1000*20);
             });
         </script>
 

@@ -1,46 +1,82 @@
 
 
 <!-- webscrape/manage.html -->
-<div class="mb-5">
+<div class="mb-5" class="manage-people-form">
     {% load define_action  %}
+
+    {% define 'selected' as select_website_url  %}
+    {% if webscrape.website_url %}
+        {% define '' as select_website_url %}
+    {% endif %}
 
     {% define 'selected' as select_state  %}
     {% if webscrape.state %}
         {% define '' as select_state %}
     {% endif %}
 
-    <input type="hidden" id="module_path" value="webscraping.manage_people" /> 
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
 
-    <input unicorn:model.defer="website_url"      type="text"   id="website_url"   placeholder="website url, ex: https://www.truthfinder.com/people-search/" value="{{webscrape.website_url}}"    
-    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider w-4/5" /> *
+            {% if not webscrape.website_url %}
+                document.querySelector('.manage-people-form #website_url').value = 'select';
+            {% endif %}
 
-    <span class="block">&nbsp;</span>
+        });
+    </script>
+    <input type="hidden" id="module_path" value="webscrape.manage_people" /> 
 
-    <textarea unicorn:model.defer="by_list"      type="text"   id="by_list"   placeholder="By List of first and last names..."    value="{{webscrape.by_list}}"
-    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider w-4/5"
-    rows="10" ></textarea>
 
-    <span class="block">&nbsp;</span>
+    <select unicorn:model.defer="website_url" id="website_url" data-formclass="manage-people-form" 
+        class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider website-url">
 
-    <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
-        <button unicorn:click="scrape" 
-            class="btn btn-outline-tertiary rounded bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">Search</button>
+        <option value="select" {{ select_website_url }}>Select a website...</option>
+
+        {% for website_url in website_urls %}
+
+            {% define '' as website_url_selected %}
+            {% if webscrape.website_url and website_url.0 == webscrape.website_url %}
+                {% define 'selected' as website_url_selected %}
+            {% endif %}
+
+            <option value="{{ website_url.0 }}"
+                    {{ website_url_selected }}>{{ website_url.1 }}</option>
+
+        {% endfor %}
+    </select> * 
+
+    <!-- input unicorn:model.defer="website_url"      type="text"   id="website_url"   placeholder="website url, ex: https://www.truthfinder.com/people-search/" value="{{webscrape.website_url}}"    
+    class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider w-4/5" / -->
+
+    <div data-website_url="truthfinder.com" class="website-data-form hidden">
+
+        <span class="block">&nbsp;</span>
+
+        <textarea unicorn:model.defer="by_list"      type="text"   id="by_list"   placeholder="By List of first and last names..."    value="{{webscrape.by_list}}"
+        class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider w-4/5"
+        rows="10" ></textarea>
+
+        <span class="block">&nbsp;</span>
+
+        <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
+            <button unicorn:click="scrape" data-form="managePeopleForm" data-formclass="manage-people-form"
+                class="btn btn-outline-tertiary rounded bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search submit">Search</button>
+        </div>
+
+        <style>
+            button.search {
+                /*
+                margin: auto !important;
+                display: block;
+                */
+                font-size: 1.6rem;
+            }
+            button.search:before,
+            button.search:after {
+                content: "__";
+                margin-top: -1em;
+            }
+
+        </style>
     </div>
-
-    <style>
-        button.search {
-            /*
-            margin: auto !important;
-            display: block;
-            */
-            font-size: 1.6rem;
-        }
-        button.search:before,
-        button.search:after {
-            content: "__";
-            margin-top: -1em;
-        }
-
-    </style>
 </div>
 

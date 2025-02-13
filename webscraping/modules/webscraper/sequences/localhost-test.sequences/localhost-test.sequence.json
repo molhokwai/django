@@ -1,0 +1,31 @@
+[
+    [
+        { "config": {
+            "ui_timeout": 1
+        }}
+    ],[
+        { "get": "http://localhost:8001/" },
+        { "assert_in_page_source": "WEBSCRAPING"}
+    ],[
+        { "find": "webscrape-data", "by": "By.ID" },
+        { "click": "Left" }
+    ],[
+        { "wait": "aggregated-results-title", "by": "By.ID", "timeout": 30 },
+        { "assert_in_page_source": "Aggregated Results" }
+    ],[
+        { "find": "#aggregated-results-table thead", "by": "By.CSS_SELECTOR" },
+        { "get_attribute": "innerText" },
+        { "set_var": "results_header_innertext" }
+    ],[
+        { "find": "aggregated-results--body", "by": "By.ID"  },
+        { "get_attribute": "innerText" },
+        { "set_var": "paginated_results_innertext" }
+    ],[
+        { "print_TEXT": "input" },
+        { "text_to_csv": "variables",
+          "variables": ["results_header_innertext", "paginated_results_innertext"], 
+          "folderpath": "output/",
+          "filename": "localhost-test.sequence" 
+        }
+    ]
+]

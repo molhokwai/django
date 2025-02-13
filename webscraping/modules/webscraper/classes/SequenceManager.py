@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf8 -*-
+from django_app.settings import _print
 from webscraping.modules.webscraper.classes.Step import Step
 from webscraping.modules.webscraper.classes.Util import Util
 
@@ -28,7 +29,7 @@ class Sequence:
             for step_dict in step_dicts:
                 for key in step_dict.keys():
                     if key == "config":
-                        print('----------| Sequence > ', key)
+                        _print('----------| Sequence > %s' % key, VERBOSITY=3)
                         step_config = step_dict["config"]
 
 
@@ -59,7 +60,7 @@ class Sequence:
                 for step_dict in step_dicts:
                     for key in step_dict.keys():
                         if key == "config":
-                            print('----------| Sequence > ', key)
+                            _print('----------| Sequence > %s' % key, VERBOSITY=3)
                             self._step_config = step_dict["config"]
         return self._step_config
 

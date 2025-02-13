@@ -20,6 +20,7 @@ else:
 
 import os
 
+from django_app.settings import _print
 from modules.webscraper.classes.SequenceManager import SequenceManager
 
 
@@ -40,12 +41,12 @@ def selenium_docs_example():
     elem.send_keys(Keys.RETURN)
     assert "No results found." not in driver.page_source
 
-    print("""
+    _print("""
         ------------ OK ----------------
         assert "Python" in driver.title
         assert "No results found." not in driver.page_source
         --------------------------------
-    """)
+    """, VERBOSITY=0)
 
     driver.close()
 
@@ -95,22 +96,22 @@ def example_local():
     assert "David Jonathan" in title
     assert "GMT" in title
 
-    print("""
+    _print("""
         ------------ OK ----------------
         assert "David Jonathan" in title
         assert "GMT" in title
         --------------------------------
-    """)
+    """, VERBOSITY=0)
 
 
     elem = driver.find_element(By.ID, "webscrapes-table")
     text = elem.get_attribute("innerText")
 
-    print(f"""
+    _print(f"""
         ------------ TEXT --------------
         {text}
         --------------------------------
-    """)
+    """, VERBOSITY=0)
 
     data = StringIO(f"""
         {text}
@@ -150,13 +151,14 @@ def sequenced(name, variables={}):
 
 
 def execute_input(filepath, n=10):
-    print(
+    _print(
         """
         --------- COMPLETED ------------
         Executing "%s"...
 
         --------------------------------
-        """ % filepath
+        """ % filepath,
+        VERBOSITY=0
     )
 
     l = []
@@ -179,12 +181,13 @@ def execute_input(filepath, n=10):
 
 
         def _exec(filepath, line, variables):
-            print(
+            _print(
                 """
                 --------- EXECUTING ------------
                 sequenced(name, %s)...
                 --------------------------------
-                """ % str(variables)
+                """ % str(variables),
+                VERBOSITY=0
             )
             sequence_file = name = filepath.replace("txt", "json")
             sequenced(name, variables=variables)
@@ -194,12 +197,13 @@ def execute_input(filepath, n=10):
             filetext = update_list_file(input_filepath, filetext,
                                         line, addtoken="✓")
 
-            print(
+            _print(
                 """
                 --------- COMPLETED ------------
                 sequenced(name, %s).
                 --------------------------------
-                """ % str(variables)
+                """ % str(variables),
+                VERBOSITY=0
             )
 
         variables = {
@@ -218,22 +222,26 @@ def execute_input(filepath, n=10):
                     filetext = update_list_file(input_filepath, filetext,
                                                 line, addtoken="✗")
                     i += 1
-                    print('--------------| Assertion rrror: ', err.args[0])
+                    _print(
+                        '--------------| Assertion rrror: ', err.args[0], 
+                        VERBOSITY=0
+                    )
 
                 except Exception as err:
                     print('--------------| Error: ', err)
             else:
                 break
         else:
-            print(
+            _print(
                 """
                 ---------- SKIPPING ------------
                 sequenced(name, %s) : Done ✓
                 --------------------------------
-                """ % str(variables)
+                """ % str(variables),
+                VERBOSITY=0
             )
 
-    print(
+    _print(
         """
 
         --------- COMPLETED ------------
@@ -241,7 +249,8 @@ def execute_input(filepath, n=10):
         %i inputs executed...
 
         --------------------------------
-        """ % i
+        """ % i, 
+        VERBOSITY=0
     )
 
 if __name__ == "__main__":

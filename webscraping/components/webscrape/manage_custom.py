@@ -2,12 +2,12 @@ from django_unicorn.components import UnicornView, QuerySetType
 from django.conf import settings
 from django.forms.models import model_to_dict
 
-from datetime import date, datetime
+from django_app.settings import _print
 from webscraping.models import Webscrape, TaskProgress, TaskHandler
-
 from webscraping.views import webscrape_steps_long_running_method
 
 
+from datetime import date, datetime
 from enum import Enum
 from typing import Union
 import copy
@@ -51,6 +51,7 @@ class ManageCustomView(UnicornView):
 
     task_name: str = ""
 
+    website_urls = None
     us_states = None
     countries = None
 
@@ -64,13 +65,14 @@ class ManageCustomView(UnicornView):
 
     def set_task_variable(self, field_value: tuple):
         self.task_variables[field_value[0]] = field_value[1]
-        print('---------------| self.task_variables: ', self.task_variables)
+        _print('---------------| self.task_variables: %s' % self.task_variables, VERBOSITY=3)
 
     def mount(self):
+        self.website_urls = self.parent.website_urls
         self.countries = self.parent.countries
         self.us_states = self.parent.us_states
         self.webscrape_tasks = self.parent.webscrape_tasks       
-        print('---------------| self.webscrape_tasks: ', self.webscrape_tasks)
+        _print('---------------| self.webscrape_tasks: %s' % self.webscrape_tasks, VERBOSITY=3)
 
         # For testing...
         # --------------
@@ -111,10 +113,10 @@ class ManageCustomView(UnicornView):
 
         # Get task variables from user given + model fields
         self.webscrape.task_variables = model_to_dict(self.webscrape)
-        print('-------------------------| ', self.webscrape.task_variables)
+        _print('-------------------------| %s' % self.webscrape.task_variables, VERBOSITY=3)
 
-        # Get/Generate task id with Task handler
-        self.webscrape.task_id = TaskHandler().start_task(
+        # Queue task with Task handler
+        self.parent.taskHandler.queue_task(
             webscrape_steps_long_running_method, [ self.webscrape ] )
 
         self.save()
@@ -125,9 +127,6 @@ class ManageCustomView(UnicornView):
         self.clear_fields()
         return self.parent.load_table(force_render=True)
 
-
-    def update_list(self):
-        self.parent.load_table(force_render=True)
 
 
     def clear_fields(self):

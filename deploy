@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# -*- coding: utf8 -*-
+
+# ---------------------
+#  ./app
+#  ./static
+# ./webscraping
+# ./django_app
+# ./staticfiles
+# ./theme
+# ./media
+# ./requirements.live.txt
+# ./db.sqlite3
+# ./geckodriver.log
+# ./requirements.local.txt
+# ./venv-activate
+# ./venv-create-activate-cmd
+# ./requirements-full.txt
+# ./manage.py
+# ./manage-cmd
+# ./__init__.py
+# ./.gitignore
+# ./README.md
+# ---------------------
+
+# ---------------------
+# I.
+# ---------------------
+zip -r ../@webscraper-deployment-1 ./app  ./static ./webscraping ./django_app ./staticfiles ./theme ./media ./requirements.live.txt ./db.sqlite3 ./geckodriver.log ./requirements.local.txt ./venv-activate ./venv-create-activate-cmd ./requirements-full.txt ./manage.py ./manage-cmd ./__init__.py ./.gitignore ./README.md 
+
+
+# ---------------------
+# II. Upload zip to live
+# ---------------------
+
+
+# ---------------------
+# III. Run on live instance
+# ---------------------
+> pip install requirements.live.txt
+
+
+# ---------------------
+# III. Check Live instance configuration
+#
+# - Python version
+# - Static
+# - ...
+# ---------------------

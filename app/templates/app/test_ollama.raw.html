@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ollama Question Response</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        #responseText {
+          display: block;
+          unicode-bidi: embed;
+          font-family: monospace;
+          white-space: pre;
+        }        
+        textarea, input, select {
+            width: 60%;
+            min-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ask Ollama a Question</h1>
+    <form id="questionForm">
+        <label for="question">Enter your question:</label><br>
+        <textarea type="text" id="question" name="question"
+                  placeholder="Type your question here..." 
+                  rows="3" required>            
+        </textarea>
+        <button type="submit">Ask</button>
+    </form>
+
+    <div id="response">
+        <strong>Response:</strong>
+        <p id="responseText">Waiting for your question...</p>
+    </div>
+
+    <script>
+        document.getElementById('questionForm').addEventListener('submit', function(event) {
+            /**************
+             * Sample response:
+             *  {"model":"deepseek-r1:1.5b","created_at":"2025-02-12T14:04:29.802546912Z","response":"\u003cthink\u003e\n\n\u003c/think\u003e\n\nHi! I'm DeepSeek-R1, an AI assistant independently developed. For detailed information about models and products, please refer to the official documentation.","done":true,"done_reason":"stop","context":[151644,17360,2385,84,650,444,10994,17607,151645,151648,271,151649,271,13048,0,358,2776,18183,39350,10911,16,11,458,15235,17847,28135,7881,13,1752,11682,1995,911,4119,323,3871,11,4486,8300,311,279,3946,9705,13],"total_duration":3601564510,"load_duration":18680838,"prompt_eval_count":10,"prompt_eval_duration":526000000,"eval_count":35,"eval_duration":3055000000}
+             **************/ 
+            event.preventDefault(); // Prevent the form from submitting the traditional way
+
+            const question = document.getElementById('question').value;
+            const responseText = document.getElementById('responseText');
+
+            responseText.textContent = "... Veuillez patienter pour le traitement de votre message, qui peut prendre jusqu'à une minute..."
+
+            // Replace with your Ollama server URL
+            const ollamaServerUrl = 'http://217.154.4.222:11434/api/generate';
+
+            fetch(ollamaServerUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt: question, model:"deepseek-r1:1.5b",stream:false })
+            })
+            .then(response => response.json())
+            .then(data => {
+                responseText.textContent = data.response || 'No response received.';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                responseText.textContent = 'Failed to get a response from the server.';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 # -*- coding: utf8 -*-
 python3 -m venv venv # create a virtualenv
+
+# linux
 source venv/bin/activate  # activate it
+
+# windows
+.\venv\Scripts\activate.bat
 
 # install
 pip install django==3.2

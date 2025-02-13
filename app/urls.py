@@ -2,18 +2,20 @@ from django.urls import path, re_path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-from .components.books.books_view import BooksView
 
 
 urlpatterns = [
-    path("", views.index, name='app_index'),
-    path("index/", views.index, name='app_index'),
-    path("start/", views.start, name='app_start'),
-
-    path("hello_world/", views.hello_world, name='hello_world'),
-    path("books_demo/", views.books_demo, name='books_demo'),
-
-    path("books_view/", BooksView.as_view(), name='books_view'),
-
-    path("trainings_dashboard/", views.trainings_dashboard, name='trainings_dashboard'),
+    # pages
+    path("", views.journal, name='home'),
+    path("index/", views.journal, name='index'),
+    path("journal/", views.journal, name='journal'),
+    # auth
+    path("login/", views.login_view, name="login"),
+    path("register/", views.register_view, name="register"),
+    path("logout/", views.logout_view, name="logout"),
+    # handlers
+    path("error/", views.error, name='error'),
+    # tests
+    path("test_ollama_raw/", views.test_ollama_raw, name='test_ollama_raw'),
 ]
+

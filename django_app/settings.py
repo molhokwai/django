@@ -12,26 +12,57 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from shutil import which
-import os
+import os, logging, sys
+from datetime import timedelta
+
+
+# Printing
+# Verbosity: 0 | 1 | 2 | 3
+# ------------------------
+PRINT_VERBOSITY = 0
+def _print(val, VERBOSITY=0):
+    if PRINT_VERBOSITY > 0:
+        print(val)
+    elif PRINT_VERBOSITY >= VERBOSITY:
+        print(val)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-print('--------------| BASE_DIR :: ', BASE_DIR)
+_print('--------------| BASE_DIR :: %s' % BASE_DIR, VERBOSITY=2)
+
+sys.path.append(BASE_DIR) 
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+
+# Security
+# WARNING: keep the secret key used in production secret!
+# --------
+# SECRET_KEY = str(os.getenv('SECRET_KEY'))
 SECRET_KEY = 'django-insecure-kc45@neob5bj2m#jj5_#^#eqz!htt#bg0hi4v)n1obnsmmy(zn'
+
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 IS_LIVE = True
-if str(BASE_DIR).find('/home/nkensa/GDrive-local/Tree/') == 0:
+IS_LOCAL = False
+IS_HEROKU = os.environ.get('DYNO') is not None
+
+WHICH_ENV = 'LOCAL' if str(BASE_DIR).find('/home/nkensa/GDrive-local/Tree/') == 0 else 'LIVE'
+if WHICH_ENV == 'LOCAL' :
     DEBUG = True
     IS_LIVE = False
+    IS_LOCAL = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "nkensa.pythonanywhere.com"]
+
+
+# ALLOWED_HOSTS = ["127.0.0.1", "localhost", "nkensa.pythonanywhere.com"]
+# ---------------
+ALLOWED_HOSTS = ["*"]
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -50,11 +81,9 @@ INSTALLED_APPS = [
 
     # extensions
     'django_unicorn',
+    'django_browser_reload',
     'tailwind',
     'theme',
-    'django_browser_reload',
-    'taggit',
-    'tinymce',
     'fontawesomefree',
     # -----------------
     # @ToDo :: Fix pandas install on pythonanywhere to restore code (see all "Fix pandas" todos)
@@ -64,13 +93,17 @@ INSTALLED_APPS = [
     # apps
     'django_app',
     'app',
-    'darklight',
-    'ourcards',
     'webscraping',
 ]
+if IS_LOCAL:
+    INSTALLED_APPS += [
+    ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -98,19 +131,58 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'django_app.wsgi.application'
+if IS_HEROKU:
+    WSGI_APPLICATION = 'django_app.wsgi.app'
 
 
 # Database
 # --------
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# SQLITE
+# ------
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db/db.sqlite3',
+#     }
+# }
+# ------
+
+
+
+
+
+# POSTGRES
+# --------
+os.environ.setdefault("PGDATABASE", "webscraper")
+os.environ.setdefault("PGUSER", "postgres")
+os.environ.setdefault("PGPASSWORD", "LeA45Jf~7ZL][e%k")
+os.environ.setdefault("PGHOST", "localhost")
+os.environ.setdefault("PGPORT", "5432")
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get("PGDATABASE", "webscraper"),
+        'USER': os.environ.get("PGUSER", "postgres"),
+        'PASSWORD': os.environ.get("PGPASSWORD", ""),
+        'HOST': os.environ.get("PGHOST", "localhost"),
+        'PORT': os.environ.get("PGPORT", "5432"),
     }
 }
+
+if WHICH_ENV != 'LOCAL' or IS_HEROKU:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600)  # Optional connection pooling
+    }
+
+# ------
+
 
 # Cache
 # -----
@@ -119,7 +191,8 @@ DATABASES = {
 #         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
 #     }
 # }
-#
+
+
 # CACHES = {
 #     'default': {
 #         'BACKEND': 'django_redis.cache.RedisCache',
@@ -162,6 +235,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_REDIRECT_URL = "journal"  # Redirect after login
+LOGOUT_REDIRECT_URL = "journal"  # Redirect after logout
+
 
 # Internationalization
 # --------------------
@@ -183,6 +259,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -190,6 +269,11 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
     BASE_DIR / 'media'
 ]
+
+
+if IS_HEROKU:
+    STATIC_URL = 'https://webscraper-automat-d453797748a5.herokuapp.com/static/'
+    MEDIA_URL = 'https://webscraper-automat-d453797748a5.herokuapp.com/media/'
 
 
 
@@ -242,5 +326,50 @@ mimetypes.add_type("text/css", ".css", True)
 # ------------------------
 
 WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
+WEBSCRAPER_HEADLESS = True
 WEBSCRAPER_CACHING_DURATION = 3600
+WEBSCRAPER_THREADS_MAX = 3
+WEBSCRAPER_THREAD_TIMEOUT = timedelta(seconds=10)  # Stop after 10 minutes
+WEBSCRAPER_TASK_MAX_ATTEMPTS = 3
 
+
+
+# ------------------------
+# Logging, Printing
+#
+# ------------------------
+
+# Create a logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)  # Set the base logger level to DEBUG (captures all levels)
+
+# Create formatters
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Create handlers for each log level
+debug_handler = logging.FileHandler('log/debug.log')
+debug_handler.setLevel(logging.DEBUG)
+debug_handler.setFormatter(formatter)
+
+info_handler = logging.FileHandler('log/info.log')
+info_handler.setLevel(logging.INFO)
+info_handler.setFormatter(formatter)
+
+warning_handler = logging.FileHandler('log/warning.log')
+warning_handler.setLevel(logging.WARNING)
+warning_handler.setFormatter(formatter)
+
+error_handler = logging.FileHandler('log/error.log')
+error_handler.setLevel(logging.ERROR)
+error_handler.setFormatter(formatter)
+
+critical_handler = logging.FileHandler('log/critical.log')
+critical_handler.setLevel(logging.CRITICAL)
+critical_handler.setFormatter(formatter)
+
+# Add handlers to the logger
+logger.addHandler(debug_handler)
+logger.addHandler(info_handler)
+logger.addHandler(warning_handler)
+logger.addHandler(error_handler)
+logger.addHandler(critical_handler)
