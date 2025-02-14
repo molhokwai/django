@@ -108,7 +108,9 @@ function onPromptRespondedTo(){
     promptInput.value = "";
     promptInput.classList.remove("wait");
     promptInput.disabled = false;
-    if(chatAddHistory.checked){ chatAddHistory.click(); }
+    if(chatAddHistory && chatAddHistory.checked){
+        chatAddHistory.click();
+    }
     chatContainerWaitText.style.opacity = 0;
     feedbackTextEl.textContent = "";
 }    
