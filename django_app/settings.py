@@ -345,6 +345,7 @@ AI_JOURNAL_GUIDANCE_CHAT_HISTORY_RECALL = 50
 # ------------------------
 # Logging, Printing
 #
+# FILE LOGGING
 # ------------------------
 
 # Create a logger

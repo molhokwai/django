@@ -121,7 +121,7 @@ function promptLLM(question, successCallback, errorCallback){
      **************/ 
 
     let chatHistory = '';
-    if(chatAddHistory.checked){
+    if(chatAddHistory && chatAddHistory.checked){
         Unicorn.call('chat.chat_prompt', 'get_history');
         chatHistory = Unicorn.getReturnValue('chat.chat_prompt');
     }
