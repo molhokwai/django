@@ -12,8 +12,16 @@
 
         <!-- Tailwind -->
         {% tailwind_preload_css %}
-        {% tailwind_css %}
+        <!-- 
+            Workaround
+            ----------
+            https://stackoverflow.com/questions/44657829/css-file-blocked-mime-type-mismatch-x-content-type-options-nosniff
+            { % tailwind_css % } 
+        -->
+        <link href="{% static 'css/dist/styles.css' %}">
 
+
+        <!-- Main -->
         <link rel="stylesheet" href="{% static 'templates/main/css/main.css' %}">
 
 
