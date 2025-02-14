@@ -143,7 +143,7 @@ class ManagePeopleView(UnicornView):
                         name: "%s" (Processed %s)
                     --------------------------------
                     """ % (
-                        f"{variables["firstName"]} {variables["lastName"]}",
+                        f"{variables['firstName']} {variables['lastName']}",
                         "✓" if line.find("✓") < 0 else "✗"
                     ),
                     VERBOSITY=0
@@ -156,7 +156,7 @@ class ManagePeopleView(UnicornView):
                         name: "%s" (Processed %s)
                     --------------------------------
                     """ % (
-                        f"{variables["firstName"]} {variables["lastName"]}",
+                        f"{variables['firstName']} {variables['lastName']}",
                         "✓" if line.find("✓") < 0 else "✗"
                     ),
                     VERBOSITY=0
