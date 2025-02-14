@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     # @ToDo :: Fix pandas install on pythonanywhere to restore code (see all "Fix pandas" todos)
     # 'pandas',
     'selenium',
+    'django_db_logger',
 
     # apps
     'django_app',
@@ -344,41 +345,87 @@ AI_JOURNAL_GUIDANCE_CHAT_HISTORY_RECALL = 50
 
 # ------------------------
 # Logging, Printing
-#
+# ------------------------
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(message)s'
+        },
+    },
+    'handlers': {
+        'db_log': {
+            'level': 'DEBUG',
+            'class': 'django_db_logger.db_log_handler.DatabaseLogHandler'
+        },
+    },
+    'loggers': {
+        'db': {
+            'handlers': ['db_log'],
+            'level': 'DEBUG'
+        },
+        'django.request': { # logging 500 errors to database
+            'handlers': ['db_log'],
+            'level': 'ERROR',
+            'propagate': False,
+        }
+    }
+}
+
+
+# Create a logger
+# ---------------
+logger = logging.getLogger('db')
+
+
+
 # FILE LOGGING
 # ------------------------
 
 # Create a logger
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)  # Set the base logger level to DEBUG (captures all levels)
+# ---------------
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.DEBUG)  # Set the base logger level to DEBUG (captures all levels)
+
 
 # Create formatters
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# -----------------
+# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # Create handlers for each log level
-debug_handler = logging.FileHandler('log/debug.log')
-debug_handler.setLevel(logging.DEBUG)
-debug_handler.setFormatter(formatter)
+# debug_handler = logging.FileHandler('log/debug.log')
+# debug_handler.setLevel(logging.DEBUG)
+# debug_handler.setFormatter(formatter)
 
-info_handler = logging.FileHandler('log/info.log')
-info_handler.setLevel(logging.INFO)
-info_handler.setFormatter(formatter)
+# info_handler = logging.FileHandler('log/info.log')
+# info_handler.setLevel(logging.INFO)
+# info_handler.setFormatter(formatter)
 
-warning_handler = logging.FileHandler('log/warning.log')
-warning_handler.setLevel(logging.WARNING)
-warning_handler.setFormatter(formatter)
+# warning_handler = logging.FileHandler('log/warning.log')
+# warning_handler.setLevel(logging.WARNING)
+# warning_handler.setFormatter(formatter)
 
-error_handler = logging.FileHandler('log/error.log')
-error_handler.setLevel(logging.ERROR)
-error_handler.setFormatter(formatter)
+# error_handler = logging.FileHandler('log/error.log')
+# error_handler.setLevel(logging.ERROR)
+# error_handler.setFormatter(formatter)
 
-critical_handler = logging.FileHandler('log/critical.log')
-critical_handler.setLevel(logging.CRITICAL)
-critical_handler.setFormatter(formatter)
+# critical_handler = logging.FileHandler('log/critical.log')
+# critical_handler.setLevel(logging.CRITICAL)
+# critical_handler.setFormatter(formatter)
 
-# Add handlers to the logger
-logger.addHandler(debug_handler)
-logger.addHandler(info_handler)
-logger.addHandler(warning_handler)
-logger.addHandler(error_handler)
-logger.addHandler(critical_handler)
+# # Add handlers to the logger
+# logger.addHandler(debug_handler)
+# logger.addHandler(info_handler)
+# logger.addHandler(warning_handler)
+# logger.addHandler(error_handler)
+# logger.addHandler(critical_handler)
+
+
+
+
+
