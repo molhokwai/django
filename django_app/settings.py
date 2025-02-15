@@ -323,16 +323,27 @@ mimetypes.add_type("text/css", ".css", True)
 #
 # Configuration
 #    Caching duration: 15 mns
+# ____________________
+# cron scripts to setup:
+# - webscraping cron
+# - NOT REQUIRED, implememented with bash background 
+#   task sleep and kill:
+#       _________________
+#       kill dangling check_tasks every 20 mns
+#       actually kills all running tasks
+#
+#       * * * * * ~/@webscraper/scripts/webscraping_cron_exec
+#       */20 * * * * pkill -f "check_tasks"
 # ------------------------
 
 WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
 WEBSCRAPER_HEADLESS = True
 WEBSCRAPER_CACHING_DURATION = 3600
 WEBSCRAPER_THREADS_MAX = 3
-WEBSCRAPER_THREAD_TIMEOUT = timedelta(seconds=10)  # Stop after 10 minutes
+WEBSCRAPER_THREAD_MAX_RAM_KB = 200000 # 200MB
+WEBSCRAPER_THREAD_TIMEOUT = timedelta(minutes=10)  # Stop after 10 minutes
 WEBSCRAPER_TASK_MAX_ATTEMPTS = 3
-
-
+WEBSCRAPER_THREADS_MAX_CHECK_TASK_TIME = 10*60 # Maximum check_task time before suppression
 
 # ------------------------
 # AI Journal Guidance
