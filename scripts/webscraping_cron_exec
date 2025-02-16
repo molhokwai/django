@@ -24,13 +24,15 @@ MAX_THREADS=$(python3 -c "from django_app import settings; print(settings.WEBSCR
 # ----------------------------------------------------------
 MAX_CHECK_TASK_TIME=$(python3 -c "from django_app import settings; print(settings.WEBSCRAPER_THREADS_MAX_CHECK_TASK_TIME)")
 
-
 # Count the number of running "marionette" processes
 # -----------------------------------------
 RUNNING_THREADS=$(ps -eF | grep -i "marionette" | grep -v "grep" | wc -l)
+
+echo "MAX_CHECK_TASK_TIME=$MAX_CHECK_TASK_TIME"
 echo "MAX_RAM_KB=$MAX_RAM_KB"
 echo "MAX_THREADS=$MAX_THREADS"
 echo "RUNNING_THREADS=$RUNNING_THREADS"
+DUM=$(python3 -c "from django_app import settings; settings.logger.info('MAX_CHECK_TASK_TIME=$MAX_CHECK_TASK_TIME, MAX_RAM_KB=$MAX_RAM_KB, MAX_THREADS=$MAX_THREADS, RUNNING_THREADS=$RUNNING_THREADS')")
 
 # Check if the number of running threads is below the maximum allowed
 # -----------------------------------------
@@ -43,7 +45,9 @@ if [ "$RUNNING_THREADS" -lt "$MAX_THREADS" ]; then
     # Run the command with RAM limit
     # ----------------------
     # @ToDo :: Get and store process id, kill after given time...
-    ulimit -v $MAX_RAM_KB
+    if [ "$MAX_RAM_KB" -ne 0 ]; then
+        ulimit -v $MAX_RAM_KB
+    fi
     python manage.py check_tasks &
 
     # Not functional, as process is held...
@@ -51,7 +55,7 @@ if [ "$RUNNING_THREADS" -lt "$MAX_THREADS" ]; then
     PID=$!  # Store the process ID
 
     # Wait for the process to complete or timeout after 10 minutes
-    sleep MAX_CHECK_TASK_TIME
+    sleep $MAX_CHECK_TASK_TIME
     if ps -p $PID > /dev/null; then
         kill $PID  # Kill the process if it's still running
         echo "Process $PID killed after timeout."

@@ -46,6 +46,8 @@ class Command(BaseCommand):
         # Fetch Webscrape objects where task_todo is not null
         tasks = Webscrape.objects.filter(
             Q(task_todo__isnull=False)
+            & ~Q(task_status="SUCCESS")
+            & ~Q(task_progress__gte=100)
             & Q(created_on__gt=datetime.datetime(2025, 2, 11))
         )
 

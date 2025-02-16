@@ -58,6 +58,9 @@ if WHICH_ENV == 'LOCAL' :
     IS_LIVE = False
     IS_LOCAL = True
 
+# 'postgres' or 'sqlite'
+# ---------------------
+WHICH_DATABASE = 'postgres'
 
 
 # ALLOWED_HOSTS = ["127.0.0.1", "localhost", "nkensa.pythonanywhere.com"]
@@ -142,46 +145,44 @@ if IS_HEROKU:
 # --------
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# SQLITE
-# ------
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db/db.sqlite3',
+if WHICH_DATABASE == 'sqlite':
+    # SQLITE
+    # ------
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db/db.sqlite3',
+        }
     }
-}
-# ------
+    # ------
+
+elif WHICH_DATABASE == 'postgres':
+    # POSTGRES
+    # --------
+    os.environ.setdefault("PGDATABASE", "webscraper")
+    os.environ.setdefault("PGUSER", "postgres")
+    os.environ.setdefault("PGPASSWORD", "LeA45Jf~7ZL][e%k")
+    os.environ.setdefault("PGHOST", "localhost")
+    os.environ.setdefault("PGPORT", "5432")
 
 
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get("PGDATABASE", "webscraper"),
+            'USER': os.environ.get("PGUSER", "postgres"),
+            'PASSWORD': os.environ.get("PGPASSWORD", ""),
+            'HOST': os.environ.get("PGHOST", "localhost"),
+            'PORT': os.environ.get("PGPORT", "5432"),
+        }
+    }
 
-
-
-# POSTGRES
-# --------
-# os.environ.setdefault("PGDATABASE", "webscraper")
-# os.environ.setdefault("PGUSER", "postgres")
-# os.environ.setdefault("PGPASSWORD", "LeA45Jf~7ZL][e%k")
-# os.environ.setdefault("PGHOST", "localhost")
-# os.environ.setdefault("PGPORT", "5432")
-
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.environ.get("PGDATABASE", "webscraper"),
-#         'USER': os.environ.get("PGUSER", "postgres"),
-#         'PASSWORD': os.environ.get("PGPASSWORD", ""),
-#         'HOST': os.environ.get("PGHOST", "localhost"),
-#         'PORT': os.environ.get("PGPORT", "5432"),
-#     }
-# }
-
-# if WHICH_ENV != 'LOCAL' or IS_HEROKU:
-#     import dj_database_url
-#     DATABASES = {
-#         'default': dj_database_url.config(conn_max_age=600)  # Optional connection pooling
-#     }
-# ------
+    if WHICH_ENV != 'LOCAL' or IS_HEROKU:
+        import dj_database_url
+        DATABASES = {
+            'default': dj_database_url.config(conn_max_age=600)  # Optional connection pooling
+        }
+    # ------
 
 
 # Cache
@@ -333,17 +334,22 @@ mimetypes.add_type("text/css", ".css", True)
 #       actually kills all running tasks
 #
 #       * * * * * ~/@webscraper/scripts/webscraping_cron_exec
-#       */20 * * * * pkill -f "check_tasks"
+#       */10 * * * * pkill -f "check_tasks"
 # ------------------------
 
 WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
 WEBSCRAPER_HEADLESS = True
 WEBSCRAPER_CACHING_DURATION = 3600
 WEBSCRAPER_THREADS_MAX = 3
-WEBSCRAPER_THREAD_MAX_RAM_KB = 200000 # 200MB
+# ChromeDriver, GeckoDriver: 
+#   https://stackoverflow.com/questions/53603429/chromedriver-is-too-slower\
+#                               -than-geckodriver-on-the-first-page-query-through-sele
+#   O to not set a max RAM limitation
+# ------------------------------------------
+WEBSCRAPER_THREAD_MAX_RAM_KB = 0 # 1000000
 WEBSCRAPER_THREAD_TIMEOUT = timedelta(minutes=10)  # Stop after 10 minutes
 WEBSCRAPER_TASK_MAX_ATTEMPTS = 3
-WEBSCRAPER_THREADS_MAX_CHECK_TASK_TIME = 10*60 # Maximum check_task time before suppression
+WEBSCRAPER_THREADS_MAX_CHECK_TASK_TIME = 600 # Maximum check_task time before suppression
 
 # ------------------------
 # AI Journal Guidance
@@ -378,12 +384,14 @@ LOGGING = {
     'loggers': {
         'db': {
             'handlers': ['db_log'],
-            'level': 'DEBUG'
+            'level': 'DEBUG',
+            'formatter': 'simple'
         },
         'django.request': { # logging 500 errors to database
             'handlers': ['db_log'],
             'level': 'ERROR',
             'propagate': False,
+            'formatter': 'simple'
         }
     }
 }
@@ -391,6 +399,7 @@ LOGGING = {
 
 # Create a logger
 # ---------------
+DJANGO_DB_LOGGER_ENABLE_FORMATTER = True
 logger = logging.getLogger('db')
 
 

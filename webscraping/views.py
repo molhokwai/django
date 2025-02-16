@@ -8,7 +8,8 @@ from selenium.webdriver.common.by import By
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver import ChromeOptions
 
 from webscraping.models import (
     Webscrape, WebscrapeData,
@@ -21,6 +22,7 @@ from django_app.settings import logger, _print, PRINT_VERBOSITY
 
 import os, datetime, time, copy, csv, json
 
+BASE_DIR = settings.BASE_DIR
 DEBUG = settings.DEBUG
 IS_LIVE = settings.IS_LIVE
 WEBSCRAPER_HEADLESS = settings.WEBSCRAPER_HEADLESS
@@ -171,10 +173,29 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
         "views.webscrape_steps_long_running_method - webscrape.task_variables > : %s " \
                                                         % str(webscrape.task_variables))
 
+    driver = None
+    options = FirefoxOptions()
+    if IS_LIVE:
+        options = ChromeOptions()
+
     # ---------------
     # driver instance create
     # ---------------
-    options = Options()
+    #
+    # Optimization options:
+    # - stackoverflow.com/questions/55072731/selenium-using-too-much-ram-with-firefox
+    # ---------------
+    options.add_argument("--start-maximized")
+    options.add_argument("--disable-infobars")
+    options.add_argument("--disable-extensions")
+    options.add_argument('--disable-application-cache')
+    options.add_argument("--disable-dev-shm-usage")
+    # -------------------------
+    # Disable sandboxing (for chrome) 
+    # (sandboxing = separated browser instance)...
+    options.add_argument("--no-sandbox")
+
+
     if WEBSCRAPER_HEADLESS or IS_LIVE:
         # ----------------------------------------
         # Do not show browser (= headless) live...
@@ -185,16 +206,25 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
         # -------------------------
         # Disable GPU usage live...
         options.add_argument("--disable-gpu")
+
+
+    # -----------------------------------
+    # from selenium.webdriver.chrome.service import Service
+    # from selenium.webdriver.firefox.service import Service
+    # ______________________________
+    # service = Service("chrome/driver/path" | "firefox|gecko/driver/path")
+    # -----------------------------------
+    if IS_LIVE:                
+        driver = webdriver.Chrome(
+            options=options,
+            service_log_path=os.path.join(str(BASE_DIR), "log/chromedriver.log")
+        )
     else:
-        # -------------------------
-        # Disable sandboxing for chrome  locally 
-        # (sandboxing = separated browser instance)...
-        options.add_argument("--no-sandbox")
+        driver = webdriver.Firefox(
+            options=options,
+            service_log_path=os.path.join(str(BASE_DIR), "log/geckodriver.log")
+        )
 
-
-    driver = webdriver.Firefox(
-        options=options
-    )
 
 
     # ----------------
@@ -218,51 +248,12 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
     # @ToDo: Mark config as setup step vs sequence steps ?
     all_steps_len -= 1
 
-    n = 0
-    for i in range(len(sequenceObjects)):
-        logger.debug(
-            "views.webscrape_steps_long_running_method - i in range(sequenceObjects) > : %i " % i)
-        logger.debug("views.webscrape_steps_long_running_method - "
-                     f"|||||||||||||||||||||| ALL_STEPS_LEN - N :: {all_steps_len} - {n}")
-        _print(
-            "|||||||||||||||||||||| ALL_STEPS_LEN - N",
-            f"{all_steps_len} - {n}"
-        )
-
-        sequenceObj = sequenceObjects[i]
-
-        steps = sequenceObj.get_steps()
-        for j in range(len(steps)):
-
-            step = steps[j]
-            outputs.append(sequenceObj.execute_step(step, variables=variables))
-
-            progress_value = int(( n / all_steps_len) * 100)
-            if progress_value >= 100:
-                progress_value = 100
-
-            taskProgress.set_unset( 
-                Status.RUNNING if progress_value < 100 else Status.SUCCESS,
-                progress_value,
-                progress_message=f'Sequence step {n} of {all_steps_len} has been processed | for: {webscrape}'
-            )
-
-            n += 1
-
-            _break = False
-            if (n >= all_steps_len) or (progress_value >= 100 or taskProgress.status == Status.SUCCESS.value):
-                taskProgress.value = progress_value = 100
-                taskProgress.status = Status.SUCCESS.value
-                _break = True
-
-            webscrape.task_progress = taskProgress.value
-            webscrape.task_status = taskProgress.status
-            webscrape.task_output = str(outputs[-1])
-            webscrape.save()
-
-
-            logger.debug("views.webscrape_steps_long_running_method - STEP > : "
-                        f"{progress_value}% - {taskProgress.status} - {str(step)}")
+    try:
+        progress_value = 0
+        n = 0
+        for i in range(len(sequenceObjects)):
+            logger.debug(
+                "views.webscrape_steps_long_running_method - i in range(sequenceObjects) > : %i " % i)
             logger.debug("views.webscrape_steps_long_running_method - "
                          f"|||||||||||||||||||||| ALL_STEPS_LEN - N :: {all_steps_len} - {n}")
             _print(
@@ -270,8 +261,66 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
                 f"{all_steps_len} - {n}"
             )
 
-            if _break:
-                break
+            sequenceObj = sequenceObjects[i]
+
+            steps = sequenceObj.get_steps()
+            for j in range(len(steps)):
+
+                step = steps[j]
+                outputs.append(sequenceObj.execute_step(step, variables=variables))
+
+                progress_value = int(( n / all_steps_len) * 100)
+                if progress_value >= 100:
+                    progress_value = 100
+
+                taskProgress.set_unset( 
+                    Status.RUNNING if progress_value < 100 else Status.SUCCESS,
+                    progress_value,
+                    progress_message=f'Sequence step {n} of {all_steps_len} has been processed | for: {webscrape}'
+                )
+
+                n += 1
+
+                _break = False
+                if (n >= all_steps_len) or (progress_value >= 100 or taskProgress.status == Status.SUCCESS.value):
+                    taskProgress.value = progress_value = 100
+                    taskProgress.status = Status.SUCCESS.value
+                    _break = True
+
+                webscrape.task_progress = taskProgress.value
+                webscrape.task_status = taskProgress.status.value
+                webscrape.task_output = str(outputs[-1])
+                webscrape.save()
+
+
+                logger.debug("views.webscrape_steps_long_running_method - STEP > : "
+                            f"{progress_value}% - {taskProgress.status} - {str(step)}")
+                logger.debug("views.webscrape_steps_long_running_method - "
+                             f"|||||||||||||||||||||| ALL_STEPS_LEN - N :: {all_steps_len} - {n}")
+                _print(
+                    "|||||||||||||||||||||| ALL_STEPS_LEN - N",
+                    f"{all_steps_len} - {n}"
+                )
+
+                if _break:
+                    break
+
+    except Exception as err:
+
+        logger.error(f"{datetime.datetime.now()} - views.webscrape_steps_long_running_method - "
+                    f"|||||||||||||||||||||| ERROR :: {err}")
+
+        taskProgress.set_unset( 
+            Status.FAILED,
+            progress_value,
+            progress_message=f"An error occured at Sequence step {n} of {all_steps_len} for: {webscrape} "
+                             f"|||||||||||||||||||||| ERROR :: {err}"
+        )
+
+        webscrape.task_progress = taskProgress.value
+        webscrape.task_status = taskProgress.status.value
+        webscrape.task_output = str(outputs[-1])
+        webscrape.save()
 
 
     # ---------------
@@ -280,187 +329,30 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
     driver.close()
 
 
-
-    # ---------------
-    # Task closure
-    # ---------------
-    output = {
-        "datetime": datetime.datetime.now(),
-        "input": webscrape,
-        "outputs": outputs
-    }
-    
-    statusE = {
-        'STARTED': Status.STARTED,
-        'RUNNING': Status.RUNNING,
-        'SUCCESS': Status.SUCCESS,
-        'FAILED': Status.FAILED,
-    }[taskProgress.status]
-    taskProgress.set_unset(
-        statusE, taskProgress.value,
-        progress_message=f"{output}% have been processed"
-    )
-
-    webscrape.task_progress = taskProgress.value
-    webscrape.task_status = taskProgress.status
-    webscrape.save()
-
-
-def Xwebscrape_steps_long_running_method( webscrape: Webscrape ):
-    """
-        A long-running method to execute web scraping steps sequentially.
-
-        -----------
-        Description:
-            ! PREFERRED METHOD - see other in archives
-
-            This method executes sequences' steps one bye one, and so 
-            it provide task progress handling at step level.
-            To be preferred for Taskprogress handling.
-
-            See:
-            -    tests.integration.test_longrunning_taskhandler
-            -    models: TaskHandler, TaskProgress
-
-        Args:
-            webscrape (Webscrape): The web scraping task model.
-    """
-    def _print(key, value):
-        if PRINT_VERBOSITY >= 0:
-            print(f'-------| webscrape_steps_long_running_method > {key}', value)
-
-
-    progress_value = 0
-
-    # ------------
-    # input values
-    # ------------
-    name = webscrape.task_name
-    variables = webscrape.task_variables
-    _print('type(webscrape.task_variables)', type(webscrape.task_variables))
-    _print('webscrape.task_variables', webscrape.task_variables)
-    logger.debug(
-        "views.webscrape_steps_long_running_method - webscrape.task_variables > : %s " \
-                                                        % str(webscrape.task_variables))
-
-    # ---------------
-    # driver instance create
-    # ---------------
-    options = Options()
-    if IS_LIVE:
-        # ----------------------------------------
-        # Do not show browser (= headless) live...
-        # remove True for showing browser locally
-        options.add_argument("--headless")
-
-    if IS_LIVE:
-        # -------------------------
-        # Disable GPU usage live...
-        options.add_argument("--disable-gpu")
-    else:
-        # -------------------------
-        # Disable sandboxing for chrome  locally 
-        # (sandboxing = separated browser instance)...
-        options.add_argument("--no-sandbox")
-
-
-    driver = webdriver.Firefox(
-        options=options
-    )
-
-
-    # ----------------
-    # Task execution & progress
-    # ----------------
-    source_path = "webscraping/modules/webscraper/"
-
-    sequenceManager = SequenceManager(driver, name, os.path.abspath(source_path))
-
-    sequenceObjects = sequenceManager.sequenceObjects
-
-    sequenceObjects_len = len(sequenceObjects)
-    outputs = []
-    all_steps_len = 0
-    for i in range(len(sequenceObjects)):
-        sequenceObj = sequenceObjects[i]
-        steps = sequenceObj.get_steps()
-        all_steps_len += len(steps)
-
-    n = 0
-    progress_value = 0
-    progress_status = None
-    for i in range(len(sequenceObjects)):
-        logger.debug(
-            "views.webscrape_steps_long_running_method - i in range(sequenceObjects) > : %i " % i)
-        logger.debug("views.webscrape_steps_long_running_method - "
-                     f"|||||||||||||||||||||| ALL_STEPS_LEN - N :: {all_steps_len} - {n}")
-        _print(
-            "|||||||||||||||||||||| ALL_STEPS_LEN - N",
-            f"{all_steps_len} - {n}"
+    if taskProgress.status != Status.FAILED:
+        # ---------------
+        # Task closure
+        # ---------------
+        output = {
+            "datetime": datetime.datetime.now(),
+            "input": webscrape,
+            "outputs": outputs
+        }
+        
+        statusE = {
+            'STARTED': Status.STARTED,
+            'RUNNING': Status.RUNNING,
+            'SUCCESS': Status.SUCCESS,
+            'FAILED': Status.FAILED,
+        }[taskProgress.status]
+        taskProgress.set_unset(
+            statusE, taskProgress.value,
+            progress_message=f"{output}% have been processed"
         )
 
-        sequenceObj = sequenceObjects[i]
-
-        steps = sequenceObj.get_steps()
-        for j in range(len(steps)):
-
-            step = steps[j]
-            outputs.append(sequenceObj.execute_step(step, variables=variables))
-
-            progress_value = int(( n / all_steps_len) * 100)
-            if progress_value >= 100:
-                progress_value = 100
-
-            progress_status = Status.RUNNING if progress_value < 100 else Status.SUCCESS
-            progress_message=f'Sequence step {n} of {all_steps_len} has been processed | for: {webscrape}'
-            _print('progress_message', progress_message)
-
-            webscrape.task_progress = progress_value
-            webscrape.task_status = progress_status
-            webscrape.task_output = str(outputs[-1])
-            webscrape.save()
-
-            logger.debug("views.webscrape_steps_long_running_method - STEP > : "
-                        f"{progress_value}% - {progress_status} - {str(step)}")
-
-            n += 1
-
-            if n >= all_steps_len:
-               progress_value = 100
-               progress_status = Status.SUCCESS.value
-
-            logger.debug("views.webscrape_steps_long_running_method - "
-                         f"|||||||||||||||||||||| ALL_STEPS_LEN - N :: {all_steps_len} - {n}")
-            _print(
-                "|||||||||||||||||||||| ALL_STEPS_LEN - N",
-                f"{all_steps_len} - {n}"
-            )
-
-            if progress_value >= 100 or progress_status == Status.SUCCESS.value:
-                break
-
-
-    # ---------------
-    # driver instance
-    # ---------------
-    driver.close()
-
-
-
-    # ---------------
-    # Task closure
-    # ---------------
-    output = {
-        "datetime": datetime.datetime.now(),
-        "input": webscrape,
-        "outputs": outputs
-    }
-    
-
-    webscrape.task_progress = progress_value
-    webscrape.task_status = progress_status
-    webscrape.save()
-
+        webscrape.task_progress = taskProgress.value
+        webscrape.task_status = taskProgress.status.value
+        webscrape.save()
 
 
 def parse_raw_outputs():

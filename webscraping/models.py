@@ -5,8 +5,9 @@ from django.utils.text import slugify
 
 from django.core.cache import cache
 from django.conf import settings
-from django_app.settings import logger, _print
-
+from django_app.settings import (
+    logger, _print, WEBSCRAPER_TASK_MAX_ATTEMPTS
+)
 import threading
 from time import sleep
 from typing import Union
@@ -125,6 +126,7 @@ class WebsiteUrls(models.TextChoices):
 class StatusTextChoices(models.TextChoices):
     STARTED = 'STARTED', _('Started')
     RUNNING = 'RUNNING', _('Running')
+    QUEUED = 'QUEUED', _('Queued')
     SUCCESS = 'SUCCESS', _('Success')
     FAILED = 'FAILED', _('Failed')
 
@@ -202,6 +204,22 @@ class Webscrape(models.Model):
         super().save(*args, **kwargs)
 
 
+    def task_to_be_queued(self):
+
+        if  self.task_status == Status.FAILED.value \
+                and not self.task_attempts >= WEBSCRAPER_TASK_MAX_ATTEMPTS:
+
+            msg = '-------------------------| PICKED TASK >> ' \
+                  'webscrape.table→load_table:: ' \
+                  'task_status, task_attempts - WEBSCRAPER_TASK_MAX_ATTEMPTS, task_id :: ' \
+                  f'{self.task_status}, {self.task_attempts} - ' \
+                  f'{WEBSCRAPER_TASK_MAX_ATTEMPTS}, ' \
+                  f'{self.task_id} '
+            _print(msg, VERBOSITY=3), logger.info(msg)
+        
+            return True
+
+
     def update_task_status(self):
         """
             Description
@@ -214,13 +232,35 @@ class Webscrape(models.Model):
                      +    Check if webscrape at 100% with SUCCESS status
                          -    If not:
                              *    Change task_status to FAILED
+
+            ----------------------------
+            **The Task Lifecycle**
+
+            1.  Task is requested from ui frontend, either as individual, or in batch
+            2.  Task is sent to be queued in corresponding uip backend (manage_*.py)
+            3.  Task is mark as queued in uip backend webscrape.py
+            3.  Task is dequeued by Taskhandler when its time comes
+            4.  Task runs, and:
+                - is marked as succesfull in long running view function when succeeds
+                - is marked as failed in long running view function if fails
+
+            5.  Task is picked and queued in uip backend (table.py) if:
+                - not succesful
+                - not queued
+                - and nr of max attempts not reached...
+            6.  Task if checked for timeout, hanging... in model. If:
+                - Task has no taskProgress 
+                - Task is not marked as successful or task_progress not = 100 
+                Task is marked as failed
         """
 
         taskProgress = TaskHandler.get_taskProgress(self.task_id)
         if not taskProgress and not \
             (self.task_status == Status.SUCCESS.value 
                             and self.task_progress == 100):
+
             self.task_status = Status.FAILED.value
+            self.save()
 
         name = f"{self.firstName} {self.lastName}"
 
@@ -234,8 +274,7 @@ class Webscrape(models.Model):
         if self.by_list and \
                 self.task_status in (Status.SUCCESS.value, Status.FAILED.value):
             self.by_list = self.by_list.replace(name, f"{name} {token}")
-
-        self.save()
+            self.save()
 
         if self.parent:
             self.parent.by_list = self.parent.by_list.replace(name, f"{name} {token}")
@@ -732,6 +771,14 @@ class TaskHandler:
 
         logger.debug("Taskhandler.start_task - RUNNING > len(self.tasks.keys()) > : %i" % len(self.tasks.keys()))
 
+        try:
+            webscrape = Webscrape.objects.get(task_id=task_id)
+            webscrape.task_status = Status.RUNNING.value
+            webscrape.save()
+        except Exception as err:
+            logger.error(f"{datetime.now()} - Taskhandler.start_task - ERROR : {err}")
+
+
         return task_id
 
 
@@ -819,8 +866,10 @@ class Status(Enum):
     """
     STARTED = 'STARTED'
     RUNNING = 'RUNNING'
+    QUEUED = 'QUEUED'
     SUCCESS = 'SUCCESS'
     FAILED = 'FAILED'
+
 
 
 class TaskProgress:
@@ -868,12 +917,12 @@ class TaskProgress:
             object: The updated TaskProgress object.
         """
 
-        self.status = status.value
+        self.status = status
         self.value = value
         self.progress_message = progress_message
 
-        # Flush the task from cache if it is completed
-        if status in [Status.SUCCESS.value, Status.FAILED.value]:
+        # Flush the task from cache if it is completed, or to be retried
+        if status.value in [Status.SUCCESS.value, Status.FAILED.value]:
             self.taskHandler.end_task_start_next(self.task_id)  # Stop the associated thread, start next task
             cache.delete(self.task_id)  # Remove the task from cache            
 

@@ -28,6 +28,11 @@ class RowView(UnicornView):
               % str(type(self.webscrape) == type({})), 
               VERBOSITY=3
         )
+
+        self.load()
+
+
+    def load(self, force_render=False):
         if type(self.webscrape) == type({}):
             # sep: "-------ktou##################outk-------" ?
             # ---------------------------
@@ -46,6 +51,8 @@ class RowView(UnicornView):
         if self.webscrape.task_output:
             self.task_output = self.webscrape.task_output.replace('\\t', '  ').replace('\\n', '<br/>')
 
+        self.force_render = force_render
+
 
     def edit(self):
         self.is_editing = True
@@ -53,6 +60,22 @@ class RowView(UnicornView):
 
     def cancel(self):
         self.is_editing = False
+
+
+    def retry(self):
+        if self.parent:
+            _print(f'webscrape.RowView.retry → {self.webscrape.firstName} {self.webscrape.lastName} '
+                   f' | {type(self.webscrape)}', 
+                  VERBOSITY=0
+            )
+            self.parent.queue_task(self.webscrape)
+            self.load(force_render = True)
+            self.call("highlight_row", f"retry-{self.webscrape.id}")
+        else:
+            _print(f'webscrape.RowView.retry → NO PARENT', 
+                  VERBOSITY=0
+            )
+            self.call("highlight_row_error", f"retry-{self.webscrape.id}")
 
 
     def save(self):

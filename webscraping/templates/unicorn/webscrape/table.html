@@ -18,9 +18,22 @@
                 {% for field in table_fields %}
                     <td class="bg-green-600 first:rounded-l-lg last:rounded-r-lg p-2
                                text-green-100 tracking-widest border-green-100">
-                        {{ field|title }}
+
+                        {% define False as sort_field %}
+                        {% if field in sort_fields %}
+                            {% define True as sort_field %}
+                        {% endif %}
+
+                        <span>
+                            {{ field|title }}{% if sort_field %}<strong 
+                                    class="sort-arrows sort-field" 
+                                    data-field="{{field}}">↓↑</strong>{% endif %}
+                        </span>
                     </td>
                 {% endfor %}
+                    <td class="bg-green-600 first:rounded-l-lg last:rounded-r-lg p-2
+                               text-green-100 tracking-widest border-green-100">
+                    </td>
             </tr>
         </thead>
         <tbody id="webscrape-body">
@@ -29,5 +42,17 @@
             {% endfor %}
         </tbody>
     </table>
+    <script>
+        function onSortFieldClick(e){
+            console.log(`onSortFieldClick: ${e.target.dataset.field}`);
+            const field = e.target.dataset.field;
+            Unicorn.call("webscrape.table", "sort", field);
+        }
+        document.addEventListener('DOMContentLoaded', (e) => {
+            document.querySelectorAll(".sort-field").forEach((field) => {
+                field.addEventListener('click', onSortFieldClick);
+            })
+        });
+    </script>
 
 </div>

@@ -7,8 +7,8 @@
         { "get": "https://www.truthfinder.com/people-search/" },
         { "assert_in_page_source": "People Search"}
     ],[
-        { "find": "squaredFour", "by": "By.ID", 
-          "alt": { "wait": "squaredFour", "by": "By.ID", "timeout": 10, "optional": true } },
+        { "wait": "squaredFour", "by": "By.ID", "timeout": 30, "optional": true, 
+          "alt": { "find": "squaredFour", "by": "By.ID" } },
         { "click": "Left" }
     ],[        
         { "find": "firstName", "by": "By.NAME"  },
@@ -34,6 +34,13 @@
         { "wait": "button.dont-know", "by": "By.CSS_SELECTOR", "timeout": 10, "optional": true },
         { "find": "button.dont-know", "by": "By.CSS_SELECTOR" },
         { "click": "Left", "scrollIntoView": true }
+    ],[
+
+        { "wait": ".confim-not-sure", "by": "By.CSS_SELECTOR", "timeout": 15, "optional": true  },
+        { "click": "Left" }
+    ],[
+        { "wait": ".intro-modal span", "by": "By.CSS_SELECTOR", "timeout": 15, "optional": true  },
+        { "click": "Left" }
     ],[
         { "wait": "button[type='submit'].continue", "by": "By.CSS_SELECTOR", "timeout": 10, "optional": true  },
         { "click": "Left" }
