@@ -128,39 +128,39 @@ class ManagePeopleView(UnicornView):
 
         i = 0
         for line in self.names_list:
-            firstName = line.split(" ")[0]
-            lastName = line.split(" ")[1]
-            variables = {
-                "firstName": firstName,
-                "lastName": lastName,
-            }
+            if line:
+                firstName = line.split(" ")[0]
+                lastName = line.split(" ")[1]
+                variables = {
+                    "firstName": firstName,
+                    "lastName": lastName,
+                }
 
-            if line.find("✓") < 0 and line.find("✗") < 0:
-                self._exec(line, variables, i)
-                _print(
-                    """
-                    ---------- PROCESSING ----------
-                        name: "%s" (Processed %s)
-                    --------------------------------
-                    """ % (
-                        f"{variables["firstName"]} {variables["lastName"]}",
-                        "✓" if line.find("✓") < 0 else "✗"
-                    ),
-                    VERBOSITY=0
-                )
-                i += 1
-            else:
-                _print(
-                    """
-                    ---------- SKIPPING ------------
-                        name: "%s" (Processed %s)
-                    --------------------------------
-                    """ % (
-                        f"{variables["firstName"]} {variables["lastName"]}",
-                        "✓" if line.find("✓") < 0 else "✗"
-                    ),
-                    VERBOSITY=0
-                )
+                if line.find("✓") < 0 and line.find("✗") < 0:
+                    self._exec(line, variables, i)
+                    _print(
+                        """
+                        ---------- PROCESSING ----------
+                            name: "%s" (Processing...)
+                        --------------------------------
+                        """ % (
+                            f"{variables['firstName']} {variables['lastName']}"
+                        ),
+                        VERBOSITY=0
+                    )
+                    i += 1
+                else:
+                    _print(
+                        """
+                        ---------- SKIPPING ------------
+                            name: "%s" (Processed %s)
+                        --------------------------------
+                        """ % (
+                            f"{variables['firstName']} {variables['lastName']}",
+                            "✓" if line.find("✓") < 0 else "✗"
+                        ),
+                        VERBOSITY=0
+                    )
 
 
 

@@ -2,7 +2,7 @@ from django.db.models import Q
 from django_unicorn.components import LocationUpdate, UnicornView, QuerySetType
 from django.shortcuts import redirect
 
-from django_app.settings import _print, WEBSCRAPER_TASK_MAX_ATTEMPTS
+from django_app.settings import _print, logger
 
 from webscraping.models import (
     Webscrape, WebscrapeTasks, WebsiteUrls,
@@ -31,9 +31,12 @@ class TableView(UnicornView):
     fields = None
     table_fields = None
 
-    excluded_fields = ('id', 'title', 'task_id', 'task_name', 'task_variables', 'task_todo', 'task_attempts',
-                       'middleInitial', 'middleName', 'country', 'by_list', 'task_queue',
-                       'last_modified', 'parent', 'webscrape_children')
+    excluded_fields = ('id', 'title', 'task_id', 'task_name', 'task_variables', 'task_todo',
+                       'task_attempts', 'middleInitial', 'middleName', 'country', 'by_list',
+                       'task_queue', 'parent', 'webscrape_children')
+    sort_fields = ('task_progress', 'task_status', 'created_on', 'last_modified')
+
+    default_sort: str = "-created_on"
 
 
     def mount(self):
@@ -49,29 +52,59 @@ class TableView(UnicornView):
         self.load_table()
 
 
-    def load_table(self, force_render=False):
+    _sort: str = None
+    def get_sort(self, field: str = None):
+        if field:
+            sign = -1
+            if self._sort:
+                if field == self._sort[1:]:
+                    # The current sort field is sent for reversing:
+                    # Get and invert sign
+                    # -----------------------------
+                    sign = int(self._sort[:1]) * -1
+
+            sign_str = "-" if sign == -1 else "+"
+            self._sort = f"{sign_str}{field}"
+
+        elif not self._sort:
+            self._sort = self.default_sort
+
+        return self._sort
+
+    def sort(self, field: str):
+        self.load_table(sort_field= field)
+
+
+
+    def load_table(self,
+                   force_render=False, sort_field: str = None):
+        """
+            Description
+                ...
+                Sort happend entirely backend view side, 
+                the frontend only sends the field
+
+            Args
+                force_render: bool
+                sort: str
+        """
+        sort = self.get_sort(field=sort_field)
+
         # self.webscrapes = Webscrape.objects.filter(Q(parent__isnull=True)).order_by("-last_modified")
         self.webscrapes = Webscrape.objects.filter(
                 Q(created_on__gt=datetime.datetime(2025,2,11))
-        ).order_by("-created_on")[:20]
+        ).order_by(sort)[:20]
 
         # Start scrape task for webscrape for which not done yet
-        if False: # Debugging, cancelled...
-            for webscrape in self.webscrapes:
-                if not webscrape.task_attempts:
-                    webscrape.task_attempts = 0
-                    webscrape.save()
+        for webscrape in self.webscrapes:
+            if not webscrape.task_attempts:
+                webscrape.task_attempts = 0
+                webscrape.save()
 
-                if webscrape.task_status != Status.SUCCESS.value and not webscrape.task_id:
-                    if webscrape.task_attempts < WEBSCRAPER_TASK_MAX_ATTEMPTS:
-                        self.parent.queue_task(webscrape = webscrape)
-                        _print('-------------------------| START >> '
-                              'webscrape.webscrape→load_table: self.webscrapes: '
-                              'task_status, attempts :: %s, %i - name :: %s' \
-                              % (webscrape.task_status, webscrape.task_attempts,
-                                f"{webscrape.firstName} {webscrape.lastName}"),
-                              VERBOSITY=3
-                        )
+            if webscrape.task_to_be_queued():
+                if self.parent:
+                    self.parent.queue_task(webscrape = webscrape)
+
 
         # Update webscrape tasks status
         i = len(self.webscrapes) - 1

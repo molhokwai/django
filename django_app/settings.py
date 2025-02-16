@@ -16,7 +16,9 @@ import os, logging, sys
 from datetime import timedelta
 
 
-# Printing
+# -----------------------------------------
+# ______________________
+# PRINTING
 # Verbosity: 0 | 1 | 2 | 3
 # ------------------------
 PRINT_VERBOSITY = 0
@@ -27,26 +29,42 @@ def _print(val, VERBOSITY=0):
         print(val)
 
 
+# -----------------------------------------
+# ______________________
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+# -----------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 _print('--------------| BASE_DIR :: %s' % BASE_DIR, VERBOSITY=2)
 
 sys.path.append(BASE_DIR) 
 
 
-# Quick-start development settings - unsuitable for production
+# -----------------------------------------
+# ______________________
+# QUICK-START DEVELOPMENT SETTINGS - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+# -----------------------------------------
 
 
-# Security
+
+# -----------------------------------------
+# ______________________
+# GLOBAL KEYS + SECURITY
+# 
 # WARNING: keep the secret key used in production secret!
-# --------
-# SECRET_KEY = str(os.getenv('SECRET_KEY'))
+#   1- Set environenent (with dotenv locally, 
+#      with cli for apphost -like heroku...
+#   2- Use:
+#
+#       SECRET_KEY = str(os.getenv('SECRET_KEY'))
+# -----------------------------------------
 SECRET_KEY = 'django-insecure-kc45@neob5bj2m#jj5_#^#eqz!htt#bg0hi4v)n1obnsmmy(zn'
 
-
-
+# -----------------------------------------
+# ______________________
 # SECURITY WARNING: don't run with debug turned on in production!
+# -----------------------------------------
+
 DEBUG = False
 IS_LIVE = True
 IS_LOCAL = False
@@ -58,17 +76,36 @@ if WHICH_ENV == 'LOCAL' :
     IS_LIVE = False
     IS_LOCAL = True
 
+# ---------------------
+# 'postgres' or 'sqlite'
+# ---------------------
+WHICH_DATABASE = 'sqlite'
+
+# ---------------------
+# 'Database', 'Redis' (must be installed), 
+#  or 'CoreRedis' (must be tested, and installed? check documentation...)
+# ---------------------
+WHICH_CACHE = 'Database'
+
+# ---------------------
+# 'Db_logger' (must be installed) or 'File'
+# ---------------------
+WHICH_LOGGING = 'Db_logger'
 
 
-# ALLOWED_HOSTS = ["127.0.0.1", "localhost", "nkensa.pythonanywhere.com"]
+# ---------------
+# IPS, ALLOWED_HOSTS = ["127.0.0.1", "localhost", "nkensa.pythonanywhere.com"]
 # ---------------
 ALLOWED_HOSTS = ["*"]
-
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-# Application definition
+# ---------------
+# ______________________
+# APPLICATION DEFINITION
+# Application, Root Url, Middleware, Database, Cache
+# ---------------
 
 INSTALLED_APPS = [
     # core
@@ -89,6 +126,7 @@ INSTALLED_APPS = [
     # @ToDo :: Fix pandas install on pythonanywhere to restore code (see all "Fix pandas" todos)
     # 'pandas',
     'selenium',
+    'django_db_logger',
 
     # apps
     'django_app',
@@ -99,8 +137,12 @@ if IS_LOCAL:
     INSTALLED_APPS += [
     ]
 
+ROOT_URLCONF = 'django_app.urls'
 
 
+# ---------------
+# MIDDLEWARES
+# ---------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -113,8 +155,9 @@ MIDDLEWARE = [
     'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
 
-ROOT_URLCONF = 'django_app.urls'
-
+# ---------------
+# TEMPLATES
+# ---------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -132,93 +175,103 @@ TEMPLATES = [
 ]
 
 
+# ---------------
+# WSGI
+# ---------------
 WSGI_APPLICATION = 'django_app.wsgi.application'
 if IS_HEROKU:
     WSGI_APPLICATION = 'django_app.wsgi.app'
 
 
-# Database
 # --------
+# DATABASE
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-# SQLITE
-# ------
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db/db.sqlite3',
-#     }
-# }
-# ------
-
-
-
-
-
-# POSTGRES
 # --------
-os.environ.setdefault("PGDATABASE", "webscraper")
-os.environ.setdefault("PGUSER", "postgres")
-os.environ.setdefault("PGPASSWORD", "LeA45Jf~7ZL][e%k")
-os.environ.setdefault("PGHOST", "localhost")
-os.environ.setdefault("PGPORT", "5432")
 
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get("PGDATABASE", "webscraper"),
-        'USER': os.environ.get("PGUSER", "postgres"),
-        'PASSWORD': os.environ.get("PGPASSWORD", ""),
-        'HOST': os.environ.get("PGHOST", "localhost"),
-        'PORT': os.environ.get("PGPORT", "5432"),
-    }
-}
-
-if WHICH_ENV != 'LOCAL' or IS_HEROKU:
-    import dj_database_url
+if WHICH_DATABASE == 'sqlite':
+    # SQLITE
+    # ------
     DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600)  # Optional connection pooling
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db/db.sqlite3',
+        }
+    }
+    # ------
+
+elif WHICH_DATABASE == 'postgres':
+    # POSTGRES
+    # --------
+    os.environ.setdefault("PGDATABASE", "webscraper")
+    os.environ.setdefault("PGUSER", "postgres")
+    os.environ.setdefault("PGPASSWORD", "LeA45Jf~7ZL][e%k")
+    os.environ.setdefault("PGHOST", "localhost")
+    os.environ.setdefault("PGPORT", "5432")
+
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get("PGDATABASE", "webscraper"),
+            'USER': os.environ.get("PGUSER", "postgres"),
+            'PASSWORD': os.environ.get("PGPASSWORD", ""),
+            'HOST': os.environ.get("PGHOST", "localhost"),
+            'PORT': os.environ.get("PGPORT", "5432"),
+        }
     }
 
-# ------
+    if WHICH_ENV != 'LOCAL' or IS_HEROKU:
+        import dj_database_url
+        DATABASES = {
+            'default': dj_database_url.config(conn_max_age=600)  # Optional connection pooling
+        }
+    # ------
 
-
-# Cache
 # -----
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-#     }
-# }
+# CACHE
+# -----
 
-
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django_redis.cache.RedisCache',
-#         'LOCATION': 'redis://127.0.0.1:6379/1',  # Use the appropriate Redis server URL
-#         'OPTIONS': {
-#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-#         }
-#     }
-# }
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        "LOCATION": "django_cache",
+if WHICH_CACHE == 'CoreRedis':
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        }
     }
-}
+
+elif WHICH_CACHE == 'Redis':
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': 'redis://127.0.0.1:6379/1',  # Use the appropriate Redis server URL
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            }
+        }
+    }
+
+elif WHICH_CACHE == 'Database':
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+            "LOCATION": "django_cache",
+        }
+    }
 
 
-# Optional: This is to ensure Django sessions are stored in Redis
+# -------------------
+# SESSION
+#
+# Optional: This is to ensure Django sessions are stored in Redis if used
+# -------------------
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
 
 
 
-# Password validation
 # -------------------
+# PASSWORD VALIDATION
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+# -------------------
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -239,9 +292,10 @@ LOGIN_REDIRECT_URL = "journal"  # Redirect after login
 LOGOUT_REDIRECT_URL = "journal"  # Redirect after logout
 
 
-# Internationalization
-# --------------------
+# -------------------
+# INTERNATIONALIZATION
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
+# --------------------
 
 LANGUAGE_CODE = 'en-us'
 
@@ -252,9 +306,11 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static & Media files (CSS, JavaScript, Images)...
 # -------------------------------------------------
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
+# STATIC & MEDIA FILES
+#   CSS, JavaScript, Images...
+#   https://docs.djangoproject.com/en/4.2/howto/static-files/
+# -------------------------------------------------
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -277,34 +333,47 @@ if IS_HEROKU:
 
 
 
-# Default primary key field type
+# -------------------------------------------------
+# DEFAULT PRIMARY KEY FIELD TYPE
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+# -------------------------------------------------
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Apps Settings
+# -------------
+# __________________
+# OTHER APPS SETTINGS
 # -------------
 
+
+# ------------------------
+# DJANGO-UNICORN
+# ------------------------
 UNICORN = {
     "MORPHER": {
         "NAME": "alpine",
     }
 }
 
+
+# ------------------------
+# TAILWIND
+# https://django-tailwind.readthedocs.io/
+# https://django-tailwind.readthedocs.io/en/latest/installation.html
+# ------------------------
 TAILWIND_APP_NAME = 'theme'
 
 # ------------------------
-# Node, npm
+# NODE, NPM
 # NPM_BIN_PATH = '/home/nkensa/.config/nvm/versions/node/v20.11.0/bin/npm'
 # ------------------------
 NPM_BIN_PATH = which("npm")
 
 
 # ------------------------
-# Taggit
+# TAGGIT
 # ------------------------
-
 TAGGIT_CASE_INSENSITIVE = True
 TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING = True
 
@@ -319,23 +388,44 @@ mimetypes.add_type("text/css", ".css", True)
 
 
 # ------------------------
-# Webscraper
+# WEBSCRAPER
+# ------------------------
 #
 # Configuration
 #    Caching duration: 15 mns
+# ____________________
+# cron scripts to setup:
+# - webscraping cron
+# - NOT REQUIRED, implememented with bash background 
+#   task sleep and kill:
+#       _________________
+#       kill dangling check_tasks every 20 mns
+#       actually kills all running tasks
+#
+#       * * * * * ~/@webscraper/scripts/webscraping_cron_exec
+#       */10 * * * * pkill -f "check_tasks"
 # ------------------------
 
 WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
 WEBSCRAPER_HEADLESS = True
 WEBSCRAPER_CACHING_DURATION = 3600
 WEBSCRAPER_THREADS_MAX = 3
-WEBSCRAPER_THREAD_TIMEOUT = timedelta(seconds=10)  # Stop after 10 minutes
-WEBSCRAPER_TASK_MAX_ATTEMPTS = 3
 
+# ------------------------------------------
+# ChromeDriver, GeckoDriver: 
+#   https://stackoverflow.com/questions/53603429/chromedriver-is-too-slower\
+#                               -than-geckodriver-on-the-first-page-query-through-sele
+#   O to not set a max RAM limitation
+# ------------------------------------------
+WEBSCRAPER_THREAD_MAX_RAM_KB = 0 # 1000000
+WEBSCRAPER_THREAD_TIMEOUT = timedelta(minutes=10)  # Stop after 10 minutes
+WEBSCRAPER_TASK_MAX_ATTEMPTS = 3
+WEBSCRAPER_THREADS_MAX_CHECK_TASK_TIME = 600 # Maximum check_task time before suppression
 
 
 # ------------------------
-# AI Journal Guidance
+# AI JOURNAL GUIDANCE
+# ------------------------
 #
 # Configuration
 # ------------------------
@@ -344,41 +434,95 @@ AI_JOURNAL_GUIDANCE_CHAT_HISTORY_RECALL = 50
 
 
 # ------------------------
-# Logging, Printing
-#
+# LOGGING, PRINTING
 # ------------------------
 
-# Create a logger
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)  # Set the base logger level to DEBUG (captures all levels)
+if WHICH_LOGGING == 'Db_logger':
 
-# Create formatters
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # ------------------------
+    # DB LOGGER
+    # ------------------------
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': True,
+        'formatters': {
+            'verbose': {
+                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            },
+            'simple': {
+                'format': '%(levelname)s %(asctime)s %(message)s'
+            },
+        },
+        'handlers': {
+            'db_log': {
+                'level': 'DEBUG',
+                'class': 'django_db_logger.db_log_handler.DatabaseLogHandler'
+            },
+        },
+        'loggers': {
+            'db': {
+                'handlers': ['db_log'],
+                'level': 'DEBUG',
+                'formatter': 'simple'
+            },
+            'django.request': { # logging 500 errors to database
+                'handlers': ['db_log'],
+                'level': 'ERROR',
+                'propagate': False,
+                'formatter': 'simple'
+            }
+        }
+    }
 
-# Create handlers for each log level
-debug_handler = logging.FileHandler('log/debug.log')
-debug_handler.setLevel(logging.DEBUG)
-debug_handler.setFormatter(formatter)
+    # ---------------
+    # Create a logger
+    # ---------------
+    logger = logging.getLogger('db')
 
-info_handler = logging.FileHandler('log/info.log')
-info_handler.setLevel(logging.INFO)
-info_handler.setFormatter(formatter)
 
-warning_handler = logging.FileHandler('log/warning.log')
-warning_handler.setLevel(logging.WARNING)
-warning_handler.setFormatter(formatter)
+if WHICH_LOGGING == 'File':
 
-error_handler = logging.FileHandler('log/error.log')
-error_handler.setLevel(logging.ERROR)
-error_handler.setFormatter(formatter)
+    # ------------------------
+    # FILE LOGGING
+    # ------------------------
 
-critical_handler = logging.FileHandler('log/critical.log')
-critical_handler.setLevel(logging.CRITICAL)
-critical_handler.setFormatter(formatter)
+    # Create a logger
+    # ---------------
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)  # Set the base logger level to DEBUG (captures all levels)
 
-# Add handlers to the logger
-logger.addHandler(debug_handler)
-logger.addHandler(info_handler)
-logger.addHandler(warning_handler)
-logger.addHandler(error_handler)
-logger.addHandler(critical_handler)
+
+    # Create formatters
+    # -----------------
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # Create handlers for each log level
+    # ---------------
+    debug_handler = logging.FileHandler('log/debug.log')
+    debug_handler.setLevel(logging.DEBUG)
+    debug_handler.setFormatter(formatter)
+
+    info_handler = logging.FileHandler('log/info.log')
+    info_handler.setLevel(logging.INFO)
+    info_handler.setFormatter(formatter)
+
+    warning_handler = logging.FileHandler('log/warning.log')
+    warning_handler.setLevel(logging.WARNING)
+    warning_handler.setFormatter(formatter)
+
+    error_handler = logging.FileHandler('log/error.log')
+    error_handler.setLevel(logging.ERROR)
+    error_handler.setFormatter(formatter)
+
+    critical_handler = logging.FileHandler('log/critical.log')
+    critical_handler.setLevel(logging.CRITICAL)
+    critical_handler.setFormatter(formatter)
+
+    # Add handlers to the logger
+    # ---------------
+    logger.addHandler(debug_handler)
+    logger.addHandler(info_handler)
+    logger.addHandler(warning_handler)
+    logger.addHandler(error_handler)
+    logger.addHandler(critical_handler)
+

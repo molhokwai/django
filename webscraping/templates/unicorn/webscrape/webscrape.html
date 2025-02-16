@@ -249,7 +249,25 @@
                 padding: 3em;
                 font-size: 1.2em;
                 letter-spacing: .1em;
-            }  
+            }
+
+            .sort-arrows {
+                letter-spacing: 0.01em;
+                border: 3px solid;
+                border-radius: 5em;
+                margin-left: .5em;
+                font-size: .8em;
+                cursor: pointer;
+            }
+            .repeat {
+                cursor: pointer;
+            }
+            .highlighted {
+                background-color: lightyellow;
+            }
+            .highlighted.error {
+                background-color: pink;
+            }
         </style>
 
         <script>
@@ -422,6 +440,13 @@
                 }
             }
 
+            function highlight_row(id){
+                document.getElementById(id).classList.add("highlighted");
+            }
+            function highlight_row_error(id){
+                highlight_row(id);
+                document.getElementById(id).classList.add("error");
+            }
 
             addEventListener("DOMContentLoaded", (event) => {
                 document.querySelectorAll(

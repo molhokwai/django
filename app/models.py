@@ -4,6 +4,11 @@ from django.contrib.auth.models import User
 
 import markdown
 
+
+# ----------------
+# AI GUIDANCE JOURNAL
+# - Chat prompts and responses
+# ----------------
 class ChatPromptAndResponse(models.Model):
     """
     Model to store chat prompts and responses.
@@ -57,5 +62,3 @@ class ChatPromptAndResponse(models.Model):
             self.response = markdown.markdown(self.response)
         if self.think:
             self.think = markdown.markdown(self.think)
-
-

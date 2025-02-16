@@ -52,7 +52,6 @@ class WebscrapeView(UnicornView):
 
     webscrape_data_id: int = None
 
-
     def mount(self):
         self.us_states = list(zip(USStates.values, USStates.names))
         self.countries = list(zip(Countries.values, Countries.names))
@@ -69,7 +68,9 @@ class WebscrapeView(UnicornView):
         self.load_table()
 
 
-    def load_table(self, webscrape: Webscrape = None, force_render=False):
+    def load_table(self, 
+                   webscrape: Webscrape = None,
+                   force_render=False):
 
         for child in self.children:
             if str(child).find('TableView') >= 0:
@@ -124,6 +125,8 @@ class WebscrapeView(UnicornView):
         # Set task to be picked and queued
         # --------------------------------
         _webscrape.task_todo = WebscrapeTaskNameChoices.WEBSCRAPE_STEPS.value
+        _webscrape.task_status = Status.QUEUED.value
+
         if not _webscrape.task_attempts:
             _webscrape.task_attempts = 0
         _webscrape.task_attempts = _webscrape.task_attempts + 1
