@@ -9,7 +9,7 @@ from django_app.settings import _print
 from webscraping.models import (
     Webscrape, WebscrapeData,
     WebscrapeTasks, WebscrapeTaskNameChoices,
-    WebsiteUrls,
+    WebsiteUrls, TaskHandler,
     Countries, USStates,
     Status,
 )

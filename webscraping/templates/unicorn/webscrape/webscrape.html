@@ -251,6 +251,27 @@
                 letter-spacing: .1em;
             }
 
+            .tab-selector {
+                background: none;
+                font-size: 1.2em;
+                font-weight: normal;
+                color: darkgreen;
+                border-right: 1px solid;
+                padding: 0.4em 1em;
+            }
+            .tab-selector:hover, .tab-selector.active {
+                background: darkgreen;
+                color: white;
+            }
+            .tab-content {
+                border: 1px solid darkgreen;
+            }
+            .tab-content h3.message {
+                font-size: 1.4em;
+                color: darkgreen;
+                padding: 5em; 
+            }
+
             .sort-arrows {
                 letter-spacing: 0.01em;
                 border: 3px solid;
@@ -259,6 +280,7 @@
                 font-size: .8em;
                 cursor: pointer;
             }
+
             .repeat {
                 cursor: pointer;
             }
@@ -361,7 +383,7 @@
                     });
                 }
             }
-            // setInterval(updateTasks, 1000*20);
+            setInterval(updateTasks, 1000*20);
 
 
             function clear_fields() {
@@ -416,30 +438,6 @@
                 }
             }
 
-            function preventScrollDownKeepVisible(elementId) {
-                const element = document.getElementById(elementId);
-
-                if (element) {
-                    let initialTop = element.offsetTop; // Store initial position
-
-                    window.addEventListener('scroll', () => {
-                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-                        if (scrollTop > initialTop) {
-                            // Scrolling down: fix the element's position
-                            element.style.position = 'fixed';
-                            element.style.top = '0'; // Or adjust as needed
-                        } else {
-                            // Scrolling up: restore initial position
-                            element.style.position = 'absolute'; // Or 'relative' depending on your layout
-                            element.style.top = `${initialTop}px`;
-                        }
-                    });
-                } else {
-                    console.error(`Element with ID '${elementId}' not found.`);
-                }
-            }
-
             function highlight_row(id){
                 document.getElementById(id).classList.add("highlighted");
             }
@@ -452,9 +450,7 @@
                 document.querySelectorAll(
                     ".exec-modules h2.section-title").forEach((h2) => {
                         scrollToTopOnHover(h2.id);
-                })
-
-                preventScrollDownKeepVisible('webscrapes-table');
+                });
 
                 document.querySelectorAll(".taskOutput").forEach((p) => {
                     const id = p.id;
@@ -469,7 +465,7 @@
 
                         openOverlay(content);
                     });
-                })
+                });
 
                 setInterval(() => {
                     if(false){
@@ -482,7 +478,7 @@
                             clearTimeount(to);
                         }                        
                     }
-                }, 1000*60*5)
+                }, 1000*60*5);
 
 
                 /**
@@ -492,7 +488,7 @@
                  **/
                 function reloadTable() {
                     Unicorn.call('webscrape.table', 'load_table', "true");
-                }
+                };
                 setInterval(reloadTable, 1000*20);
             });
         </script>

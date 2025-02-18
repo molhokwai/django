@@ -19,7 +19,7 @@ def task_dispatch(task_name: str, webscrape: Webscrape):
 
     # Task handler from cache
     # ------------------------
-    key = "task_dispatcher.taskHandler"
+    key = TaskHandler.get_self_cache_key()
     taskHandler = cache.get( key )
     if not taskHandler:
         taskHandler = TaskHandler()

@@ -124,11 +124,11 @@ class WebsiteUrls(models.TextChoices):
 
 
 class StatusTextChoices(models.TextChoices):
-    STARTED = 'STARTED', _('Started')
     RUNNING = 'RUNNING', _('Running')
-    QUEUED = 'QUEUED', _('Queued')
     SUCCESS = 'SUCCESS', _('Success')
     FAILED = 'FAILED', _('Failed')
+    QUEUED = 'QUEUED', _('Queued')
+    STARTED = 'STARTED', _('Started')
 
 
 class WebscrapeTaskNameChoices(models.TextChoices):
@@ -727,6 +727,18 @@ class TaskHandler:
 
 
     @staticmethod
+    def get_self_cache_key():
+        """
+            Gets the task handers' cache key, used to retrived and use
+            the object or set it in cache
+
+            Returns:
+                str: the cache key string
+        """
+        return settings.WEBSCRAPER_TASKHANDLER_CACHE_KEY
+
+
+    @staticmethod
     def get_taskProgress( task_id : str ):
         """
             Retrieve the TaskProgress object for a given task_id.
@@ -786,17 +798,21 @@ class TaskHandler:
         """
             Start the next task in the queue if any tasks are waiting.
         """
-        n = settings.WEBSCRAPER_THREADS_MAX
-        logger.debug("Taskhandler.start_next_tasks - settings.WEBSCRAPER_THREADS_MAX :: %i" % n)
+        _max = settings.WEBSCRAPER_THREADS_MAX
+        logger.debug("Taskhandler.start_next_tasks - settings.WEBSCRAPER_THREADS_MAX :: %i" % _max)
         logger.debug("Taskhandler.start_next_tasks - len(self.tasks.keys()) :: %i" % len(self.tasks.keys()))
 
-        while len(self.tasks.keys()) <= n:
+        i = 0
+        while len(self.tasks.keys()) <= _max:
             if len(self.tasks_queue):
                 method, args = self.tasks_queue.pop(0)
                 obj = args[0]
                 obj.task_id = self.start_task(method, args)
                 obj.save()
                 logger.debug("Taskhandler.start_next_tasks - obj SAVED > : %s - %s" % (str(method), str(args)))
+                i += 1 
+
+        return i, len(self.tasks.keys())
 
 
     def queue_task(self, method, args):
@@ -864,11 +880,11 @@ class Status(Enum):
     """
         Enum representing the possible statuses of a task.
     """
-    STARTED = 'STARTED'
     RUNNING = 'RUNNING'
     QUEUED = 'QUEUED'
     SUCCESS = 'SUCCESS'
     FAILED = 'FAILED'
+    STARTED = 'STARTED'
 
 
 

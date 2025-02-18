@@ -7,7 +7,7 @@ from django_app.settings import _print, logger
 from webscraping.models import (
     Webscrape, WebscrapeTasks, WebsiteUrls,
     Countries, USStates,
-    Status
+    Status, StatusTextChoices
 )
 
 from enum import Enum
@@ -37,6 +37,12 @@ class TableView(UnicornView):
     sort_fields = ('task_progress', 'task_status', 'created_on', 'last_modified')
 
     default_sort: str = "-created_on"
+
+    # tables value types: Union[ QuerySetType[Webscrape], None ]
+    # ---------------------------------------------------
+    statuses = StatusTextChoices.values
+    tables = []
+    default_webscrape_status = "RUNNING"
 
 
     def mount(self):
@@ -71,49 +77,109 @@ class TableView(UnicornView):
 
         return self._sort
 
-    def sort(self, field: str):
-        self.load_table(sort_field= field)
+    def sort(self, query_string: str):
+        """
+            Sorts the corresponding table, using querystring to identify which.
+
+            query_string
+                A url parameters like query string variables,
+                Workaround to bypass Unicorn multiple arguments js call issue...
+                @ToDo :: Fix in Unicorn framework (branch?)
+
+                From javascript:
+                    ```js
+                        //* Convert object to query string
+                        const params = { _response, think };
+                        const queryString = new URLSearchParams(params).toString();
+                    ```
+        """
+
+        # Convert query string back to dictionary
+        # ---------------------------------------
+        parsed_dict = None
+        if query_string:
+            parsed_dict = {k: v[0] \
+                    for k, v in parse_qs(query_string).items()}
+
+        self.load_table(
+            status = parsed_dict["status"],
+            sort_field = parsed_dict["field"]
+        )
 
 
 
     def load_table(self,
-                   force_render=False, sort_field: str = None):
+                   force_render=False,
+                   status: str = None,
+                   sort_field: str = None):
         """
             Description
                 ...
-                Sort happend entirely backend view side, 
+                Sort happens entirely backend view side, 
                 the frontend only sends the field
 
             Args
                 force_render: bool
+                table: str
                 sort: str
         """
         sort = self.get_sort(field=sort_field)
 
-        # self.webscrapes = Webscrape.objects.filter(Q(parent__isnull=True)).order_by("-last_modified")
-        self.webscrapes = Webscrape.objects.filter(
-                Q(created_on__gt=datetime.datetime(2025,2,11))
-        ).order_by(sort)[:20]
+        if not (status and sort_field):
 
-        # Start scrape task for webscrape for which not done yet
-        for webscrape in self.webscrapes:
-            if not webscrape.task_attempts:
-                webscrape.task_attempts = 0
-                webscrape.save()
+            # self.webscrapes = Webscrape.objects.filter(Q(parent__isnull=True)).order_by("-last_modified")
+            # ---------------------------
+            self.webscrapes = Webscrape.objects.filter(
+                    Q(created_on__gt=datetime.datetime(2025,2,11))
+            )
 
-            if webscrape.task_to_be_queued():
-                if self.parent:
-                    self.parent.queue_task(webscrape = webscrape)
+            # Start scrape task for webscrape for which not done yet
+            # ---------------------------
+            for webscrape in self.webscrapes:
+                if not webscrape.task_attempts:
+                    webscrape.task_attempts = 0
+                    webscrape.save()
+
+                if webscrape.task_to_be_queued():
+                    if self.parent:
+                        self.parent.queue_task(webscrape = webscrape)
 
 
-        # Update webscrape tasks status
-        i = len(self.webscrapes) - 1
-        while i >= 0:
-            self.webscrapes[i].update_task_status()
-            i -= 1
+            # Update webscrape tasks status
+            # ---------------------------
+            i = len(self.webscrapes) - 1
+            while i >= 0:
+                self.webscrapes[i].update_task_status()
+                i -= 1
+
+            # webscrapes tables by status
+            # ---------------------------
+            self.tables = list(map(lambda status: \
+                    (
+                        status,
+                        self.webscrapes.filter(
+                            Q(task_status=status)
+                        ).order_by(sort)[:20]
+                    ),
+                    self.statuses
+                )
+            )
+
+        else:
+            # webscrape table by status
+            # --------------------------
+            i = self.statuses.index(status)
+            self.tables[i] = (
+                status,
+                self.webscrapes.filter(
+                    Q(task_status=status)
+                ).order_by(sort)[:20]
+            )
+
 
         # if len(self.webscrapes):
         #     self.webscrapes = self.webscrapes[0:10]
+        # ---------------------------
         self.force_render = force_render
 
 

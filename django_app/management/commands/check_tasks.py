@@ -1,6 +1,8 @@
 from django.db.models import Q
 from django.core.management.base import BaseCommand
-from webscraping.models import Webscrape
+from webscraping.models import (
+    Webscrape, TaskHandler
+)
 from django_app.task_dispatcher import task_dispatch
 from django_app import settings
 import subprocess
@@ -51,20 +53,51 @@ class Command(BaseCommand):
             & Q(created_on__gt=datetime.datetime(2025, 2, 11))
         )
 
-        for task in tasks:
-            # Dispatch the task based on the value of task_todo
-            task_dispatch(task.task_todo, task)
+        if len(tasks):
+            for task in tasks:
+                # Dispatch the task based on the value of task_todo
+                task_dispatch(task.task_todo, task)
 
-            # Clear the task_todo field after dispatching
-            task.task_todo = None
-            task.save()
+                # Clear the task_todo field after dispatching
+                task.task_todo = None
+                task.save()
 
-        msg = self.style.SUCCESS(
-            f"\n\n\t\t--------------------------------------------------------"
-            f"\n\t\tTask checking and dispatching completed: {len(tasks)} tasks done."
-            f"\n\t\t--------------------------------------------------------\n\n"
-        )
-        self.stdout.write(msg), logger.info(msg)
+            msg = self.style.SUCCESS(
+                f"\n\n\t\t--------------------------------------------------------"
+                f"\n\t\tTask checking and dispatching completed: {len(tasks)} tasks done."
+                f"\n\t\t--------------------------------------------------------\n\n"
+            )
+            self.stdout.write(msg), logger.info(msg)
+
+        else:
+            # Task handler from cache
+            # ------------------------
+            key = TaskHandler.get_self_cache_key()
+            taskHandler = cache.get( key )
+            if not taskHandler:
+                taskHandler = TaskHandler()
+                cache.set( key, taskHandler )
+
+            # Check for next tasks with Task handler
+            # -------------------------------------
+            i, n = taskHandler.start_next_tasks()
+
+            msg = ""
+            if i:
+                msg = self.style.SUCCESS(
+                    f"\n\n\t\t--------------------------------------------------------"
+                    f"\n\t\t{i} task(s) started, {n} task(s) running..."
+                    f"\n\t\t--------------------------------------------------------\n\n"
+                )
+
+            else:
+                msg = self.style.INFO(
+                    f"\n\n\t\t--------------------------------------------------------"
+                    f"\n\t\t{0} task(s) started, {n} task(s) running..."
+                    f"\n\t\t--------------------------------------------------------\n\n"
+                )
+
+            self.stdout.write(msg), logger.info(msg)
 
         exit()
 

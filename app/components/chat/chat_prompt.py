@@ -67,6 +67,13 @@ class ChatPromptView(UnicornView):
                 A url parameters like query string variables,
                 Workaround to bypass Unicorn multiple arguments js call issue...
                 @ToDo :: Fix in Unicorn framework (branch?)
+
+                From javascript:
+                    ```js
+                        //* Convert object to query string
+                        const params = { _response, think };
+                        const queryString = new URLSearchParams(params).toString();
+                    ```
         """
 
         # Convert query string back to dictionary

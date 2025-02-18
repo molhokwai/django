@@ -19,6 +19,7 @@ from django.conf import settings
 from django.urls import path, include
 from django.views.generic.base import RedirectView
 from django.conf.urls.static import static
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 
 urlpatterns = [
@@ -41,5 +42,6 @@ urlpatterns = [
         RedirectView.as_view(url=settings.STATIC_URL + 'site.webmanifest', permanent=True)
     ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
-  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
+  + debug_toolbar_urls()
 

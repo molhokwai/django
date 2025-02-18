@@ -76,6 +76,8 @@ if WHICH_ENV == 'LOCAL' :
     IS_LIVE = False
     IS_LOCAL = True
 
+TESTING = "test" in sys.argv
+
 # ---------------------
 # 'postgres' or 'sqlite'
 # ---------------------
@@ -133,6 +135,7 @@ INSTALLED_APPS = [
     'app',
     'webscraping',
 ]
+
 if IS_LOCAL:
     INSTALLED_APPS += [
     ]
@@ -154,6 +157,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
+
+
 
 # ---------------
 # TEMPLATES
@@ -421,7 +426,7 @@ WEBSCRAPER_THREAD_MAX_RAM_KB = 0 # 1000000
 WEBSCRAPER_THREAD_TIMEOUT = timedelta(minutes=10)  # Stop after 10 minutes
 WEBSCRAPER_TASK_MAX_ATTEMPTS = 3
 WEBSCRAPER_THREADS_MAX_CHECK_TASK_TIME = 600 # Maximum check_task time before suppression
-
+WEBSCRAPER_TASKHANDLER_CACHE_KEY = "task_dispatcher.taskHandler"
 
 # ------------------------
 # AI JOURNAL GUIDANCE
@@ -525,4 +530,52 @@ if WHICH_LOGGING == 'File':
     logger.addHandler(warning_handler)
     logger.addHandler(error_handler)
     logger.addHandler(critical_handler)
+
+
+
+
+# ---------------
+# DJANGO TOOLBAR
+# https://django-debug-toolbar.readthedocs.io/
+# ---------------
+if not TESTING:
+    INSTALLED_APPS = [
+        *INSTALLED_APPS,
+        # "debug_toolbar",
+    ]
+    MIDDLEWARE = [
+        # "debug_toolbar.middleware.DebugToolbarMiddleware",
+        *MIDDLEWARE,
+    ]
+
+if False:
+    # ----------------------
+    # For configuration
+    # ----------------------
+    DEBUG_TOOLBAR_PANELS = [
+        'debug_toolbar.panels.history.HistoryPanel',
+        'debug_toolbar.panels.versions.VersionsPanel',
+        'debug_toolbar.panels.timer.TimerPanel',
+        'debug_toolbar.panels.settings.SettingsPanel',
+        'debug_toolbar.panels.headers.HeadersPanel',
+        'debug_toolbar.panels.request.RequestPanel',
+        'debug_toolbar.panels.sql.SQLPanel',
+        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+        'debug_toolbar.panels.templates.TemplatesPanel',
+        'debug_toolbar.panels.alerts.AlertsPanel',
+        'debug_toolbar.panels.cache.CachePanel',
+        'debug_toolbar.panels.signals.SignalsPanel',
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+        'debug_toolbar.panels.profiling.ProfilingPanel',
+    ]
+
+    # ----------------------
+    # DEBUG_TOOLBAR_CONFIG
+    # See:
+    # https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config
+    # ----------------------
+
+
+
+
 

@@ -3,55 +3,162 @@
 {% load unicorn %}
 {% load define_action %}
 
-<div unicorn:view>
+<div unicorn:view id="webscrapes-table">
 
-    <table id="webscrapes-table"
-           class="table table-auto rounded border-green-300 bg-slate-100">
-        <thead class="p-4 text-gray">
-            <tr>
-                <!--
-                    <td class="min-w-32">
-                        &nbsp;
-                    </td>
-                -->
+    {% for status in statuses %}
 
-                {% for field in table_fields %}
-                    <td class="bg-green-600 first:rounded-l-lg last:rounded-r-lg p-2
-                               text-green-100 tracking-widest border-green-100">
+        <a  href="#{{status}}-webscrapes-table"
+            data-tabcontentselector="#{{status}}-webscrapes-table"
+            data-status="{{status}}"
+            class="tab-selector  {% if status == default_webscrape_status %}active{% endif %}">
+               {{status}}
+        </a>
 
-                        {% define False as sort_field %}
-                        {% if field in sort_fields %}
-                            {% define True as sort_field %}
-                        {% endif %}
+    {% endfor %}
 
-                        <span>
-                            {{ field|title }}{% if sort_field %}<strong 
-                                    class="sort-arrows sort-field" 
-                                    data-field="{{field}}">↓↑</strong>{% endif %}
-                        </span>
-                    </td>
-                {% endfor %}
-                    <td class="bg-green-600 first:rounded-l-lg last:rounded-r-lg p-2
-                               text-green-100 tracking-widest border-green-100">
-                    </td>
-            </tr>
-        </thead>
-        <tbody id="webscrape-body">
-            {% for webscrape in webscrapes %}
-                {% unicorn 'webscrape.row' webscrape=webscrape key=webscrape.id parent=self %}
-            {% endfor %}
-        </tbody>
-    </table>
+    {% for table_tuple in tables %}
+
+        {% define table_tuple.0 as status %}
+        {% define table_tuple.1 as webscrapes %}
+
+        <div id="{{status}}-webscrapes-table"
+             data-status="{{status}}"
+             class="tab-content {% if status != default_webscrape_status %}hidden{% endif %}">
+            {% if webscrapes.count %}
+
+                <table class="table table-auto rounded border-green-300 bg-slate-100">
+                    <thead class="p-4 text-gray">
+                        <tr>
+                            <!--
+                                <td class="min-w-32">
+                                    &nbsp;
+                                </td>
+                            -->
+
+                            {% for field in table_fields %}
+                                <td class="bg-green-600 first:rounded-l-lg last:rounded-r-lg p-2
+                                           text-green-100 tracking-widest border-green-100">
+
+                                    {% define False as sort_field %}
+                                    {% if field in sort_fields %}
+                                        {% define True as sort_field %}
+                                    {% endif %}
+
+                                    <span>
+                                        {{ field|title }}{% if sort_field %}<strong 
+                                                class="sort-arrows sort-field" 
+                                                data-field="{{field}}" data-status="{{status}}"
+                                                >↓↑</strong>{% endif %}
+                                    </span>
+                                </td>
+                            {% endfor %}
+                                <td class="bg-green-600 first:rounded-l-lg last:rounded-r-lg p-2
+                                           text-green-100 tracking-widest border-green-100">
+                                </td>
+                        </tr>
+                    </thead>
+                    <tbody id="webscrape-body">
+                        {% for webscrape in webscrapes %}
+                            {% unicorn 'webscrape.row' webscrape=webscrape key=webscrape.id parent=self %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% else %}
+
+                <h3 class="message">No webscrape in status "{{status}}"</h3>
+
+            {% endif %}
+        </div>
+
+    {% endfor %}
+
+
     <script>
+        const defaultWebscrapeStatus = "{{default_webscrape_status}}";
+
+        function preventScrollDownKeepVisible(elementId) {
+            const element = document.getElementById(elementId);
+
+            if (element) {
+                let initialTop = element.offsetTop; // Store initial position
+
+                window.addEventListener('scroll', () => {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                    if (scrollTop > initialTop) {
+                        // Scrolling down: fix the element's position
+                        element.style.position = 'fixed';
+                        element.style.top = '0'; // Or adjust as needed
+                    } else {
+                        // Scrolling up: restore initial position
+                        element.style.position = 'absolute'; // Or 'relative' depending on your layout
+                        element.style.top = `${initialTop}px`;
+                    }
+                });
+            } else {
+                console.error(`Element with ID '${elementId}' not found.`);
+            }
+        }
+
+
         function onSortFieldClick(e){
             console.log(`onSortFieldClick: ${e.target.dataset.field}`);
+            const status = a.dataset.status;
             const field = e.target.dataset.field;
-            Unicorn.call("webscrape.table", "sort", field);
+
+            const params = { status, field };
+            const queryString = new URLSearchParams(params).toString();
+
+            Unicorn.call("webscrape.table", "sort", queryString);
         }
+
+        function hideWebscrapesTables(except){
+            document.querySelectorAll(`.tab-content`).forEach((tabContent) => {
+                if(tabContent.dataset.status != except){
+                    tabContent.classList.add("hidden");
+                }
+            });
+        }
+        function deactivateWebscrapesTablesSelectors(except){
+            document.querySelectorAll(`.tab-selector`).forEach((tabContentSelector) => {
+                if(tabContentSelector.dataset.status != except){
+                    tabContentSelector.classList.remove("active");
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', (e) => {
             document.querySelectorAll(".sort-field").forEach((field) => {
                 field.addEventListener('click', onSortFieldClick);
             })
+
+            document.querySelectorAll(
+                ".exec-modules h2.section-title").forEach((h2) => {
+                    scrollToTopOnHover(h2.id);
+            });
+
+
+            hideWebscrapesTables(defaultWebscrapeStatus);
+            deactivateWebscrapesTablesSelectors(defaultWebscrapeStatus);
+
+
+            document.querySelectorAll(".tab-selector").forEach((button) => {
+                const tabContentSelector = button.dataset.tabcontentselector;
+                console.log(`tabContentSelector : ${tabContentSelector}`);
+
+                button.addEventListener("click", (event) => {
+                    let tabContent = document.querySelector(event.target.dataset.tabcontentselector);
+
+                    hideWebscrapesTables()
+                    deactivateWebscrapesTablesSelectors();
+
+                    tabContent.classList.remove("hidden");
+                    button.classList.add("active");
+                })
+            });
+
+            preventScrollDownKeepVisible('webscrapes-table');
         });
     </script>
 
