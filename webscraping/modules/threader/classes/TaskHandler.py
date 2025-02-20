@@ -146,34 +146,33 @@ class TaskHandler:
         is_queueable = task.task_status not in (Status.QUEUED.value, 
                         Status.RUNNING.value, Status.SUCCESS.value)
 
-        # 2. Check that progress is not 100%
+        # 2. Check that progress is less than 100%
         # ----------------------------------
-        if not :
-            is_queueable = not self.task_progress < 100
+        if is_queueable:
+            is_queueable = not task.task_progress < 100
 
         # 3. Check that MAX_ATTEMPTS is not reached
         # -------------------------------------------------------
-        if not is_queueable:
-            is_queueable = not self.task_attempts >= WEBSCRAPER_TASK_MAX_ATTEMPTS
+        if is_queueable:
+            is_queueable = not task.task_attempts >= WEBSCRAPER_TASK_MAX_ATTEMPTS
 
 
         # 4. if 1, 2, 3: check that task does not have TaskProgress
         # -------------------------------------------------------
-        if not is_queueable:
+        if is_queueable:
             is_queueable = True if not TaskHandler.get_taskProgress(task.task_run_id) else False
 
             # ... or that task thread timeout is reached
             # -------------------------------------------
             if not is_queueable:
-                runtime_mns = (datetime.now() - task.task_thread_started_at) // 60
-                is_queueable = runtime_mns < WEBSCRAPER_THREAD_TIMEOUT
+                is_queueable = TaskHandler.task_is_timedout(task)
 
         msg = '-------------------------| QUEUABLE TASK ? >> ' \
               f'task.task_is_queueable :: {is_queueable}  ///  ' \
               'task_status, task_attempts - WEBSCRAPER_TASK_MAX_ATTEMPTS, task_run_id :: ' \
-              f'{self.task_status}, {self.task_attempts} - ' \
+              f'{task.task_status}, {task.task_attempts} - ' \
               f'{WEBSCRAPER_TASK_MAX_ATTEMPTS}, ' \
-              f'{self.task_run_id} '
+              f'{task.task_run_id} '
 
         _print(msg, VERBOSITY=3), logger.info(msg)
 
@@ -184,7 +183,7 @@ class TaskHandler:
     @staticmethod
     def task_is_timedout(task: ThreadTask):
         task_duration = (datetime.now() - \
-                    task.task_thread_started_at.seconds) \\ 60
+                    task.task_thread_started_at.seconds) // 60
         
         return task_duration > WEBSCRAPER_THREAD_TIMEOUT
 
@@ -212,12 +211,12 @@ class TaskHandler:
 
         self.start_next_tasks()
 
-        _message = f"Taskhandler.queue_task - QUEUED :: previously? {task_previously_queued}"
+        _message = f"Taskhandler.queue_task - QUEUED :: previously? {task_previously_queued}" \
                    f" /// {method} - {args}" % (str(method), str(args))
         _print(_message, VERBOSITY=0)
         logger.debug(_message)
 
-        return Status.QUEUED, !task_previously_queued
+        return Status.QUEUED, not task_previously_queued
 
 
     def start_task(self, method, args, taskObject: ThreadTask = None):

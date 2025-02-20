@@ -6,8 +6,6 @@ from django.utils.text import slugify
 from django.core.cache import cache
 from django.conf import settings
 
-from webscraping.modules.threader.classes.TaskProgress import Status
-
 
 from time import sleep
 from typing import Union
@@ -291,7 +289,7 @@ class ThreadTask(models.Model):
 
 
     def __str__(self):
-        return f"title: {self.task_title} - run_id: {self.task_run_id} "
+        return f"title: {self.task_title} - run_id: {self.task_run_id} " \
                f"- progress: {self.task_progress} - attempts: {self.task_attempts}"
 
 
@@ -343,17 +341,17 @@ class ThreadTask(models.Model):
             # ----------------------------------------
 
             if self.task_progress >= 100 \
-                and self.task_status != Status.SUCCESS.value:
+                and self.task_status != StatusTextChoices.SUCCESS.value:
                 # Task has succeeded, but status is not updated
                 # ----------------------------------------
-                self.task_status = Status.SUCCESS.value
+                self.task_status = StatusTextChoices.SUCCESS.value
                 self.save()
 
             if self.task_progress <= 100 \
-                and self.task_status != Status.FAILED.value:
+                and self.task_status != StatusTextChoices.FAILED.value:
                 # Task has failed, but status is not updated
                 # ----------------------------------------
-                self.task_status = Status.FAILED.value
+                self.task_status = StatusTextChoices.FAILED.value
                 self.save()
 
 
@@ -397,10 +395,6 @@ class Webscrape(ThreadTask):
     parent = models.ForeignKey("Webscrape", null=True, blank=True, 
                             on_delete=models.CASCADE,
                             related_name="webscrape_children", editable=False)
-
-    # crud datetimes
-    created_on = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
 
 
     def __str__(self):
@@ -471,14 +465,14 @@ class Webscrape(ThreadTask):
         name = f"{self.firstName} {self.lastName}"
 
         token = ""
-        if self.task_status == Status.SUCCESS.value:
+        if self.task_status == StatusTextChoices.SUCCESS.value:
             token = "✓"
             self.task_queue = None
         else:
             token = "✗"
 
         if self.by_list and \
-                self.task_status in (Status.SUCCESS.value, Status.FAILED.value):
+                self.task_status in (StatusTextChoices.SUCCESS.value, StatusTextChoices.FAILED.value):
             # Self is parent task, update child's by_list line
             # ------------------------------------------------
 
@@ -496,7 +490,7 @@ class Webscrape(ThreadTask):
                 # line does not have token, set and update
                 # ----------------------------------------
                 self.parent.by_list = add_token_and_return(self.parent.by_list, name, token)
-                    self.save()
+                self.save()
 
 
     @staticmethod

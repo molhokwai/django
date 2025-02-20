@@ -7,6 +7,7 @@ from django_app.settings import (
     WEBSCRAPER_CACHING_DURATION
 )
 
+
 import threading
 from time import sleep
 from typing import Union
@@ -48,10 +49,10 @@ class TaskProgress:
     status: Status = Status.RUNNING  # Current status of the task
     value: Union[int, None] = None  # Progress value (e.g., percentage)
     output: Union[int, None] = None  # Output of the task
-    taskHandler: TaskHandler = None  # Reference to the TaskHandler managing this task
+    taskHandler = None  # Reference to the TaskHandler instance managing this task
 
 
-    def __init__(self, taskHandler: TaskHandler):
+    def __init__(self, taskHandler):
         self.task_run_id = str( uuid1() )
         cache.set( self.task_run_id, self, 3600 )
         self.taskHandler = taskHandler
