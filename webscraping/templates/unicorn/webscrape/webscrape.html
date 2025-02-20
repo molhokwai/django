@@ -329,21 +329,21 @@
                  **/
                 let progressBars = document.querySelectorAll('.progressBar');
                 progressBars.forEach(function(progressBar) {
-                    const task_id = progressBar.id;
+                    const task_run_id = progressBar.id;
 
-                    Unicorn.call('webscrape.webscrape', 'task_is_running', task_id);
+                    Unicorn.call('webscrape.webscrape', 'task_is_running', task_run_id);
                     const task_is_running = Unicorn.getReturnValue('webscrape.webscrape');
                     console.log(1111111111);
 
-                    if(!(task_id in tasksProgress)){
-                        tasksProgress[task_id] = { 'has_succeeded': false };
+                    if(!(task_run_id in tasksProgress)){
+                        tasksProgress[task_run_id] = { 'has_succeeded': false };
                     }
 
-                    if(task_is_running && !tasksProgress[task_id]['has_succeeded']){
+                    if(task_is_running && !tasksProgress[task_run_id]['has_succeeded']){
 
                         console.log(22222222222);
                         Unicorn.call('webscrape.webscrape', 
-                            'get_task_progress_data', task_id);
+                            'get_task_progress_data', task_run_id);
 
                         const task_progress_data = 
                                     Unicorn.getReturnValue('webscrape.webscrape');
@@ -351,19 +351,19 @@
 
                         if(task_progress_data && task_progress_value) {
                             console.log(333333333333);
-                            console.log(`task_progress - ${task_id} : ${task_progress_value}`);
+                            console.log(`task_progress - ${task_run_id} : ${task_progress_value}`);
 
                             progressBar.style.width = `${task_progress_value}%`;
 
                             // Optionally, update progress text
-                            const progressText = document.getElementById(`progressText-${task_id}`);
+                            const progressText = document.getElementById(`progressText-${task_run_id}`);
                             if (progressText) {
                                 console.log(4444444444);
                                 progressText.textContent = `${task_progress_value}%`;
                             }
 
                             if(task_progress_value >= 100){
-                                tasksProgress[task_id]['has_succeeded'] = true;
+                                tasksProgress[task_run_id]['has_succeeded'] = true;
                             }
                         } else {
                             console.log(`task_progress - no value`);

@@ -1,7 +1,9 @@
 from django.test import SimpleTestCase, TestCase, TransactionTestCase
 from django.db.utils import OperationalError
 
-from webscraping.models import Webscrape, TaskProgress, TaskHandler, Status
+from webscraping.modules.threader.classes.TaskHandler import TaskHandler
+from webscraping.modules.threader.classes.TaskProgress import TaskProgress, Status
+from webscraping.models import Webscrape
 
 import re, datetime, time
 from typing import Union
@@ -10,17 +12,17 @@ from typing import Union
 class ProcessObject:
     """
         processObj = {
-            "title": "A process object with: task_id, task_progress, task_outputs",
-            "task_id": None,
+            "title": "A process object with: task_run_id, task_progress, task_outputs",
+            "task_run_id": None,
             "task_progress": None,
             "task_outputs": None,
         }
     """
-    task_id: Union[ str, None ] = None
+    task_run_id: Union[ str, None ] = None
     task_progress: Union[ int, None ] = None
     task_status: Union[ str, None ] = None
     task_outputs: Union[ list, None] = None
-    description: str = "A process object with: task_id, task_progress, task_outputs"
+    description: str = "A process object with: task_run_id, task_progress, task_outputs"
 
 
 class LongRunningTaskHandlerTestCases(TransactionTestCase):
@@ -56,13 +58,13 @@ class LongRunningTaskHandlerTestCases(TransactionTestCase):
         #     input = 'aaaaaa'
         #     print( f'{ input= }' )
 
-        #     task_id = self.__start_task( input )
-        #     print( f'{ task_id= }' )
+        #     task_run_id = self.__start_task( input )
+        #     print( f'{ task_run_id= }' )
 
         #     while True:
 
         #         time.sleep( 1 )
-        #         result = self.__get_task_progress_response( task_id )
+        #         result = self.__get_task_progress_response( task_run_id )
 
         #         if result_dict[ 'status' ] == "SUCCESS":
         #             self.print_output(result_dict)
@@ -84,14 +86,14 @@ class LongRunningTaskHandlerTestCases(TransactionTestCase):
         #     res = self.client.get( f'/bgTaskExAPI/start_long_running_task/?input={ input }' )
         #     self.assertEqual( res.status_code, 200 )
 
-        #     task_id = res.json()[ 'task_id' ]
+        #     task_run_id = res.json()[ 'task_run_id' ]
         #     UUID_V1_PATTERN = re.compile( '[a-f0-9]{8}-[a-f0-9]{4}-1[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$', re.IGNORECASE)
-        #     self.assertEqual( UUID_V1_PATTERN.match( task_id ) is not None, True )
+        #     self.assertEqual( UUID_V1_PATTERN.match( task_run_id ) is not None, True )
 
-        #     return task_id
+        #     return task_run_id
 
-        # def __get_task_progress_response( self, task_id : str ):
-        #     res = self.client.get( f'/bgTaskExAPI/get_task_progress/?task_id={ task_id }' )
+        # def __get_task_progress_response( self, task_run_id : str ):
+        #     res = self.client.get( f'/bgTaskExAPI/get_task_progress/?task_run_id={ task_run_id }' )
         #     self.assertEqual( res.status_code, 200 )
 
         #     return res.json()
@@ -109,21 +111,21 @@ class LongRunningTaskHandlerTestCases(TransactionTestCase):
         processObj = ProcessObject()
 
         # Get/Generate task id with Task handler
-        processObj.task_id = TaskHandler().start_task(
+        processObj.task_run_id = TaskHandler().start_task(
             self.long_running_method, [ processObj ] )
 
         UUID_V1_PATTERN = re.compile( '[a-f0-9]{8}-[a-f0-9]{4}-1[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$', re.IGNORECASE)
-        self.assertEqual( UUID_V1_PATTERN.match( processObj.task_id ) is not None, True )
+        self.assertEqual( UUID_V1_PATTERN.match( processObj.task_run_id ) is not None, True )
 
-        _print( 'processObj.task_id', processObj.task_id )
+        _print( 'processObj.task_run_id', processObj.task_run_id )
 
         i = 0
-        taskProgress = TaskHandler.get_taskProgress( processObj.task_id )
+        taskProgress = TaskHandler.get_taskProgress( processObj.task_run_id )
         while taskProgress.status != Status.SUCCESS.value:
             try:
 
                     time.sleep( 1 )
-                    taskProgress = TaskHandler.get_taskProgress( processObj.task_id )
+                    taskProgress = TaskHandler.get_taskProgress( processObj.task_run_id )
 
                     progress_value = taskProgress.value
                     self.assertTrue( taskProgress.value is not None )

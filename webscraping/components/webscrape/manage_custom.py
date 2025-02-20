@@ -3,7 +3,8 @@ from django.conf import settings
 from django.forms.models import model_to_dict
 
 from django_app.settings import _print
-from webscraping.models import Webscrape, TaskProgress, TaskHandler
+from webscraping.modules.threader.classes.TaskHandler import TaskHandler
+from webscraping.models import Webscrape
 from webscraping.views import webscrape_steps_long_running_method
 
 
@@ -115,9 +116,8 @@ class ManageCustomView(UnicornView):
         self.webscrape.task_variables = model_to_dict(self.webscrape)
         _print('-------------------------| %s' % self.webscrape.task_variables, VERBOSITY=3)
 
-        # Queue task with Task handler
-        self.parent.taskHandler.queue_task(
-            webscrape_steps_long_running_method, [ self.webscrape ] )
+        # If Queueable: set for scrape: set task status = QUEUED
+        self.webscrape = self.parent.set_queuable_task_queued( webscrape = self.webscrape )
 
         self.save()
 

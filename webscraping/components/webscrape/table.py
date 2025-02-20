@@ -7,8 +7,10 @@ from django_app.settings import _print, logger
 from webscraping.models import (
     Webscrape, WebscrapeTasks, WebsiteUrls,
     Countries, USStates,
-    Status, StatusTextChoices
+    StatusTextChoices
 )
+from webscraping.modules.threader.classes.TaskProgress import Status
+
 
 from enum import Enum
 from typing import Union
@@ -31,7 +33,7 @@ class TableView(UnicornView):
     fields = None
     table_fields = None
 
-    excluded_fields = ('id', 'title', 'task_id', 'task_name', 'task_variables', 'task_todo',
+    excluded_fields = ('id', 'title', 'task_run_id', 'task_name', 'task_variables', 'task_todo',
                        'task_attempts', 'middleInitial', 'middleName', 'country', 'by_list',
                        'task_queue', 'parent', 'webscrape_children')
     sort_fields = ('task_progress', 'task_status', 'created_on', 'last_modified')
@@ -140,16 +142,15 @@ class TableView(UnicornView):
                     webscrape.task_attempts = 0
                     webscrape.save()
 
-                if webscrape.task_to_be_queued():
-                    if self.parent:
-                        self.parent.queue_task(webscrape = webscrape)
+                if self.parent:
+                    self.parent.set_queuable_task_queued(webscrape = webscrape)
 
 
             # Update webscrape tasks status
             # ---------------------------
             i = len(self.webscrapes) - 1
             while i >= 0:
-                self.webscrapes[i].update_task_status()
+                self.webscrapes[i].update_ended_task_status()
                 i -= 1
 
             # webscrapes tables by status

@@ -11,9 +11,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver import ChromeOptions
 
+from webscraping.modules.threader.classes.TaskHandler import TaskHandler
+from webscraping.modules.threader.classes.TaskProgress import TaskProgress, Status
+
 from webscraping.models import (
-    Webscrape, WebscrapeData,
-    TaskProgress, TaskHandler, Status
+    Webscrape, WebscrapeData
 )
 
 from webscraping.modules.webscraper.classes.SequenceManager import SequenceManager
@@ -46,18 +48,18 @@ def webscrape_data(request):
 
 def export_output_to_csv(
                 request,
-                task_id: str = None, 
+                task_run_id: str = None, 
                 data_id: int = None) -> HttpResponse:
     """
         Exports the output of a specific Webscrape task to a CSV file.
 
         Args:
             request (HttpRequest): The HTTP request object.
-            task_id (str): The unique ID of the task whose output is to be exported.
+            task_run_id (str): The unique ID of the task whose output is to be exported.
             data_id (str): The unique ID of the data object whose output is to be exported.
 
         Raises:
-            ValueError: If neither `task_id` nor `data_id` is provided.
+            ValueError: If neither `task_run_id` nor `data_id` is provided.
 
         Returns:
             HttpResponse: A CSV file as an HTTP response for download.
@@ -65,7 +67,7 @@ def export_output_to_csv(
         Steps:
             1. Create an HTTP response object with CSV content type.
             2. Set the Content-Disposition header to trigger a file download.
-            3. Retrieve the Webscrape object using the provided task_id.
+            3. Retrieve the Webscrape object using the provided task_run_id.
             4. Parse the task_output field (assumed to be JSON) into a Python object.
             5. Process the parsed output to extract relevant data.
             6. Write the header row to the CSV file.
@@ -73,18 +75,18 @@ def export_output_to_csv(
             8. Return the HTTP response with the CSV file.
 
         Example Usage:
-            - URL: /export-csv/<task_id>/
-            - Template: <a href="{% url 'export_csv' task_id=task.id %}">Download CSV</a>
+            - URL: /export-csv/<task_run_id>/
+            - Template: <a href="{% url 'export_csv' task_run_id=task.id %}">Download CSV</a>
 
         With:
             Deepseek AI - "Django/Python" conversation → Mon 10 Feb 2025        
     """
 
     try:
-        if not task_id and not data_id:
+        if not task_run_id and not data_id:
             raise ValueError(
                 "webscraping.Webscrape.parse_output_text :: "
-                "One of <task_id> or <data_id> must be provided..."
+                "One of <task_run_id> or <data_id> must be provided..."
             )
 
         # Step 1: Get the JSON data output from the object
@@ -93,9 +95,9 @@ def export_output_to_csv(
         data = []
         
         file_id, file_prefix = None, None
-        if task_id:
-            file_id, file_prefix = task_id, 'task'
-            data = Webscrape.data_for_export_output_to_csv(task_id)
+        if task_run_id:
+            file_id, file_prefix = task_run_id, 'task'
+            data = Webscrape.data_for_export_output_to_csv(task_run_id)
 
         elif data_id:
             file_id, file_prefix = data_id, 'data'

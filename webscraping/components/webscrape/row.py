@@ -37,14 +37,14 @@ class RowView(UnicornView):
             # sep: "-------ktou##################outk-------" ?
             # ---------------------------
             _print(
-                'webscrape.RowView.mount → task_id : %s ' % str(self.webscrape["task_id"]),
+                'webscrape.RowView.mount → task_run_id : %s ' % str(self.webscrape["task_run_id"]),
                 VERBOSITY=3
             )
 
-            self.webscrape = Webscrape.objects.get(task_id=self.webscrape["task_id"])
+            self.webscrape = Webscrape.objects.get(task_run_id=self.webscrape["task_run_id"])
         else:
             _print(
-                'webscrape.RowView.mount → task_id : %s' % self.webscrape.task_id,
+                'webscrape.RowView.mount → task_run_id : %s' % self.webscrape.task_run_id,
                 VERBOSITY=3
             )
 
@@ -68,7 +68,7 @@ class RowView(UnicornView):
                    f' | {type(self.webscrape)}', 
                   VERBOSITY=0
             )
-            self.parent.queue_task(self.webscrape)
+            self.parent.set_queuable_task_queued(self.webscrape)
             self.load(force_render = True)
             self.call("highlight_row", f"retry-{self.webscrape.id}")
         else:

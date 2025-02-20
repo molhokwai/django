@@ -103,8 +103,8 @@ class ManageView(UnicornView):
         self.webscrape.task_variables = model_to_dict(self.webscrape)
         _print('-------------------------| %s' % self.webscrape.task_variables, VERBOSITY=3)
 
-        # Scrape: Start / Queue task
-        self.webscrape = self.parent.queue_task( webscrape = self.webscrape )
+        # If Queueable: set for scrape: set task status = QUEUED
+        self.webscrape = self.parent.set_queuable_task_queued( webscrape = self.webscrape )
 
         self.save()
 
