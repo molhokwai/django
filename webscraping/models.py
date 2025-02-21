@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from django.utils.text import slugify
@@ -270,6 +271,12 @@ class WebscrapeData(models.Model):
 
 
 class ThreadTask(models.Model):
+    """
+        Parent class for all Thread Tasks models.
+        ----------------------------------------
+        @ToDo :: Implement actual inheritance, checking and adjusting
+                 for databases interpretation: sqlite, Postgres, MySQL... 
+    """
 
     # optional
     task_title = models.CharField(max_length=200, null=True, blank=True)
@@ -356,12 +363,34 @@ class ThreadTask(models.Model):
 
 
 
-class Webscrape(ThreadTask):
+class Webscrape(models.Model):
+    """
+        Inherits from TaskThread
+        ----------------------------------------
+        @ToDo :: Implement actual inheritance, checking and adjusting
+                 for databases interpretation: sqlite, Postgres, MySQL... 
+    """
+
     # website
+
     # -------
     # https://www.truthfinder.com/people-search/
     website_url = models.CharField(max_length=200,  choices=WebsiteUrls.choices,
                         default="https://www.truthfinder.com/")
+
+    # optional
+    # --------
+    task_title = models.CharField(max_length=200, null=True, blank=True)
+
+    # core
+    task_run_id = models.CharField(max_length=50, null=True, blank=True)
+    task_progress = models.IntegerField(default=0)
+    task_status = models.CharField(max_length=20, null=True, blank=True, choices=StatusTextChoices.choices)
+    task_output = models.TextField(null=True, blank=True)
+    task_thread_started_at = models.DateTimeField(null=True, blank=True) 
+    task_thread_stopped_at = models.DateTimeField(null=True, blank=True) 
+    task_attempts = models.IntegerField(default=0)
+
     # metas
     # -----
     task_name = models.CharField(max_length=200, null=False, blank=False,
@@ -395,6 +424,10 @@ class Webscrape(ThreadTask):
                             on_delete=models.CASCADE,
                             related_name="webscrape_children", editable=False)
 
+    # crud datetimes
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
+
 
     def __str__(self):
         return f"{self.website_url} - {self.title} - task: {self.task_name} - variables: {self.task_variables}"
@@ -411,42 +444,74 @@ class Webscrape(ThreadTask):
     def update_ended_task_status(self):
         """
             Description
-            -----------
-            Update the tasks by_list corresponding [firtName] [lastName] line items:
-            -   parent tasks: task has by_list, update items
-            -   child task: task has parent, get parent's by_list and update items
-            -   save: save only if changed
+                Parent method call
+                ------------------
+                If the task is not running anymore and not at 100% with SUCCESS status, marked as failed...
+                -    Get webscrape's Taskhandler TaskProgess object
+                -    If existing:
+                     *    Do nothing, task still running, to be updated
+                     *    If not:
+                         +    Check if webscrape at 100% with SUCCESS status
+                             -    If not:
+                                 *    Change task_status to FAILED
+
+                Self method steps
+                ------------------
+                Update the tasks by_list corresponding [firtName] [lastName] line items:
+                -   parent tasks: task has by_list, update items
+                -   child task: task has parent, get parent's by_list and update items
+                -   save: save only if changed
+
     
-            ----------------------------
-            **The Task Lifecycle**
+                ----------------------------
+                **The Task Lifecycle**
 
-            1.  Task is requested from ui frontend, either as individual, or in batch
-            2.  Task is sent to be queued in corresponding uip backend (manage_*.py)
-            3.  Task is mark as queued in uip backend webscrape.py
-            3.  Task is dequeued by Taskhandler when its time comes
-            4.  Task runs, and:
-                - is marked as succesfull in long running view function when succeeds
-                - is marked as failed in long running view function if fails
+                1.  Task is requested from ui frontend, either as individual, or in batch
+                2.  Task is sent to be queued in corresponding uip backend (manage_*.py)
+                3.  Task is mark as queued in uip backend webscrape.py
+                3.  Task is dequeued by Taskhandler when its time comes
+                4.  Task runs, and:
+                    - is marked as succesfull in long running view function when succeeds
+                    - is marked as failed in long running view function if fails
 
-            5.  Task is picked and queued in uip backend (table.py) if:
-                - not succesful
-                - not queued
-                - and nr of max attempts not reached...
-            6.  Task if checked for timeout, hanging... in model. If:
-                - Task has no taskProgress 
-                - Task is not marked as successful or task_progress not = 100 
-                Task is marked as failed
+                5.  Task is picked and queued in uip backend (table.py) if:
+                    - not succesful
+                    - not queued
+                    - and nr of max attempts not reached...
+                6.  Task if checked for timeout, hanging... in model. If:
+                    - Task has no taskProgress 
+                    - Task is not marked as successful or task_progress not = 100 
+                    Task is marked as failed
         """
 
         # -----------
         # call parent method
+        #   @ToDo: implement as actual inheritance parent method call:
+        #          `super.update_ended_task_status()`
         # ------------------
-        super.update_ended_task_status()
+        taskProgress = TaskHandler.get_taskProgress(self.task_run_id)
+        if not taskProgress:
+            # Task not running anymore = Task is ended
+            # ----------------------------------------
+
+            if self.task_progress >= 100 \
+                and self.task_status != StatusTextChoices.SUCCESS.value:
+                # Task has succeeded, but status is not updated
+                # ----------------------------------------
+                self.task_status = StatusTextChoices.SUCCESS.value
+                self.save()
+
+            if self.task_progress <= 100 \
+                and self.task_status != StatusTextChoices.FAILED.value:
+                # Task has failed, but status is not updated
+                # ----------------------------------------
+                self.task_status = StatusTextChoices.FAILED.value
+                self.save()
 
 
-        # -----------
-        # do self method
-        # -----------
+        # ----------------
+        # self method steps
+        # -----------------
 
         def get_line(lines, name):
             line = list(filter(lambda x: x.find(f"{self.firstName} {self.lastName}") >= 0, lines))
