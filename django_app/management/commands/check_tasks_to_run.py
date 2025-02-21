@@ -22,8 +22,22 @@ class Command(BaseCommand):
             -----------
                 With Deepseek / Python - 62610719, and prior
             -----------
+
+            # cron commands
+            # The cron commands to be set: scripts run, and intervalled scripts kill/clear
+            # to flush loose running processes and threads
+            # ---------------------------------------------------------------------------
+
+            * * * * * ~/@webscraper/django_app/management/scripts/webscraping-cron-exec-tasks-to-end
+            * * * * * ~/@webscraper/django_app/management/scripts/webscraping-cron-exec-tasks-to-run
+            */20 * * * * pkill -f "webscraping-cron-exec"
+            */20 * * * * pkill -f "marionette"
+
         """
+
+        # --------------------------------------------------
         # Count the number of running "marionette" processes
+        # --------------------------------------------------
         try:
             result = subprocess.run(
                 ["ps", "-eF"],
@@ -37,7 +51,9 @@ class Command(BaseCommand):
             self.stdout.write(msg), logger.debug(msg)
             return
 
+        # --------------------------------------------------
         # Check if the number of running threads exceeds the maximum allowed
+        # --------------------------------------------------
         if running_threads >= settings.WEBSCRAPER_THREADS_MAX:
             msg = self.style.WARNING(
                 f"\n\n\t\t--------------------------------------------------------"

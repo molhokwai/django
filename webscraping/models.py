@@ -371,7 +371,6 @@ class Webscrape(ThreadTask):
     task_todo = models.CharField(max_length=100, null=True, blank=True, choices=WebscrapeTaskNameChoices.choices,
                                  help_text="The task to be performed for this web scraping job.")
 
-
     # identification
     # --------------
     firstName = models.CharField(max_length=200, null=False, blank=False)

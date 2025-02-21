@@ -22,6 +22,17 @@ class Command(BaseCommand):
             -----------
                 With Deepseek / Python - 62610719, and prior
             -----------
+
+            # cron commands
+            # The cron commands to be set: scripts run, and intervalled scripts kill/clear
+            # to flush loose running processes and threads
+            # ---------------------------------------------------------------------------
+
+            * * * * * ~/@webscraper/django_app/management/scripts/webscraping-cron-exec-tasks-to-end
+            * * * * * ~/@webscraper/django_app/management/scripts/webscraping-cron-exec-tasks-to-run
+            */20 * * * * pkill -f "webscraping-cron-exec"
+            */20 * * * * pkill -f "marionette"
+
         """
 
         # -------------------

@@ -48,7 +48,7 @@ if [ "$RUNNING_THREADS" -lt "$MAX_THREADS" ]; then
     if [ "$MAX_RAM_KB" -ne 0 ]; then
         ulimit -v $MAX_RAM_KB
     fi
-    python manage.py check_tasks &
+    python manage.py check_tasks_to_run &
 
     # Not functional, as process is held...
     # -------------------------------
@@ -63,7 +63,7 @@ if [ "$RUNNING_THREADS" -lt "$MAX_THREADS" ]; then
         
     # Notify the user
     # ----------------------
-    notify-send "Webscraping" "Check tasks done..."
+    notify-send "Webscraping" "Check tasks to run done..."
 else
     notify-send "Webscraping" "Thread limit reached. Skipping task check."
 fi

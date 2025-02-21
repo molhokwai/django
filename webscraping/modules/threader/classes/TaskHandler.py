@@ -3,7 +3,8 @@ from django.utils.translation import gettext_lazy as _
 from django.core.cache import cache
 from django.conf import settings
 from django_app.settings import (
-    logger, _print, 
+    logger, _print,
+    WEBSCRAPER_THREADS_MAX,
     WEBSCRAPER_TASK_MAX_ATTEMPTS, 
     WEBSCRAPER_THREAD_TIMEOUT
 )
@@ -139,6 +140,15 @@ class TaskHandler:
 
 
     @staticmethod
+    def task_is_timedout(task: ThreadTask):
+        task_duration = (datetime.now() - \
+                            task.task_thread_started_at).seconds // 60
+        
+        return task_duration > WEBSCRAPER_THREAD_TIMEOUT
+
+
+
+    @staticmethod
     def task_is_queueable(task: ThreadTask):
 
         # 1. Check that status is not QUEUED, RUNNING  or SUCCESS
@@ -149,12 +159,12 @@ class TaskHandler:
         # 2. Check that progress is less than 100%
         # ----------------------------------
         if is_queueable:
-            is_queueable = not task.task_progress < 100
+            is_queueable = task.task_progress < 100
 
         # 3. Check that MAX_ATTEMPTS is not reached
         # -------------------------------------------------------
         if is_queueable:
-            is_queueable = not task.task_attempts >= WEBSCRAPER_TASK_MAX_ATTEMPTS
+            is_queueable = task.task_attempts < WEBSCRAPER_TASK_MAX_ATTEMPTS
 
 
         # 4. if 1, 2, 3: check that task does not have TaskProgress
@@ -167,6 +177,7 @@ class TaskHandler:
             if not is_queueable:
                 is_queueable = TaskHandler.task_is_timedout(task)
 
+
         msg = '-------------------------| QUEUABLE TASK ? >> ' \
               f'task.task_is_queueable :: {is_queueable}  ///  ' \
               'task_status, task_attempts - WEBSCRAPER_TASK_MAX_ATTEMPTS, task_run_id :: ' \
@@ -178,15 +189,6 @@ class TaskHandler:
 
         
         return is_queueable
-
-
-    @staticmethod
-    def task_is_timedout(task: ThreadTask):
-        task_duration = (datetime.now() - \
-                    task.task_thread_started_at.seconds) // 60
-        
-        return task_duration > WEBSCRAPER_THREAD_TIMEOUT
-
 
 
     def queue_task(self, method, args) -> Status:
@@ -216,7 +218,7 @@ class TaskHandler:
         _print(_message, VERBOSITY=0)
         logger.debug(_message)
 
-        return Status.QUEUED, not task_previously_queued
+        return Status.QUEUED
 
 
     def start_task(self, method, args, taskObject: ThreadTask = None):
@@ -271,13 +273,12 @@ class TaskHandler:
 
             Return
                 (int, int): number of tasks started, number of tasks runnning
-        """
-        _max = settings.WEBSCRAPER_THREADS_MAX
-        logger.debug("Taskhandler.start_next_tasks - settings.WEBSCRAPER_THREADS_MAX :: %i" % _max)
-        logger.debug("Taskhandler.start_next_tasks - len(self.tasks_running.keys()) :: %i" % len(self.tasks_running.keys()))
+        """        
+        logger.debug(f"Taskhandler.start_next_tasks - WEBSCRAPER_THREADS_MAX :: {WEBSCRAPER_THREADS_MAX}")
+        logger.debug(f"Taskhandler.start_next_tasks - len(self.tasks_running.keys()) :: {len(self.tasks_running.keys())}")
 
         i = 0
-        while len(self.tasks_running.keys()) <= _max:
+        while len(self.tasks_running.keys()) <= WEBSCRAPER_THREADS_MAX:
             if len(self.tasks_queue):
                 method, args = self.tasks_queue.pop(0)
                 obj = args[0]

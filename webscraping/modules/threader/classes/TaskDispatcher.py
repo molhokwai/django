@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from django.core.cache import cache
@@ -8,7 +9,7 @@ from django_app.settings import (
     WEBSCRAPER_THREAD_TIMEOUT
 )
 
-from webscraping.models import Webscrape
+from webscraping.models import ThreadTask, Webscrape
 from webscraping.modules.threader.classes.TaskProgress import Status
 from webscraping.views import webscrape_steps_long_running_method
 
@@ -146,7 +147,8 @@ class TaskDispatcher:
 
         Queries = {
             # ----------------------------------
-            # 1. Check if task is completed, or if task has reached timeout:
+            # 1. Check tasks that do not have the status SUCCESS
+            #    that are completed, or that have reached timeout:
             #    - if completed: set task status SUCCESS
             # ----------------------------------
             "task_is_completed_Q": ((
@@ -165,14 +167,13 @@ class TaskDispatcher:
         }
 
         tasks = []
-        for _tuple in Queries:
+        for key in Queries:
+            _tuple =Queries[key]
             query = _tuple[0]
             status = _tuple[1]
 
             _tasks = Webscrape.objects.filter(query)
             for task in _tasks:
-                task.task_status = status
-
                 # ----------------------------------
                 # ...
                 #   - call `taskHandler.end_task`
@@ -185,6 +186,7 @@ class TaskDispatcher:
                 #   - save, to finish. Task status must be updated
                 #     *after* task is stopped.
                 # ----------------------------------
+                task.task_status = status
                 task.save()
                 tasks.append(task)
 
