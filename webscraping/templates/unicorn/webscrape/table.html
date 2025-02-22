@@ -76,8 +76,6 @@
 
 
     <script>
-        const defaultWebscrapeStatus = "{{default_webscrape_status}}";
-
         function preventScrollDownKeepVisible(elementId) {
             const element = document.getElementById(elementId);
 
@@ -129,10 +127,12 @@
             });
         }
 
+
+        const defaultWebscrapeStatus = "{{default_webscrape_status}}";
         let statuses = [];
-        // {% for status in statuses %}
+        // {% for status in statuses %} ! DO NOT REMOVE
         statuses.push('{{status}}');
-        // {% endfor %}
+        // {% endfor %}                 ! DO NOT REMOVE
         function showFirstFilledStatusTable(){
             /* Not used, process controlled on view server side...  */
             for(let i=0; i<statuses.length; i++){
@@ -145,6 +145,29 @@
                 }
             }            
         }
+
+        let statusCycleCurrent = defaultWebscrapeStatus;
+        document.body.addEventListener("keyup", function(e){
+
+            if(["ArrowLeft", "ArrowRight"].indexOf(e.key) >= 0){
+                let dir = 0;
+                switch(e.key){
+                    case "ArrowLeft":  dir = -1; break
+                    case "ArrowRight": dir = +1; break
+                }
+
+                if(e.target.tagName == 'BODY'){
+
+                    let l = statuses.length;
+                    let i = statuses.indexOf(statusCycleCurrent) + dir;
+                    i = i >= l ? 0 : i;
+                    i = i < 0 ? l - 1 : i;
+                    document.querySelector(`#${statuses[i]}-tab-selector`).click();
+                    statusCycleCurrent = statuses[i];
+                }
+            }
+        });
+
 
         document.addEventListener('DOMContentLoaded', (e) => {
             document.querySelectorAll(".sort-field").forEach((field) => {
@@ -176,7 +199,7 @@
             });
 
             preventScrollDownKeepVisible('webscrapes-table');
-
+        
         });
     </script>
 

@@ -197,7 +197,8 @@ class TableView(UnicornView):
                 lambda x: (
                     x[0], x[1], 
                     x[2].task_thread_started_at.strftime('%Y%m%d%H%M%s') \
-                    if x[2] else datetime.datetime(1900,1,1).strftime('%Y%m%d%H%M%s')
+                    if x[2] and x[2].task_thread_started_at \
+                    else datetime.datetime(1900,1,1).strftime('%Y%m%d%H%M%s')
                 ),
                 self.tables
             ))

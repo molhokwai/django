@@ -18,21 +18,21 @@
             -->
 
             <h2 id="exec-search"
-                class="section-titlemt-5 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
+                class="section-title mt-5">
                 Search
             </h2>
             {% unicorn 'webscrape.manage' parent=self %}
 
 
             <h2 id="exec-reversesearch"
-                class="section-titlemt-8 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
+                class="section-title mt-8">
                 Reverse find
             </h2>
             {% unicorn 'webscrape.manage_reverse' parent=self %}
 
 
             <h2 id="exec-batch"
-                class="section-title mt-8 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
+                class="section-title mt-8">
                 Search list
             </h2>
             {% unicorn 'webscrape.manage_people' parent=self %}
@@ -50,14 +50,13 @@
 
 
             <h2 id="aggregated-results-title"
-                class="section-title mt-10 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
+                class="section-title">
                 {{aggregated_results_nr}} Aggregated Results
             </h2>
 
             <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
                 <a  href="{% url 'webscrape_export_dataoutput_to_csv' webscrape_data_id  %}"
-                    class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 
-                           p-2 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">
+                    class="download">
                        Download
                 </a>
             </div>
@@ -232,12 +231,18 @@
                 font-size: .8em;
             }
 
-            #aggregated-results-title {
-                margin-top: 8em;
-            }  
-
             body {
                 min-height: 200em;
+            }
+
+            .section-title {
+                background: none;
+                text-transform: uppercase;
+                color: green;
+                font-size: 1.5em;
+                letter-spacing: 0.1em;
+                border-bottom: 1px solid green;
+                padding-left: .5em;
             }
 
             .website-data-form {
@@ -246,14 +251,15 @@
             .website-data-form heading {
                 background-color: #fefefe;
                 border-color: lightgreen;
-                padding: 3em;
+                padding: 2em;
                 font-size: 1.2em;
                 letter-spacing: .1em;
             }
             .website-data-form label {
                 font-size: 1.3em;
                 font-weight: normal;
-                color: #454545;
+                color: #232323;
+                padding-left: .5em;
             }
             .website-data-form input[type="checkbox"] {
                 width: 1.8em;
@@ -262,6 +268,33 @@
             .website-data-form select option+option {
                 text-transform: uppercase;
             }
+
+            .form-button-container {
+                border-top: 1px solid #0ecc0e;
+                margin-bottom: 3em;
+            }
+
+            button.search.submit,
+            button.test.submit,
+            .download {
+                background-color: #0ecc0e;
+                color: white;
+                text-transform: uppercase;
+                font-size: 1.3rem;
+                letter-spacing: 0.1em;
+                padding: .3em .7em;
+                font-weight: bold;
+            }
+            button.search.submit:hover,
+            button.test.submit:hover,
+            .download:hover {
+                background-color: #1ddd1d;
+            }
+
+            #aggregated-results-title {
+                margin-top: 8em;
+            }  
+
 
             .tab-selector {
                 background: none;
@@ -301,6 +334,10 @@
             }
             .highlighted.error {
                 background-color: pink;
+            }
+
+            .border-top {
+                border-top: 1px solid;
             }
         </style>
 
@@ -497,10 +534,10 @@
                  * RELOAD TABLE... 
                  * ---------------
                  **/
-                function reloadTable() {
-                    Unicorn.call('webscrape.table', 'load_table', "true");
-                };
-                setInterval(reloadTable, 1000*20);
+                // function reloadTable() {
+                //     Unicorn.call('webscrape.table', 'load_table', "true");
+                // };
+                // setInterval(reloadTable, 1000*20);
             });
         </script>
 
