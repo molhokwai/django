@@ -7,17 +7,24 @@ from webscraping.modules.threader.classes.TaskHandler import TaskHandler
 
 from django_app import settings
 import subprocess
-import datetime
+
 
 logger = settings.logger
 
 
 class Command(BaseCommand):
-    help = "Checks the task_todo field in Webscrape models and dispatches tasks."
+    help = "Calls TaskDispatcher to fetch and end the Webscrape models tasks to be ended..."
 
     def handle(self, *args, **kwargs):
         """
             Main logic for the command.
+
+            -------------------
+            ! @ToDo :: Same method / processes: `check_tasks_to_end`,  `check_tasks_to_update`,
+                        separated because the process hangs when calling for threads stop...
+                        To refactor...
+            -------------------
+
 
             -----------
                 With Deepseek / Python - 62610719, and prior
@@ -28,10 +35,14 @@ class Command(BaseCommand):
             # to flush loose running processes and threads
             # ---------------------------------------------------------------------------
 
-            * * * * * ~/@webscraper/django_app/management/scripts/webscraping-cron-exec-tasks-to-end
-            * * * * * ~/@webscraper/django_app/management/scripts/webscraping-cron-exec-tasks-to-run
-            */20 * * * * pkill -f "webscraping-cron-exec"
-            */20 * * * * pkill -f "marionette"
+            */2 * * * * ~/@webscraper/django_app/management/scripts/webscraping-cron-exec-tasks-to-queue
+            */2 * * * * ~/@webscraper/django_app/management/scripts/webscraping-cron-exec-dequeue-and-run-tasks
+            */2 * * * * ~/@webscraper/django_app/management/scripts/webscraping-cron-exec-tasks-to-update
+            */5 * * * * ~/@webscraper/django_app/management/scripts/webscraping-cron-exec-tasks-to-end
+            */10 * * * * pkill -f "check_tasks"
+            */10 * * * * pkill -f "webscraping-cron-exec"
+            */10 * * * * pkill -f "marionette"
+            */10 * * * * pkill -f "dequeue_and_run"
 
         """
 
@@ -39,13 +50,13 @@ class Command(BaseCommand):
         # Check tasks to end
         # -------------------
         taskDispatcher = TaskDispatcher(Webscrape)
-        tasks = taskDispatcher.check_tasks_to_end()
+        tasks = taskDispatcher.check_tasks_to_end("end")
 
 
         if not len(tasks):
             # Check for next tasks with Task handler
             # -------------------------------------
-            taskHandler = TaskHandler.get_taskHandler(self.taskClass)
+            taskHandler = TaskHandler.get_taskHandler(Webscrape)
             i, n = taskHandler.start_next_tasks()
 
             msg = ""
@@ -57,7 +68,7 @@ class Command(BaseCommand):
                 )
 
             else:
-                msg = self.style.INFO(
+                msg = self.style.NOTICE(
                     f"\n\n\t\t--------------------------------------------------------"
                     f"\n\t\t{0} task(s) started, {n} task(s) running..."
                     f"\n\t\t--------------------------------------------------------\n\n"

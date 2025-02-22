@@ -1,5 +1,4 @@
 from django.test import SimpleTestCase, TestCase, TransactionTestCase
-from django.db.utils import OperationalError
 
 from webscraping.modules.threader.classes.TaskHandler import TaskHandler
 from webscraping.modules.threader.classes.TaskProgress import TaskProgress, Status
@@ -121,7 +120,7 @@ class LongRunningTaskHandlerTestCases(TransactionTestCase):
 
         i = 0
         taskProgress = TaskHandler.get_taskProgress( processObj.task_run_id )
-        while taskProgress.status != Status.SUCCESS.value:
+        while taskProgress.status != Status.SUCCESS:
             try:
 
                     time.sleep( 1 )
@@ -178,7 +177,7 @@ class LongRunningTaskHandlerTestCases(TransactionTestCase):
                 processObj.task_status = taskProgress.status
                 processObj.task_outputs = taskProgress.outputs
 
-                if progress_value >= 100 or taskProgress.status == Status.SUCCESS.value:
+                if progress_value >= 100 or taskProgress.status == Status.SUCCESS:
                     break
 
         final_output = f"[{ datetime.datetime.now() }] input::{ processObj }, outputs::{taskProgress.outputs}"

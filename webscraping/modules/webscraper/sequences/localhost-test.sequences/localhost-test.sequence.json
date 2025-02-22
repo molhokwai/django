@@ -4,7 +4,7 @@
             "ui_timeout": 1
         }}
     ],[
-        { "get": "http://localhost:8001/" },
+        { "get": "http://localhost:8001/webscrape_index/" },
         { "assert_in_page_source": "WEBSCRAPING"}
     ],[
         { "find": "webscrape-data", "by": "By.ID" },

@@ -7,10 +7,11 @@
 
     {% for status in statuses %}
 
-        <a  href="#{{status}}-webscrapes-table"
+        <a  id="{{status}}-tab-selector"
+            href="#{{status}}-webscrapes-table"
             data-tabcontentselector="#{{status}}-webscrapes-table"
             data-status="{{status}}"
-            class="tab-selector  {% if status == default_webscrape_status %}active{% endif %}">
+            class="tab-selector {% if status == default_webscrape_status %}active{% endif %}">
                {{status}}
         </a>
 
@@ -128,6 +129,23 @@
             });
         }
 
+        let statuses = [];
+        // {% for status in statuses %}
+        statuses.push('{{status}}');
+        // {% endfor %}
+        function showFirstFilledStatusTable(){
+            /* Not used, process controlled on view server side...  */
+            for(let i=0; i<statuses.length; i++){
+                let status = statuses[i];
+                let l = document.querySelectorAll(`.webscrape-row.${status}`).length;
+
+                if(l>0){
+                    document.querySelector(`#${status}-tab-selector`).click();
+                    break;
+                }
+            }            
+        }
+
         document.addEventListener('DOMContentLoaded', (e) => {
             document.querySelectorAll(".sort-field").forEach((field) => {
                 field.addEventListener('click', onSortFieldClick);
@@ -145,7 +163,6 @@
 
             document.querySelectorAll(".tab-selector").forEach((button) => {
                 const tabContentSelector = button.dataset.tabcontentselector;
-                console.log(`tabContentSelector : ${tabContentSelector}`);
 
                 button.addEventListener("click", (event) => {
                     let tabContent = document.querySelector(event.target.dataset.tabcontentselector);
@@ -159,6 +176,7 @@
             });
 
             preventScrollDownKeepVisible('webscrapes-table');
+
         });
     </script>
 

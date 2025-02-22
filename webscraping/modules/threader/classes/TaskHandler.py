@@ -9,7 +9,6 @@ from django_app.settings import (
     WEBSCRAPER_THREAD_TIMEOUT
 )
 
-from webscraping.models import ThreadTask
 from webscraping.modules.threader.classes.StoppableThread import StoppableThread
 from webscraping.modules.threader.classes.TaskProgress import TaskProgress, Status
 
@@ -85,9 +84,10 @@ class TaskHandler:
     tasks_running: dict = {}  # Dictionary to track running tasks: {task_run_id: thread}
     tasks_queue: list = []  # Queue to hold tasks waiting to be executed
 
-    taskClass: ThreadTask = None
+    taskClass = None # type : ThreadTask, or subclass of - @ToDo: Implement inheritance... 
 
-    def __init__(self, taskClass: ThreadTask):
+
+    def __init__(self, taskClass): # type : ThreadTask, or subclass of
         self.tasks_running = {}  # Initialize the running tasks dictionary
         self.taskClass = taskClass
 
@@ -105,7 +105,7 @@ class TaskHandler:
 
 
     @staticmethod
-    def get_taskHandler(taskClass: ThreadTask):
+    def get_taskHandler(taskClass): # type : ThreadTask, or subclass of
         """
             Gets the current task hander from cache, or instantiates
             a new one and set it in cache.
@@ -140,7 +140,7 @@ class TaskHandler:
 
 
     @staticmethod
-    def task_is_timedout(task: ThreadTask):
+    def task_is_timedout(task): # type : ThreadTask, or subclass of
         task_duration = (datetime.now() - \
                             task.task_thread_started_at).seconds // 60
         
@@ -149,7 +149,7 @@ class TaskHandler:
 
 
     @staticmethod
-    def task_is_queueable(task: ThreadTask):
+    def task_is_queueable(task): # type : ThreadTask, or subclass of
 
         # 1. Check that status is not QUEUED, RUNNING  or SUCCESS
         # -------------------------------------------------------
@@ -178,20 +178,20 @@ class TaskHandler:
                 is_queueable = TaskHandler.task_is_timedout(task)
 
 
-        msg = '-------------------------| QUEUABLE TASK ? >> ' \
-              f'task.task_is_queueable :: {is_queueable}  ///  ' \
-              'task_status, task_attempts - WEBSCRAPER_TASK_MAX_ATTEMPTS, task_run_id :: ' \
-              f'{task.task_status}, {task.task_attempts} - ' \
-              f'{WEBSCRAPER_TASK_MAX_ATTEMPTS}, ' \
-              f'{task.task_run_id} '
+        # msg = '-------------------------| QUEUABLE TASK ? >> ' \
+        #       f'task.task_is_queueable :: {is_queueable}  ///  ' \
+        #       'task_status, task_attempts - WEBSCRAPER_TASK_MAX_ATTEMPTS, task_run_id :: ' \
+        #       f'{task.task_status}, {task.task_attempts} - ' \
+        #       f'{WEBSCRAPER_TASK_MAX_ATTEMPTS}, ' \
+        #       f'{task.task_run_id} '
 
-        _print(msg, VERBOSITY=3), logger.info(msg)
+        # _print(msg, VERBOSITY=3), logger.info(msg)
 
         
         return is_queueable
 
 
-    def queue_task(self, method, args) -> Status:
+    def queue_task(self, method, args, force_run = False) -> Status:
         """
             Add a task to the queue for later execution.
 
@@ -211,17 +211,30 @@ class TaskHandler:
         if not task_previously_queued:
             self.tasks_queue.append((method, args))
 
-        self.start_next_tasks()
+        if not force_run:
 
-        _message = f"Taskhandler.queue_task - QUEUED :: previously? {task_previously_queued}" \
-                   f" /// {method} - {args}" % (str(method), str(args))
-        _print(_message, VERBOSITY=0)
-        logger.debug(_message)
+            self.start_next_tasks()
 
-        return Status.QUEUED
+            _message = f"Taskhandler.queue_task - QUEUED :: previously? {task_previously_queued}" \
+                       f" /// {method} - {args}"
+            _print(_message, VERBOSITY=0)
+            logger.debug(_message)
+
+            return Status.QUEUED
+
+        if force_run:
+
+            self.start_task(method, args)
+
+            _message = f"Taskhandler.queue_task - RUNNING :: " \
+                       f" /// {method} - {args}"
+            _print(_message, VERBOSITY=0)
+            logger.debug(_message)
+
+            return Status.RUNNING
 
 
-    def start_task(self, method, args, taskObject: ThreadTask = None):
+    def start_task(self, method, args, taskObject = None): # type : ThreadTask, or subclass of
         """
             Start a new background task in a separate thread.
 
@@ -235,47 +248,49 @@ class TaskHandler:
             Returns:
                 str: The task_run_id of the newly started task.
         """
-        logger.debug("Taskhandler.start_task - TO BE STARTED > len(self.tasks_running.keys()) > : %i" % len(self.tasks_running.keys()))
-
         taskProgress = TaskProgress(self)
         task_run_id = taskProgress.get_task_run_id()
 
         t = StoppableThread( target=method, args=[ *args, taskProgress ] )
 
-        logger.debug("Taskhandler.start_task - STARTING > len(self.tasks_running.keys()) > : %i" % len(self.tasks_running.keys()))
-
         t.setDaemon(True)
         t.start()
-
-        logger.debug("Taskhandler.start_task - STARTED > len(self.tasks_running.keys()) > : %i" % len(self.tasks_running.keys()))
 
         # Track the task and its thread
         self.tasks_running[task_run_id] = t
 
-        logger.debug("Taskhandler.start_task - RUNNING > len(self.tasks_running.keys()) > : %i" % len(self.tasks_running.keys()))
-
         try:
             if not taskObject:
                 taskObject = self.taskClass.objects.get(task_run_id=task_run_id)
+
+            if not taskObject.task_attempts:
+                taskObject.task_attempts = 0
+            taskObject.task_attempts = taskObject.task_attempts + 1
+
             taskObject.task_status = Status.RUNNING.value
             taskObject.task_thread_started_at = datetime.now()
             taskObject.save()
+
         except Exception as err:
             logger.error(f"{datetime.now()} - Taskhandler.start_task - taskObject.save() ERROR : {err}")
 
 
+        logger.debug("Taskhandler.start_task - RUNNING > len(self.tasks_running.keys()) > : %i" % len(self.tasks_running.keys()))
+
         return task_run_id
 
 
-    def start_next_tasks(self):
+    def start_next_tasks(self, forceStartTaskObjects = []):
         """
             Start the next task in the queue if any tasks are waiting.
 
             Return
                 (int, int): number of tasks started, number of tasks runnning
         """        
-        logger.debug(f"Taskhandler.start_next_tasks - WEBSCRAPER_THREADS_MAX :: {WEBSCRAPER_THREADS_MAX}")
-        logger.debug(f"Taskhandler.start_next_tasks - len(self.tasks_running.keys()) :: {len(self.tasks_running.keys())}")
+        msgs = [f"Taskhandler.start_next_tasks - WEBSCRAPER_THREADS_MAX :: {WEBSCRAPER_THREADS_MAX}"]
+        msgs.append(f"Taskhandler.start_next_tasks - QUEUED TASKS :: {len(self.tasks_queue)}")
+        msgs.append(f"Taskhandler.start_next_tasks - RUNNING TASKS :: {len(self.tasks_running.keys())}")
+        for msg in msgs: logger.debug(msg), print(msg)
 
         i = 0
         while len(self.tasks_running.keys()) <= WEBSCRAPER_THREADS_MAX:
@@ -283,19 +298,19 @@ class TaskHandler:
                 method, args = self.tasks_queue.pop(0)
                 obj = args[0]
 
-                obj = self.taskClass.objects.get(task_run_id=obj.task_run_id)
                 if obj.task_attempts < WEBSCRAPER_TASK_MAX_ATTEMPTS:
                     self.start_task(method, args, taskObject=obj)
 
                     logger.debug("Taskhandler.start_next_tasks - obj SAVED > : %s - %s" % (str(method), str(args)))
                     i += 1 
 
+
         return i, len(self.tasks_running.keys())
 
 
     def end_task(self, 
                  task_run_id: str, 
-                 taskObject: ThreadTask = None,
+                 taskObject = None, # type : ThreadTask, or subclass of
                  do_save: bool = False):
         """
             Ends a running task and flush it from memory.
@@ -307,6 +322,21 @@ class TaskHandler:
                 do_save (book) (optional):
                             if database save should be done here, or not
         """
+
+        # ---------------------------------
+        # First start next tasks, so that next thread can run:
+        # With this, only individual threads may hang/freeze, not the whole process 
+        # ---------------------------------
+        self.start_next_tasks()
+
+
+        try:
+            if not taskObject:
+                taskObject = self.taskClass.objects.get(task_run_id=task_run_id)
+        except Exception as err:
+            msg = "Taskhandler.end_task - Exception : %s " % str(err)                    
+            _print(msg, VERBOSITY=0), logger.debug(msg)
+
         if task_run_id in self.tasks_running:
             thread = self.tasks_running[task_run_id]
             if DEBUG:
@@ -325,28 +355,21 @@ class TaskHandler:
                     else:
                         logger.debug("Cannot join current thread, skipping join")
 
-                    if DEBUG:
-                        webscrape = Webscrape.objects.get(task_run_id=task_run_id)
-                        logger.debug("Taskhandler.start_next_tasks - ENDED > %s ||||||||||||||||| STATUS > %s" \
-                                    % (str(webscrape.task_variables), str(webscrape.task_status)))
-
                 except RuntimeError as err:
                     # RuntimeError: cannot join current thread
                     # ----------------------------------------
-                    msg = "Taskhandler.start_next_tasks - Err : %s " % str(err)
-                    logger.debug(msg)
-                    _print(msg, VERBOSITY=0)
+                    msg = "Taskhandler.end_task - RuntimeError : %s " % str(err)                    
+                    _print(msg, VERBOSITY=0), logger.debug(msg)
 
 
             # Nullify the thread, and remove the task from the tracking dictionary
             self.tasks_running[task_run_id] = None
             del self.tasks_running[task_run_id]
 
-            if not taskObject:
-                taskObject = self.taskClass.objects.get(task_run_id=task_run_id)
-            taskObject.task_thread_started_at = datetime.now()
-            if do_save:
-                taskObject.save()
+            if taskObject:
+                taskObject.task_thread_stopped_at = datetime.now()
+                if do_save:
+                    taskObject.save()
 
             return taskObject
 
@@ -354,7 +377,7 @@ class TaskHandler:
     def end_task_start_next(
                 self, 
                 task_run_id: str, 
-                taskObject: ThreadTask = None,
+                taskObject = None, # type : ThreadTask, or subclass of
                 do_save: bool = False):
         """
             Calls end_task to ends a running task and flush it from memory.

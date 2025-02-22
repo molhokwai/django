@@ -175,7 +175,7 @@ class Step:
         else:
             _assert = step_dict["assert_in_page_source"] \
                                             % _placeholder_variables
-            assert _assert in self.driver.page_source, f'Error "{_assert}" not in source...'
+            assert _assert.lower() in self.driver.page_source.lower(), f'Error "{_assert.lower()}" not in source...'
 
         _not_string = "not" if _not else ""
         self.steps_common["asserts"].append(

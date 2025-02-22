@@ -413,8 +413,8 @@ mimetypes.add_type("text/css", ".css", True)
 
 WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
 WEBSCRAPER_HEADLESS = True
-WEBSCRAPER_CACHING_DURATION = 3600
-WEBSCRAPER_THREADS_MAX = 3
+WEBSCRAPER_CACHING_DURATION = 600 # This should match THREAD_TIMEOUT, as a higher value would be inneffective...? 
+WEBSCRAPER_THREADS_MAX = 2
 
 # ------------------------------------------
 # ChromeDriver, GeckoDriver: 
@@ -424,6 +424,7 @@ WEBSCRAPER_THREADS_MAX = 3
 # ------------------------------------------
 WEBSCRAPER_THREAD_MAX_RAM_KB = 0 # 1000000
 WEBSCRAPER_THREAD_TIMEOUT = timedelta(minutes=10)  # Stop after 10 minutes
+WEBSCRAPER_THREAD_TIMEOUT_FROM_CREATION = timedelta(minutes=30)  # Use `created_on` if `thread_task_started_at` not_available
 WEBSCRAPER_TASK_MAX_ATTEMPTS = 3
 WEBSCRAPER_THREADS_MAX_CHECK_TASK_TIME = 600 # Maximum check_task time before suppression
 WEBSCRAPER_TASKHANDLER_CACHE_KEY = "task_dispatcher.taskHandler"

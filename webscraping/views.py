@@ -284,9 +284,9 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
                 n += 1
 
                 _break = False
-                if (n >= all_steps_len) or (progress_value >= 100 or taskProgress.status == Status.SUCCESS.value):
+                if (n >= all_steps_len) or (progress_value >= 100 or taskProgress.status == Status.SUCCESS):
                     taskProgress.value = progress_value = 100
-                    taskProgress.status = Status.SUCCESS.value
+                    taskProgress.status = Status.SUCCESS
                     _break = True
 
                 webscrape.task_progress = taskProgress.value
@@ -341,14 +341,14 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
             "outputs": outputs
         }
         
-        statusE = {
-            'STARTED': Status.STARTED,
-            'RUNNING': Status.RUNNING,
-            'SUCCESS': Status.SUCCESS,
-            'FAILED': Status.FAILED,
-        }[taskProgress.status]
+        # statusE = {
+        #     'STARTED': Status.STARTED,
+        #     'RUNNING': Status.RUNNING,
+        #     'SUCCESS': Status.SUCCESS,
+        #     'FAILED': Status.FAILED,
+        # }[taskProgress.status]
         taskProgress.set_unset(
-            statusE, taskProgress.value,
+            taskProgress.status, taskProgress.value,
             progress_message=f"{output}% have been processed"
         )
 

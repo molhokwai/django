@@ -3,6 +3,7 @@ from django_unicorn.components import UnicornView
 from django_app.settings import _print
 from .webscrape import MessageStatus
 from webscraping.models import Webscrape
+from webscraping.modules.threader.classes.TaskHandler import TaskHandler
 
 
 
@@ -17,6 +18,7 @@ class RowView(UnicornView):
 
     task_output = ''
 
+    task_is_queueable = False
 
     def mount(self):
         self.us_states = self.parent.us_states
@@ -50,6 +52,8 @@ class RowView(UnicornView):
 
         if self.webscrape.task_output:
             self.task_output = self.webscrape.task_output.replace('\\t', '  ').replace('\\n', '<br/>')
+
+        self.task_is_queueable = TaskHandler.task_is_queueable(self.webscrape)
 
         self.force_render = force_render
 

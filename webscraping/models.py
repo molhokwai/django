@@ -7,6 +7,7 @@ from django.utils.text import slugify
 from django.core.cache import cache
 from django.conf import settings
 
+from webscraping.modules.threader.classes.TaskHandler import TaskHandler
 
 from time import sleep
 from typing import Union
@@ -380,6 +381,7 @@ class Webscrape(models.Model):
 
     # optional
     # --------
+    title = models.CharField(max_length=200, null=True, blank=True)
     task_title = models.CharField(max_length=200, null=True, blank=True)
 
     # core

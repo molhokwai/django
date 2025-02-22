@@ -146,7 +146,7 @@ def webscrape_sequence_long_running_method( webscrape: Webscrape, taskProgress )
         webscrape.task_outputs = taskProgress.outputs
         webscrape.save()
 
-        if progress_value >= 100 or taskProgress.status == Status.SUCCESS.value:
+        if progress_value >= 100 or taskProgress.status == Status.SUCCESS:
             break
 
     # driver instance
@@ -286,7 +286,7 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
             logger.debug("views.webscrape_steps_long_running_method - STEP > : "
                         f"{progress_value}% - {taskProgress.status} - {str(step)}")
 
-            if progress_value >= 100 or taskProgress.status == Status.SUCCESS.value:
+            if progress_value >= 100 or taskProgress.status == Status.SUCCESS:
                 break
 
             n += 1
