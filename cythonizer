@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# -*- coding: utf8 -*-
+cythonize -i *.py
+python cytonizer_replace

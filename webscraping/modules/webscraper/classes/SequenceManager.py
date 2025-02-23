@@ -1,178 +1,67 @@
 #!/usr/bin/env python3
-# -*- coding: utf8 -*-
+_C='----------| Sequence > %s'
+_B='config'
+_A=None
 from django_app.settings import _print
 from webscraping.modules.webscraper.classes.Step import Step
 from webscraping.modules.webscraper.classes.Util import Util
-
 import os
 from typing import Union
-
 class Sequence:
-    driver = None
-    sequence_steps = None
-    source_path = None
-
-    def __init__(self, driver, sequence_steps, source_path):
-        self.driver = driver
-        self.sequence_steps = sequence_steps
-        self.source_path = os.path.abspath(source_path)
-
-
-    # -------------------
-    # FULL SEQUENCE EXECUTION
-    # -------------------
-    def execute(self, _input=None, variables={}):
-        _outputs = []
-
-        step_config = None
-        for step_dicts in self.sequence_steps:
-            for step_dict in step_dicts:
-                for key in step_dict.keys():
-                    if key == "config":
-                        _print('----------| Sequence > %s' % key, VERBOSITY=3)
-                        step_config = step_dict["config"]
-
-
-        stepObj = Step(self.driver, config_dict=step_config)
-        stepObj.variables = variables
-        stepObj.source_path = self.source_path
-        for step_dicts in self.sequence_steps:
-            for step_dict in step_dicts:
-                _outputs.append(stepObj.execute(
-                        step_dict,
-                        _input if not len(outputs) else outputs[-1]
-                    )
-                )
-
-        return _outputs
-
-
-
-    # -------------------
-    # SEQUENCE STEP BY STEP EXECUTION
-    # -------------------
-
-    _step_config: Union[ dict, None] = None
-    @property
-    def step_config(self):
-        if self._step_config is None:
-            for step_dicts in self.sequence_steps:
-                for step_dict in step_dicts:
-                    for key in step_dict.keys():
-                        if key == "config":
-                            _print('----------| Sequence > %s' % key, VERBOSITY=3)
-                            self._step_config = step_dict["config"]
-        return self._step_config
-
-
-    stepObj: Union[ Step, None] = None
-    def get_stepObj(self, variables={}):
-        if self.stepObj is None:
-            self.stepObj = Step(self.driver, config_dict=self.step_config)
-            self.stepObj.variables = variables
-            self.stepObj.source_path = self.source_path
-        return self.stepObj
-
-
-    def get_steps(self):
-        """
-            Description
-                step is the equivalent of step_dict...
-        """
-        steps = []
-        for step_dicts in self.sequence_steps:
-            for step_dict in step_dicts:
-                steps.append(step_dict)
-        return steps
-
-
-    execute_step_outputs: list = []
-    def execute_step(self, step: dict, _input=None, variables={}):
-        """
-            Description
-                step is the equivalent of step_dict...
-        """
-        step_dict = step
-
-        stepObj = self.get_stepObj(variables=variables)
-
-        _outputs = self.execute_step_outputs
-        output = stepObj.execute(
-            step_dict,
-            _input if not len(_outputs) else _outputs[-1]
-        )
-
-        self.execute_step_outputs.append(output)
-        return output
-
-
-
+	driver=_A;sequence_steps=_A;source_path=_A
+	def __init__(A,driver,sequence_steps,source_path):A.driver=driver;A.sequence_steps=sequence_steps;A.source_path=os.path.abspath(source_path)
+	def execute(A,_input=_A,variables={}):
+		E=[];F=_A
+		for C in A.sequence_steps:
+			for B in C:
+				for G in B.keys():
+					if G==_B:_print(_C%G,VERBOSITY=3);F=B[_B]
+		D=Step(A.driver,config_dict=F);D.variables=variables;D.source_path=A.source_path
+		for C in A.sequence_steps:
+			for B in C:E.append(D.execute(B,_input if not len(outputs)else outputs[-1]))
+		return E
+	_step_config:Union[dict,_A]=_A
+	@property
+	def step_config(self):
+		A=self
+		if A._step_config is _A:
+			for D in A.sequence_steps:
+				for B in D:
+					for C in B.keys():
+						if C==_B:_print(_C%C,VERBOSITY=3);A._step_config=B[_B]
+		return A._step_config
+	stepObj:Union[Step,_A]=_A
+	def get_stepObj(A,variables={}):
+		if A.stepObj is _A:A.stepObj=Step(A.driver,config_dict=A.step_config);A.stepObj.variables=variables;A.stepObj.source_path=A.source_path
+		return A.stepObj
+	def get_steps(B):
+		'\n            Description\n                step is the equivalent of step_dict...\n        ';A=[]
+		for C in B.sequence_steps:
+			for D in C:A.append(D)
+		return A
+	execute_step_outputs:list=[]
+	def execute_step(A,step,_input=_A,variables={}):'\n            Description\n                step is the equivalent of step_dict...\n        ';D=step;E=A.get_stepObj(variables=variables);B=A.execute_step_outputs;C=E.execute(D,_input if not len(B)else B[-1]);A.execute_step_outputs.append(C);return C
 class SequenceManager:
-    driver = None
-    name = None
-    source_path = None
-
-
-    def __init__(self, driver, name, source_path):
-        self.driver = driver
-        self.name = name
-        self.source_path = os.path.abspath(source_path)
-
-
-    _sequences = None
-    @property    
-    def sequences(self):
-        if not self._sequences:
-            if self.name.endswith(".sequence.json"):
-                sequence = Util.get_sequence(
-                    self.source_path,
-                    from_path=self.name
-                )
-                self._sequences = [sequence]
-
-            else:
-                self._sequences = Util.get_sequences_from_name(
-                    self.source_path,
-                    self.name
-                )
-
-        return self._sequences
-
-
-    # -------------------
-    # FULL SEQUENCE(S) EXECUTION
-    # -------------------
-
-    def execute_sequence(self, variables={}, i=0):
-        sequence_steps = self.sequences[i]
-        sequence = Sequence(self.driver, sequence_steps)
-        return sequence.execute(variables=variables)
-
-
-    def execute_sequences(self, variables={}):
-        outputs = []
-
-        sequences = self.sequences
-        for sequence_steps in sequences:
-            sequence = Sequence(self.driver, sequence_steps, self.source_path)
-            outputs.append(sequence.execute(variables=variables))
-
-        return outputs
-
-
-    # -------------------
-    # FOR SEQUENCE STEP BY STEP EXECUTION
-    # -------------------
-
-    _sequenceObjects: Union[ list[Sequence], None ] = None
-    @property
-    def sequenceObjects(self):
-        if self._sequenceObjects is None:
-            self._sequenceObjects = []
-
-            sequences = self.sequences
-            for sequence_steps in sequences:
-                self._sequenceObjects.append(
-                    Sequence(self.driver, sequence_steps, self.source_path))
-
-        return self._sequenceObjects
+	driver=_A;name=_A;source_path=_A
+	def __init__(A,driver,name,source_path):A.driver=driver;A.name=name;A.source_path=os.path.abspath(source_path)
+	_sequences=_A
+	@property
+	def sequences(self):
+		A=self
+		if not A._sequences:
+			if A.name.endswith('.sequence.json'):B=Util.get_sequence(A.source_path,from_path=A.name);A._sequences=[B]
+			else:A._sequences=Util.get_sequences_from_name(A.source_path,A.name)
+		return A._sequences
+	def execute_sequence(A,variables={},i=0):B=A.sequences[i];C=Sequence(A.driver,B);return C.execute(variables=variables)
+	def execute_sequences(A,variables={}):
+		B=[];C=A.sequences
+		for D in C:E=Sequence(A.driver,D,A.source_path);B.append(E.execute(variables=variables))
+		return B
+	_sequenceObjects:Union[list[Sequence],_A]=_A
+	@property
+	def sequenceObjects(self):
+		A=self
+		if A._sequenceObjects is _A:
+			A._sequenceObjects=[];B=A.sequences
+			for C in B:A._sequenceObjects.append(Sequence(A.driver,C,A.source_path))
+		return A._sequenceObjects

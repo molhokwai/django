@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+import os
+from python_minifier import minify
+
+def minify_project(directory, exclude_dirs):
+    for root, dirs, files in os.walk(directory):
+        # Exclude specified directories
+        dirs[:] = [d for d in dirs if os.path.join(root, d) not in exclude_dirs]
+
+        for file in files:
+            if file.endswith(".py"):
+                file_path = os.path.join(root, file)
+                with open(file_path, "r") as f:
+                    code = f.read()
+                minified_code = minify(code)
+                with open(file_path, "w") as f:
+                    f.write(minified_code)
+
+# Define the project directory and directories to exclude
+project_dir = "."
+exclude_dirs = [os.path.join(project_dir, "venv")]
+
+# Minify the project
+minify_project(project_dir, exclude_dirs)

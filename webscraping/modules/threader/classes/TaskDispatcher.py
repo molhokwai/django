@@ -1,311 +1,72 @@
+_C='QUEUED'
+_B='SUCCESS'
+_A=None
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-
 from django.core.cache import cache
 from django.conf import settings
-from django_app.settings import (
-    logger, _print, 
-    WEBSCRAPER_TASK_MAX_ATTEMPTS, 
-    WEBSCRAPER_THREAD_TIMEOUT,
-    WEBSCRAPER_THREAD_TIMEOUT_FROM_CREATION
-)
-
-from webscraping.models import ThreadTask, Webscrape
+from django_app.settings import logger,_print,WEBSCRAPER_TASK_MAX_ATTEMPTS,WEBSCRAPER_THREAD_TIMEOUT,WEBSCRAPER_THREAD_TIMEOUT_FROM_CREATION
+from webscraping.models import ThreadTask,Webscrape
 from webscraping.modules.threader.classes.TaskHandler import TaskHandler
 from webscraping.modules.threader.classes.TaskProgress import Status
 from webscraping.views import webscrape_steps_long_running_method
-
-
 import threading
 from time import sleep
 from typing import Union
-
-from datetime import datetime, timedelta
-import uuid, copy, json
+from datetime import datetime,timedelta
+import uuid,copy,json
 from uuid import uuid1
-
 from enum import Enum
-
-DEBUG = settings.DEBUG
-
-
-
-
+DEBUG=settings.DEBUG
 class TaskDispatcher:
-    """
-        A class to check and dispatch tasks...
+	'\n        A class to check and dispatch tasks...\n\n        Example usage:\n            ```python\n\n                # Example usage\n                task_dispatcher = TaskDispatcher()\n                ...\n            ```\n    ';taskClass:ThreadTask=_A
+	def __init__(A,taskClass):A.taskClass=taskClass
+	_taskHandler=_A
+	@property
+	def taskHandler(self):
+		A=self
+		if not A._taskHandler:A._taskHandler=TaskHandler.get_taskHandler(A.taskClass)
+		return A._taskHandler
+	def check_tasks_to_queue(C,timeout=_A):
+		'\n            Querying, then filtering tasks for tasks to run\n            Then dispatching them...\n\n            1. Check that status is not QUEUED, RUNNING  or SUCCESS\n            2. Check that progress is not 100%\n            3. Check that MAX_ATTEMPTS is not reached\n            4. \n                if 1, 2, 3: check that task does not have TaskProgress, or that \n                Task thread timeout is reached: \n                  datetime.now – task_thread_started_at >= TASK_TIMEOUT\n\n            Return:\n                Dispacthed tasks: Union[List, None]\n        ';D=timeout;F=D or WEBSCRAPER_THREAD_TIMEOUT;G=D or WEBSCRAPER_THREAD_TIMEOUT_FROM_CREATION;H=~Q(task_status__in=[_C,'RUNNING',_B])&Q(task_progress__lt=100)&Q(task_attempts__lt=settings.WEBSCRAPER_TASK_MAX_ATTEMPTS);I=~Q(task_status__in=[_C,_B])&Q(task_progress__lt=100)&Q(task_attempts__lt=settings.WEBSCRAPER_TASK_MAX_ATTEMPTS)&(Q(task_thread_started_at__lt=datetime.now()-F)|Q(created_on__lt=datetime.now()-G));A=C.taskClass.objects.filter(H|I)
+		if len(A):
+			for B in A:J=C.dispatch(B.task_todo,B);B.task_status=J.value;B.save()
+		E=f"""
 
-        Example usage:
-            ```python
+\t\t--------------------------------------------------------
+\t\tTASKS TO QUEUE: checking and dispatching completed: {len(A)} tasks done.
+\t\t--------------------------------------------------------
 
-                # Example usage
-                task_dispatcher = TaskDispatcher()
-                ...
-            ```
-    """
-    taskClass: ThreadTask = None
+""";print(E),logger.info(E);return A
+	def dequeue_and_run(C):
+		'\n            Querying, then filtering tasks for tasks to run\n            Then dispatching them...\n\n            1. Check that status is not QUEUED, RUNNING  or SUCCESS\n            2. Check that progress is not 100%\n            3. Check that MAX_ATTEMPTS is not reached\n            4. \n                if 1, 2, 3: check that task does not have TaskProgress, or that \n                Task thread timeout is reached: \n                  datetime.now – task_thread_started_at >= TASK_TIMEOUT\n\n            Return:\n                Dispacthed tasks: Union[List, None]\n        ';E=Q(task_status__in=[_C])&Q(task_progress__lt=100)&Q(task_attempts__lt=settings.WEBSCRAPER_TASK_MAX_ATTEMPTS);A=C.taskClass.objects.filter(E)
+		if len(A):
+			for B in A:F=C.dispatch(B.task_todo,B);B.task_status=F.value;B.save()
+		D=f"""
 
-    def __init__(self, taskClass: ThreadTask):
-        self.taskClass = taskClass
+\t\t--------------------------------------------------------
+\t\tTASKS TO DEQUEUE AND RUN: checking and dispatching completed: {len(A)} tasks done.
+\t\t--------------------------------------------------------
 
-    _taskHandler = None
-    @property
-    def taskHandler(self):
-        # Task handler from cache
-        # ------------------------
-        if not self._taskHandler:
-            self._taskHandler = TaskHandler.get_taskHandler(self.taskClass)
+""";print(D),logger.info(D);return A
+	def check_tasks_to_end(E,_which,webscrapes=_A,status=_A,timeout=_A):
+		'\n            For each task with status=(arg:None)\n            + for each task in running queue:\n            ________________________________\n\n\n            1. Check if task is completed, or if task has reached timeout:\n               - if completed: set task status SUCCESS\n               - if timed out: set task status FAILED\n               - call `taskHandler.end_task_start_nexts`\n\n            2. if not completed and not timed out:\n               - Do nothin, pass\n        ';F='task_is_timedout_Q';G='task_is_completed_Q';H=timeout;I=status;B=_which;R=H or WEBSCRAPER_THREAD_TIMEOUT;S=H or WEBSCRAPER_THREAD_TIMEOUT_FROM_CREATION;J={G:(~Q(task_status=_B)&Q(task_progress__gte=100),Status.SUCCESS.value),F:(~Q(task_status=_B)&(Q(task_thread_started_at__lt=datetime.now()-R)|Q(created_on__lt=datetime.now()-S)),Status.FAILED.value)};C=[];K=0;L=0;M,N=0,0
+		for D in J:
+			O=J[D];T=O[0];I=O[1];U=E.taskClass.objects.filter(T)
+			for A in U:
+				if B=='update':A.task_status=I;A.save()
+				elif B=='end':A,V,W=E.taskHandler.end_task_start_next(A.task_run_id,taskObject=A);M+=V;N+=W
+				if D==G:K+=1
+				elif D==F:L+=1
+				C.append(A)
+		P=f"""
 
-        return self._taskHandler
+\t\t--------------------------------------------------------
+\t\tTASKS TO {B.upper()}: checking completed::
+\t\t- {K} tasks completed
+\t\t- {L} tasks timed out
+\t\t- {len(C)} tasks ended, {M} started, {N} running...
+\t\t--------------------------------------------------------
 
-
-
-    def check_tasks_to_queue(self,
-            timeout: timedelta = None ):
-        """
-            Querying, then filtering tasks for tasks to run
-            Then dispatching them...
-
-            1. Check that status is not QUEUED, RUNNING  or SUCCESS
-            2. Check that progress is not 100%
-            3. Check that MAX_ATTEMPTS is not reached
-            4. 
-                if 1, 2, 3: check that task does not have TaskProgress, or that 
-                Task thread timeout is reached: 
-                  datetime.now – task_thread_started_at >= TASK_TIMEOUT
-
-            Return:
-                Dispacthed tasks: Union[List, None]
-        """
-        started_at_to = timeout or WEBSCRAPER_THREAD_TIMEOUT
-        created_on_to = timeout or WEBSCRAPER_THREAD_TIMEOUT_FROM_CREATION
-
-        # ----------------------------------
-        # I. ALL TASKS THAT ARE NOT QUEUED, NOT RUNNING, AND NOT SUCCESSFUL
-        #
-        # 1. Check that status is not QUEUED, RUNNING  or SUCCESS
-        # 2. Check that progress is not 100%
-        # 3. Check that MAX_ATTEMPTS is not reached
-        # ----------------------------------
-        task_is_queuable_Q1 = (
-              ~Q(task_status__in=["QUEUED", "RUNNING", "SUCCESS"])
-            &  Q(task_progress__lt=100)
-            &  Q(task_attempts__lt=settings.WEBSCRAPER_TASK_MAX_ATTEMPTS)
-        )
-
-        # ----------------------------------
-        # II. ALL TASKS THAT HAVE TIMED OUT, AND ARE NOT QUEUED, AND NOT SUCCESSFUL
-        #
-        # 1. Check that status is not QUEUED, or SUCCESS
-        # 2. Check that progress is not 100%
-        # 3. Check that MAX_ATTEMPTS is not reached
-        # ----------------------------------
-        task_is_queuable_Q2 = (
-              ~Q(task_status__in=["QUEUED", "SUCCESS"])
-            &  Q(task_progress__lt=100)
-            &  Q(task_attempts__lt=settings.WEBSCRAPER_TASK_MAX_ATTEMPTS)
-            &  (
-                Q(task_thread_started_at__lt=(datetime.now() - started_at_to))
-                | Q(created_on__lt=(datetime.now() - created_on_to))
-            )
-        )
-
-
-        tasks = self.taskClass.objects.filter((task_is_queuable_Q1 | task_is_queuable_Q2))
-
-
-        if len(tasks):
-            for task in tasks:
-                # Dispatch the task based on the value of task_todo
-                _Status = self.dispatch(task.task_todo, task)
-
-                # Clear the task_todo field after dispatching
-                task.task_status = _Status.value
-                task.save()
-
-        msg =  \
-            f"\n\n\t\t--------------------------------------------------------" \
-            f"\n\t\tTASKS TO QUEUE: checking and dispatching completed: {len(tasks)} tasks done." \
-            f"\n\t\t--------------------------------------------------------\n\n" \
-
-        print(msg), logger.info(msg)
-
-        return tasks
-
-
-
-
-    def dequeue_and_run(self):
-        """
-            Querying, then filtering tasks for tasks to run
-            Then dispatching them...
-
-            1. Check that status is not QUEUED, RUNNING  or SUCCESS
-            2. Check that progress is not 100%
-            3. Check that MAX_ATTEMPTS is not reached
-            4. 
-                if 1, 2, 3: check that task does not have TaskProgress, or that 
-                Task thread timeout is reached: 
-                  datetime.now – task_thread_started_at >= TASK_TIMEOUT
-
-            Return:
-                Dispacthed tasks: Union[List, None]
-        """
-
-        # ----------------------------------
-        # ALL TASKS THAT ARE QUEUED AND NOT SUCCESSFUL
-        #
-        # 1. Check that status is QUEUED
-        # 2. Check that progress is not 100%
-        # 3. Check that MAX_ATTEMPTS is not reached
-        # ----------------------------------
-        task_is_queuable_Q = (
-               Q(task_status__in=["QUEUED"])
-            &  Q(task_progress__lt=100)
-            &  Q(task_attempts__lt=settings.WEBSCRAPER_TASK_MAX_ATTEMPTS)
-        )
-        tasks = self.taskClass.objects.filter((task_is_queuable_Q))
-
-        if len(tasks):
-            for task in tasks:
-                # Dispatch the task based on the value of task_todo
-                _Status = self.dispatch(task.task_todo, task)
-
-                # Clear the task_todo field after dispatching
-                task.task_status = _Status.value
-                task.save()
-
-        msg =  \
-            f"\n\n\t\t--------------------------------------------------------" \
-            f"\n\t\tTASKS TO DEQUEUE AND RUN: checking and dispatching completed: {len(tasks)} tasks done." \
-            f"\n\t\t--------------------------------------------------------\n\n" \
-
-        print(msg), logger.info(msg)
-
-        return tasks
-
-
-
-    def check_tasks_to_end(self, 
-            _which: str,        # "update" | "end"
-            webscrapes: Union[ list[Webscrape], None ] = None,
-            status: Union[ Status, None ] = None,
-            timeout: timedelta = None ):
-        """
-            For each task with status=(arg:None)
-            + for each task in running queue:
-            ________________________________
-
-
-            1. Check if task is completed, or if task has reached timeout:
-               - if completed: set task status SUCCESS
-               - if timed out: set task status FAILED
-               - call `taskHandler.end_task_start_nexts`
-
-            2. if not completed and not timed out:
-               - Do nothin, pass
-        """
-
-        started_at_to = timeout or WEBSCRAPER_THREAD_TIMEOUT
-        created_on_to = timeout or WEBSCRAPER_THREAD_TIMEOUT_FROM_CREATION
-
-        Queries = {
-            # ----------------------------------
-            # 1. Check tasks that do not have the status SUCCESS
-            #    that are completed, or that have reached timeout:
-            #    - if completed: set task status SUCCESS
-            # ----------------------------------
-            "task_is_completed_Q": ((
-                  ~Q(task_status="SUCCESS")
-                &  Q(task_progress__gte=100)
-            ), Status.SUCCESS.value),
-
-            # ----------------------------------
-            # ...
-            #   - if timed out: set task status FAILED
-            # ----------------------------------
-            "task_is_timedout_Q": ((
-                  ~Q(task_status="SUCCESS")
-                &  (
-                    Q(task_thread_started_at__lt=(datetime.now() - started_at_to))
-                    | Q(created_on__lt=(datetime.now() - created_on_to))
-                )
-            ), Status.FAILED.value)
-        }
-
-        tasks = []
-        nc = 0           # n completed
-        nto = 0          # n timedout
-        i, n = 0, 0      # i started, n running
-        for key in Queries:            
-            _tuple =Queries[key]
-            query = _tuple[0]
-            status = _tuple[1]
-
-            _tasks = self.taskClass.objects.filter(query)
-            for task in _tasks:
-
-                if _which == "update":
-                    # ----------------------------------
-                    # ...
-                    #   - save, to finish. Task status must be updated
-                    #     *before* calling for thread stop (to avoid delayed 
-                    #      update because of a hanging thread).
-                    # ----------------------------------
-                    task.task_status = status
-                    task.save()
-
-                elif _which == "end":
-                    # ----------------------------------
-                    # ...
-                    #   - call `taskHandler.end_task_start_next`
-                    # ----------------------------------
-                    task, i1, n1 = self.taskHandler.end_task_start_next(
-                                        task.task_run_id, taskObject=task)
-                    i += i1
-                    n += n1
-
-                if key == "task_is_completed_Q":
-                    nc += 1
-                elif key == "task_is_timedout_Q":
-                    nto += 1
-
-                tasks.append(task)
-
-
-        msg = \
-            f"\n\n\t\t--------------------------------------------------------" \
-            f"\n\t\tTASKS TO {_which.upper()}: checking completed::" \
-            f"\n\t\t- {nc} tasks completed" \
-            f"\n\t\t- {nto} tasks timed out" \
-            f"\n\t\t- {len(tasks)} tasks ended, {i} started, {n} running..." \
-            f"\n\t\t--------------------------------------------------------\n\n"
-
-        print(msg), logger.info(msg)
-
-        return tasks
-
-
-    def dispatch(self, task_name: str, webscrape: Webscrape, force_run = False):
-        """
-        Dispatches tasks based on the task_name.
-
-        Args:
-            task_name (str): The name of the task to execute.
-            webscrape (Webscrape): The Webscrape instance associated with the task.
-        """
-        method = {
-            "webscrape_steps_long_running_method": webscrape_steps_long_running_method
-        }.get(task_name, ValueError(f"Unknown task: {task_name}"))
-
-
-        # Queue task with Task handler
-        # -----------------------------
-        _Status = self.taskHandler.queue_task( 
-            method, [ webscrape ],
-            force_run = force_run
-        )
-
-        return _Status
-
-
+""";print(P),logger.info(P);return C
+	def dispatch(B,task_name,webscrape,force_run=False):'\n        Dispatches tasks based on the task_name.\n\n        Args:\n            task_name (str): The name of the task to execute.\n            webscrape (Webscrape): The Webscrape instance associated with the task.\n        ';A=task_name;C={'webscrape_steps_long_running_method':webscrape_steps_long_running_method}.get(A,ValueError(f"Unknown task: {A}"));D=B.taskHandler.queue_task(C,[webscrape],force_run=force_run);return D

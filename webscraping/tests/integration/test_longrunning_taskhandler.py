@@ -1,196 +1,31 @@
-from django.test import SimpleTestCase, TestCase, TransactionTestCase
-
+_A=None
+from django.test import SimpleTestCase,TestCase,TransactionTestCase
 from webscraping.modules.threader.classes.TaskHandler import TaskHandler
-from webscraping.modules.threader.classes.TaskProgress import TaskProgress, Status
+from webscraping.modules.threader.classes.TaskProgress import TaskProgress,Status
 from webscraping.models import Webscrape
-
-import re, datetime, time
+import re,datetime,time
 from typing import Union
-
-
-class ProcessObject:
-    """
-        processObj = {
-            "title": "A process object with: task_run_id, task_progress, task_outputs",
-            "task_run_id": None,
-            "task_progress": None,
-            "task_outputs": None,
-        }
-    """
-    task_run_id: Union[ str, None ] = None
-    task_progress: Union[ int, None ] = None
-    task_status: Union[ str, None ] = None
-    task_outputs: Union[ list, None] = None
-    description: str = "A process object with: task_run_id, task_progress, task_outputs"
-
-
+class ProcessObject:'\n        processObj = {\n            "title": "A process object with: task_run_id, task_progress, task_outputs",\n            "task_run_id": None,\n            "task_progress": None,\n            "task_outputs": None,\n        }\n    ';task_run_id:Union[str,_A]=_A;task_progress:Union[int,_A]=_A;task_status:Union[str,_A]=_A;task_outputs:Union[list,_A]=_A;description:str='A process object with: task_run_id, task_progress, task_outputs'
 class LongRunningTaskHandlerTestCases(TransactionTestCase):
-    """
-        -----------
-        @T :: SimpleTestCase →to TestCase →to TransactionTestCase
-        @T ::   try:
-                    ...
-                except django.db.utils.OperationalError as err:
-                    ...
-
-        @T ::   darklight.Blog.date_created: (fields.W161) Fixed default value provided.
-                HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
-
-        @T ::   Status.STATUS instead of Status.SUCCESS
-
-                :167    taskProgress.set_unset(
-                            Status.STATUS, progress_value,
-                            progress_message=f"{output}% has been processed" )
-
-
-
-        -----------
-        Src:
-            "A simple approach for background task in Django"
-            Handle long running task using Threading and Django Cache
-            - https://ivanyu2021.hashnode.dev/a-simple-approach-for-background-task-in-django
-    """
-
-    def from_source(self):
-        # def test_long_running_task(self):
-
-        #     input = 'aaaaaa'
-        #     print( f'{ input= }' )
-
-        #     task_run_id = self.__start_task( input )
-        #     print( f'{ task_run_id= }' )
-
-        #     while True:
-
-        #         time.sleep( 1 )
-        #         result = self.__get_task_progress_response( task_run_id )
-
-        #         if result_dict[ 'status' ] == "SUCCESS":
-        #             self.print_output(result_dict)
-        #             break
-
-        #         self.print_progress_message(result_dict)
-
-        # def print_output(self, result_dict):
-        #     status = result_dict[ 'status' ]
-        #     output = result_dict[ "output" ]
-        #     print( f'{status=}, { output= }' )
-
-        # def print_progress_message(self, result_dict):
-        #     status = result_dict[ 'status' ]
-        #     progress_message = result_dict[ 'progress_message' ]
-        #     print( f'{ status= },{ progress_message= }' )
-
-        # def __start_task( self, input ):
-        #     res = self.client.get( f'/bgTaskExAPI/start_long_running_task/?input={ input }' )
-        #     self.assertEqual( res.status_code, 200 )
-
-        #     task_run_id = res.json()[ 'task_run_id' ]
-        #     UUID_V1_PATTERN = re.compile( '[a-f0-9]{8}-[a-f0-9]{4}-1[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$', re.IGNORECASE)
-        #     self.assertEqual( UUID_V1_PATTERN.match( task_run_id ) is not None, True )
-
-        #     return task_run_id
-
-        # def __get_task_progress_response( self, task_run_id : str ):
-        #     res = self.client.get( f'/bgTaskExAPI/get_task_progress/?task_run_id={ task_run_id }' )
-        #     self.assertEqual( res.status_code, 200 )
-
-        #     return res.json()
-        pass
-
-
-    @staticmethod
-    def _print(key, value):
-        print( f'webscraping.tests.integration.test_long_running_task - { key } :: { value }' )
-
-
-    def test_long_running_task(self):
-        _print = LongRunningTaskHandlerTestCases._print
-
-        processObj = ProcessObject()
-
-        # Get/Generate task id with Task handler
-        processObj.task_run_id = TaskHandler().start_task(
-            self.long_running_method, [ processObj ] )
-
-        UUID_V1_PATTERN = re.compile( '[a-f0-9]{8}-[a-f0-9]{4}-1[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$', re.IGNORECASE)
-        self.assertEqual( UUID_V1_PATTERN.match( processObj.task_run_id ) is not None, True )
-
-        _print( 'processObj.task_run_id', processObj.task_run_id )
-
-        i = 0
-        taskProgress = TaskHandler.get_taskProgress( processObj.task_run_id )
-        while taskProgress.status != Status.SUCCESS:
-            try:
-
-                    time.sleep( 1 )
-                    taskProgress = TaskHandler.get_taskProgress( processObj.task_run_id )
-
-                    progress_value = taskProgress.value
-                    self.assertTrue( taskProgress.value is not None )
-
-                    _print( 'taskProgress.value', taskProgress.value )
-                    _print( 'taskProgress.status', taskProgress.status )
-                    if taskProgress.status == Status.SUCCESS:
-                        _print( f'{taskProgress.status} > output', taskProgress.output )
-                        break
-
-                    _print( f'{taskProgress.status} > progress_message', taskProgress.progress_message )
-                    i += 1
-            except OperationalError as err:
-                _print( 'Caught <django.db.utils.OperationalError>: ', err )
-
-
-        self.assertTrue( taskProgress.outputs is not None )
-        _print( 'test_long_running_task > taskProgress.outputs', taskProgress.outputs )
-        _print( 'test_long_running_task > processObj.task_outputs', processObj.task_outputs )
-
-
-
-    def long_running_method(self, processObj: ProcessObject, taskProgress ):
-        _print = LongRunningTaskHandlerTestCases._print
-
-        progress_value = 0
-        taskProgress.set_unset( 
-            Status.STARTED, progress_value,
-            progress_message=f'The process with object "{processObj}" has been started' )
-
-
-        sequence = range(2)
-        sequences_len = len(sequence)
-        for i in range(sequences_len):
-            for j in range( 10 ):
-                time.sleep( 1 )
-                output = 5 * j + 1
-
-                progress_value = int(( i / sequences_len) * 100)
-                if progress_value >= 100:
-                    progress_value = 100
-
-                taskProgress.set_unset(
-                    Status.RUNNING if progress_value < 100 else Status.SUCCESS,
-                    progress_value,
-                    progress_message=f"{output}% has been processed",
-                    output = output)
-
-                processObj.task_progress = progress_value
-                processObj.task_status = taskProgress.status
-                processObj.task_outputs = taskProgress.outputs
-
-                if progress_value >= 100 or taskProgress.status == Status.SUCCESS:
-                    break
-
-        final_output = f"[{ datetime.datetime.now() }] input::{ processObj }, outputs::{taskProgress.outputs}"
-
-        progress_value = 100
-        taskProgress.set_unset(
-            Status.SUCCESS, progress_value,
-            progress_message=f"{final_output}% have been processed" )
-
-        processObj.task_progress = progress_value
-        processObj.task_status = taskProgress.status
-
-        _print( 'long_running_method > taskProgress.status', taskProgress.status )
-        _print( 'long_running_method > processObj.task_progress', processObj.task_progress )
-        _print( 'long_running_method > processObj.task_outputs', processObj.task_outputs )
-
+	'\n        -----------\n        @T :: SimpleTestCase →to TestCase →to TransactionTestCase\n        @T ::   try:\n                    ...\n                except django.db.utils.OperationalError as err:\n                    ...\n\n        @T ::   darklight.Blog.date_created: (fields.W161) Fixed default value provided.\n                HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`\n\n        @T ::   Status.STATUS instead of Status.SUCCESS\n\n                :167    taskProgress.set_unset(\n                            Status.STATUS, progress_value,\n                            progress_message=f"{output}% has been processed" )\n\n\n\n        -----------\n        Src:\n            "A simple approach for background task in Django"\n            Handle long running task using Threading and Django Cache\n            - https://ivanyu2021.hashnode.dev/a-simple-approach-for-background-task-in-django\n    '
+	def from_source(A):0
+	@staticmethod
+	def _print(key,value):print(f"webscraping.tests.integration.test_long_running_task - {key} :: {value}")
+	def test_long_running_task(D):
+		B=LongRunningTaskHandlerTestCases._print;C=ProcessObject();C.task_run_id=TaskHandler().start_task(D.long_running_method,[C]);E=re.compile('[a-f0-9]{8}-[a-f0-9]{4}-1[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$',re.IGNORECASE);D.assertEqual(E.match(C.task_run_id)is not _A,True);B('processObj.task_run_id',C.task_run_id);F=0;A=TaskHandler.get_taskProgress(C.task_run_id)
+		while A.status!=Status.SUCCESS:
+			try:
+				time.sleep(1);A=TaskHandler.get_taskProgress(C.task_run_id);H=A.value;D.assertTrue(A.value is not _A);B('taskProgress.value',A.value);B('taskProgress.status',A.status)
+				if A.status==Status.SUCCESS:B(f"{A.status} > output",A.output);break
+				B(f"{A.status} > progress_message",A.progress_message);F+=1
+			except OperationalError as G:B('Caught <django.db.utils.OperationalError>: ',G)
+		D.assertTrue(A.outputs is not _A);B('test_long_running_task > taskProgress.outputs',A.outputs);B('test_long_running_task > processObj.task_outputs',C.task_outputs)
+	def long_running_method(K,processObj,taskProgress):
+		C=taskProgress;B=processObj;D=LongRunningTaskHandlerTestCases._print;A=0;C.set_unset(Status.STARTED,A,progress_message=f'The process with object "{B}" has been started');G=range(2);E=len(G)
+		for H in range(E):
+			for I in range(10):
+				time.sleep(1);F=5*I+1;A=int(H/E*100)
+				if A>=100:A=100
+				C.set_unset(Status.RUNNING if A<100 else Status.SUCCESS,A,progress_message=f"{F}% has been processed",output=F);B.task_progress=A;B.task_status=C.status;B.task_outputs=C.outputs
+				if A>=100 or C.status==Status.SUCCESS:break
+		J=f"[{datetime.datetime.now()}] input::{B}, outputs::{C.outputs}";A=100;C.set_unset(Status.SUCCESS,A,progress_message=f"{J}% have been processed");B.task_progress=A;B.task_status=C.status;D('long_running_method > taskProgress.status',C.status);D('long_running_method > processObj.task_progress',B.task_progress);D('long_running_method > processObj.task_outputs',B.task_outputs)

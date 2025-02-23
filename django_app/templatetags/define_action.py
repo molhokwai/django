@@ -1,28 +1,4 @@
 from django import template
-register = template.Library()
-
+register=template.Library()
 @register.simple_tag
-def define(val=None):
-  """
-    @description
-      Usage
-      -----
-
-      ```django
-      {% load define_action %}
-      {% if item %}
-
-         {% define "Edit" as action %}
-
-      {% else %}
-
-         {% define "Create" as action %}
-
-      {% endif %}      
-      ```
-
-      Src
-      ---
-      https://stackoverflow.com/questions/1070398/how-to-set-a-value-of-a-variable-inside-a-template-code#answer-37755722
-  """
-  return val
+def define(val=None):'\n    @description\n      Usage\n      -----\n\n      ```django\n      {% load define_action %}\n      {% if item %}\n\n         {% define "Edit" as action %}\n\n      {% else %}\n\n         {% define "Create" as action %}\n\n      {% endif %}      \n      ```\n\n      Src\n      ---\n      https://stackoverflow.com/questions/1070398/how-to-set-a-value-of-a-variable-inside-a-template-code#answer-37755722\n  ';return val

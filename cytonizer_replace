@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+import os
+import shutil
+
+# Directory containing your project
+project_dir = "your_project"
+
+# Iterate through all files in the directory
+for root, dirs, files in os.walk(project_dir):
+    for file in files:
+        if file.endswith(".so"):  # Find compiled .so files
+            so_file = os.path.join(root, file)
+            py_file = os.path.join(root, file.replace(".so", ".py"))  # Corresponding .py file
+
+            # Check if the .py file exists
+            if os.path.exists(py_file):
+                # Option 1: Delete the .py file
+                os.remove(py_file)
+
+                # Option 2: Move the .py file to a backup directory
+                # backup_dir = os.path.join(root, "backup")
+                # os.makedirs(backup_dir, exist_ok=True)
+                # shutil.move(py_file, os.path.join(backup_dir, os.path.basename(py_file)))
+
+                print(f"Removed or moved: {py_file}")
