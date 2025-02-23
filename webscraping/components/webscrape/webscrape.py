@@ -6,13 +6,17 @@ from django.shortcuts import redirect
 from django.contrib import messages
 
 from django_app.settings import _print
+
+from webscraping.modules.threader.classes.TaskHandler import TaskHandler
+from webscraping.modules.threader.classes.TaskDispatcher import TaskDispatcher
+from webscraping.modules.threader.classes.TaskProgress import Status
 from webscraping.models import (
     Webscrape, WebscrapeData,
     WebscrapeTasks, WebscrapeTaskNameChoices,
-    WebsiteUrls, TaskHandler,
+    WebsiteUrls,
     Countries, USStates,
-    Status,
 )
+
 from webscraping.views import (
     parse_raw_outputs,
     webscrape_steps_long_running_method
@@ -55,8 +59,25 @@ class WebscrapeView(UnicornView):
     def mount(self):
         self.us_states = list(zip(USStates.values, USStates.names))
         self.countries = list(zip(Countries.values, Countries.names))
-        self.website_urls = list(zip(WebsiteUrls.values, WebsiteUrls.names))
-        self.webscrape_tasks = list(zip(WebscrapeTasks.values, WebscrapeTasks.names))
+
+
+        self.website_urls = list(zip([WebsiteUrls.TRUTHFINDER.value], [WebsiteUrls.TRUTHFINDER.name]))
+        if settings.DEBUG:
+            self.website_urls = list(zip(WebsiteUrls.values, WebsiteUrls.names))
+            self.tasks = {
+                "truthfinder.com": "truthfinder.sequences/find-person-in-usa-new.sequence.json",
+                "localhost": "localhost-test.sequences/localhost-test.sequence.json",
+                "localhost-fail": "localhost-test.sequences/localhost-test-fail.sequence.json",
+            }
+
+
+        self.webscrape_tasks = list(zip(
+            [WebscrapeTasks.TRUTHFINDER_USA_FIND_A_PERSON.value], 
+            [WebscrapeTasks.TRUTHFINDER_USA_FIND_A_PERSON.name]
+        ))
+        if settings.DEBUG:
+            self.webscrape_tasks = list(zip(WebscrapeTasks.values, WebscrapeTasks.names))
+
 
         self.previous_outputs = self.get_previous_outputs()
 
@@ -84,16 +105,16 @@ class WebscrapeView(UnicornView):
 
 
 
-    def queue_task(self, 
-                    webscrape: Union[ Webscrape, None ]  = None,
-                    task_id: Union[ str, None ] = None) -> Webscrape:
+    def force_task_run(self, 
+                    webscrape: Union[ Webscrape, None ]  = None) -> Webscrape:
         """
             Description
-                Starts/queues scrape tak by Webscrape object or task°id
+                Forces task run, queues scrape tak by Webscrape object or task°id
+                setting it to force run 
 
             Args
                 webscrape: Union[ Webscrape, None ]
-                task_id: Union[ str, None ]
+                task_run_id: Union[ str, None ]
                 One of thwo arguments must be provided
 
             Raises
@@ -102,66 +123,97 @@ class WebscrapeView(UnicornView):
             Returns
                 Webscrape
         """
-        _webscrape = None
         if webscrape:
-            _webscrape = webscrape
-
-        elif task_id:
-            _webscrape = Webscrape.objects.get(task_id=task_id)
-
+            pass
+        elif task_run_id:
+            webscrape = Webscrape.objects.get(task_run_id=task_run_id)
         else:
-            raise ValueError("webscraping:unicorn :: webscrape.WebscrapeView.queue_task: "
-                             "One of <webscrape:Webscrape> or <task_id: str> must be provided...")
+            raise ValueError("webscraping:unicorn :: webscrape.WebscrapeView.set_queuable_task_queued: "
+                             "One of <webscrape:Webscrape> or <task_run_id: str> must be provided...")
 
-        # Get task variables from user given + model fields
-        # -------------------------------------------------
-        if not _webscrape.task_variables:
-            _webscrape.task_variables = model_to_dict(_webscrape)
-            _print(
-                '-------------------------| %s ' % str(_webscrape.task_variables),
-                VERBOSITY=3
-            )
+        webscrape.task_todo = WebscrapeTaskNameChoices.WEBSCRAPE_STEPS.value
 
-        # Set task to be picked and queued
-        # --------------------------------
-        _webscrape.task_todo = WebscrapeTaskNameChoices.WEBSCRAPE_STEPS.value
-        _webscrape.task_status = Status.QUEUED.value
-
-        if not _webscrape.task_attempts:
-            _webscrape.task_attempts = 0
-        _webscrape.task_attempts = _webscrape.task_attempts + 1
-        _webscrape.save()
+        taskDispatcher = TaskDispatcher(Webscrape)
+        taskDispatcher.dispatch(
+            webscrape.task_todo,
+            webscrape, 
+            force_run = True
+        )
 
         return webscrape
 
 
-    def task_is_running(self, task_id: str) -> int:
-        taskProgress = TaskHandler.get_taskProgress(task_id)
+
+    def set_queuable_task_queued(self, 
+                    webscrape: Union[ Webscrape, None ]  = None) -> Webscrape:
+        """
+            Description
+                Starts/queues scrape tak by Webscrape object or task°id
+
+            Args
+                webscrape: Union[ Webscrape, None ]
+                task_run_id: Union[ str, None ]
+                One of thwo arguments must be provided
+
+            Raises
+                ValueError if none of the both arguments are provided
+
+            Returns
+                Webscrape
+        """
+        if webscrape:
+            pass
+        elif task_run_id:
+            webscrape = Webscrape.objects.get(task_run_id=task_run_id)
+        else:
+            raise ValueError("webscraping:unicorn :: webscrape.WebscrapeView.set_queuable_task_queued: "
+                             "One of <webscrape:Webscrape> or <task_run_id: str> must be provided...")
+
+        if TaskHandler.task_is_queueable(webscrape):
+
+            # Get task variables from user given + model fields
+            # -------------------------------------------------
+            if not webscrape.task_variables:
+                webscrape.task_variables = model_to_dict(webscrape)
+
+            # Set task to be picked and queued
+            # --------------------------------
+            webscrape.task_todo = WebscrapeTaskNameChoices.WEBSCRAPE_STEPS.value
+            webscrape.task_status = Status.QUEUED.value
+            webscrape.save()
+
+        return webscrape
+
+    def task_is_running(self, task_run_id: str) -> int:
+        taskProgress = TaskHandler.get_taskProgress(task_run_id)
         if taskProgress:
             return True
 
 
-    def get_task_progress_data(self, task_id: str) -> int:
+    def get_task_progress_data(self, task_run_id: str) -> int:
         task_progress_value = 0
         task_output = []
 
-        webscrape = Webscrape.objects.get(task_id = task_id)
+        webscrape = Webscrape.objects.get(task_run_id = task_run_id)
         task_progress_value = webscrape.task_progress
         if webscrape.task_status == Status.SUCCESS.value:
             task_output = webscrape.task_output
 
+        # -----------------
+        # Handled in `check_tasks_to_end`
+        # @ToDo: See if to be kept here for redundandy...
+        # -----------------
         if webscrape.task_status in (Status.SUCCESS.value, Status.FAILED.value):
-            self.taskHandler.end_task_start_next(webscrape.task_id)
+            self.taskHandler.end_task_start_next(
+                webscrape.task_run_id,
+                taskObject = webscrape,
+                do_save = True
+            )
 
         task_progress_data = {
             "task_progress_value": task_progress_value,
             "task_output": task_output
         }
-        _print(
-            '---------------| Unicorn.webscrape.webscrape > get_task_progress_data %s' \
-            % str(task_progress_data),
-            VERBOSITY=3
-        )
 
 
         return task_progress_data

@@ -5,16 +5,33 @@
 
 <div unicorn:view id="webscrapes-table">
 
-    {% for status in statuses %}
+    <div id="webscrapes-table-selectors">
+        {% for status in statuses %}
 
-        <a  href="#{{status}}-webscrapes-table"
+        <a  id="{{status}}-tab-selector"
+            href="#{{status}}-webscrapes-table"
             data-tabcontentselector="#{{status}}-webscrapes-table"
             data-status="{{status}}"
-            class="tab-selector  {% if status == default_webscrape_status %}active{% endif %}">
+            class="tab-selector {% if status == default_webscrape_status %}active{% endif %}">
                {{status}}
         </a>
 
-    {% endfor %}
+        {% endfor %}
+
+        <span id="reloading-prompt" class="hidden">
+            <i id="reloading-message" class="fa fa-hourglass hide"> (reloading) ...</i>
+
+            <span id="reloading-prompt-reloading">
+                Reloading in <span id="reloading-prompt-seconds"></span> seconds, click here to cancel: 
+                 <i onclick="reloadTableCancel()" class="fa fa-cancel cancel cursor-pointer link-button function-call"> cancel</i>...                
+            </span>
+
+            <span id="reloading-prompt-cancelled" class="hidden ">
+                Cancelled... <i onclick="reloadTableOnce()" class="fa fa-one cursor-pointer link-button function-call"> reload</i>,
+                    or <i onclick="reloadIntervalRestart()" class="fa fa-reload cursor-pointer link-button function-call"> restart reloads</i>...                                
+            </span>
+        </span>
+    </div>
 
     {% for table_tuple in tables %}
 
@@ -75,8 +92,6 @@
 
 
     <script>
-        const defaultWebscrapeStatus = "{{default_webscrape_status}}";
-
         function preventScrollDownKeepVisible(elementId) {
             const element = document.getElementById(elementId);
 
@@ -128,6 +143,55 @@
             });
         }
 
+
+        function retry(webscrape_id){
+            Unicorn.call('webscrape.row', 'retry', webscrape_id);
+            reloadTableOnce();
+        }
+
+
+
+        const defaultWebscrapeStatus = "{{default_webscrape_status}}";
+        let statuses = [];
+        // {% for status in statuses %} ! DO NOT REMOVE
+        statuses.push('{{status}}');
+        // {% endfor %}                 ! DO NOT REMOVE
+        function showFirstFilledStatusTable(){
+            /* Not used, process controlled on view server side...  */
+            for(let i=0; i<statuses.length; i++){
+                let status = statuses[i];
+                let l = document.querySelectorAll(`.webscrape-row.${status}`).length;
+
+                if(l>0){
+                    document.querySelector(`#${status}-tab-selector`).click();
+                    break;
+                }
+            }            
+        }
+
+        let statusCycleCurrent = defaultWebscrapeStatus;
+        document.body.addEventListener("keyup", function(e){
+
+            if(["ArrowLeft", "ArrowRight"].indexOf(e.key) >= 0){
+                let dir = 0;
+                switch(e.key){
+                    case "ArrowLeft":  dir = -1; break
+                    case "ArrowRight": dir = +1; break
+                }
+
+                if(e.target.tagName == 'BODY'){
+
+                    let l = statuses.length;
+                    let i = statuses.indexOf(statusCycleCurrent) + dir;
+                    i = i >= l ? 0 : i;
+                    i = i < 0 ? l - 1 : i;
+                    document.querySelector(`#${statuses[i]}-tab-selector`).click();
+                    statusCycleCurrent = statuses[i];
+                }
+            }
+        });
+
+
         document.addEventListener('DOMContentLoaded', (e) => {
             document.querySelectorAll(".sort-field").forEach((field) => {
                 field.addEventListener('click', onSortFieldClick);
@@ -145,7 +209,6 @@
 
             document.querySelectorAll(".tab-selector").forEach((button) => {
                 const tabContentSelector = button.dataset.tabcontentselector;
-                console.log(`tabContentSelector : ${tabContentSelector}`);
 
                 button.addEventListener("click", (event) => {
                     let tabContent = document.querySelector(event.target.dataset.tabcontentselector);
@@ -159,6 +222,7 @@
             });
 
             preventScrollDownKeepVisible('webscrapes-table');
+        
         });
     </script>
 

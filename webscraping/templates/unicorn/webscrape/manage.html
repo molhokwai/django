@@ -14,9 +14,9 @@
         {% define '' as select_state %}
     {% endif %}
 
-    {% define 'selected' as select_state  %}
-    {% if webscrape.state %}
-        {% define '' as select_state %}
+    {% define 'selected' as select_localhost_task_name  %}
+    {% if webscrape.localhost_task_name %}
+        {% define '' as select_localhost_task_name %}
     {% endif %}
 
     <script>
@@ -177,8 +177,6 @@
     <span class="block">&nbsp;</span>
 
     <div data-website_url="truthfinder.com" class="website-data-form hidden">
-        <span class="block">&nbsp;</span>
-
         <input unicorn:model.defer="firstName"      type="text"   id="firstName"   placeholder="First name"    value="{{webscrape.firstName}}"
         class="form-control rounded border-green-700 shadow-lg text-green-900 tracking-wider" />
         <input unicorn:model.defer="lastName"      type="text"   id="lastName"   placeholder="Last name"    value="{{webscrape.lastName}}"
@@ -214,21 +212,55 @@
 
         <span class="block">&nbsp;</span>
 
-        <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
+        <div>
+            <input unicorn:model.defer="force_run" type="checkbox" /> 
+        </div>
+
+        <span class="block">&nbsp;</span>
+
+        <div class="flex sm:block sm:mt-5 sm:mb-10 items-center form-button-container">
             <button unicorn:click="scrape" data-form="manageForm"
-                class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search submit">Search</button>
+                class="search submit">Search</button>
         </div>
 
     </div>
 
     <div id="locahost-data-form" data-website_url="localhost" class="website-data-form hidden">
-        <heading>Click 'Search' to test scrape local data...</heading>
+        <heading>Select a task and click 'Search' to test scrape local data...</heading>
 
         <span class="block">&nbsp;</span>
 
-        <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
+        <select unicorn:model.defer="task_name" id="task_name" data-formclass="manage-form" required 
+            class="form-select rounded  border-green-700 shadow-lg text-green-900 tracking-wider task-name">
+
+            <option value="select" {{ select_localhost_task_name }}>Select a task...</option>
+
+            {% for task in tasks_tuples %}
+
+                {% define '' as localhost_task_name_selected %}
+                {% if webscrape.task_name and task.1 == webscrape.task_name %}
+                    {% define 'selected' as localhost_task_name_selected %}
+                {% endif %}
+
+                <option value="{{ task.1 }}"
+                        {{ localhost_task_name_selected }}>{{ task.0 }}</option>
+
+            {% endfor %}
+        </select> * 
+
+        <span class="block">&nbsp;</span>
+
+        <div>
+            <input unicorn:model.defer="force_run" type="checkbox"
+                   class="shadow-xl" />
+            <label class="text-3xl font-bold shadow-xl">Run now</label>
+        </div>
+
+        <span class="block">&nbsp;</span>
+
+        <div class="flex sm:block sm:mt-5 sm:mb-10 items-center form-button-container">
             <button unicorn:click="scrape" data-form="manageForm" data-formclass="manage-form"
-                class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 p-4 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search submit">Search</button>
+                class="search submit">Search</button>
         </div>
 
     </div>

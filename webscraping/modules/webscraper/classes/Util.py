@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf8 -*-
 import os, json
+from django_app.settings import MAIN_APP_PATHNAME
+
+MAIN_APP_PATHNAME = MAIN_APP_PATHNAME
 
 class Util:
     @staticmethod
@@ -10,13 +13,13 @@ class Util:
 
             filepath = os.path.join(
                 source_path, "sequences",
-                f"{from_name}.sequence.json"
+                MAIN_APP_PATHNAME, f"{from_name}.sequence.json"
             )
 
         if from_path:
             if from_path.endswith(".sequence.json"):
                 filepath = os.path.join(
-                    source_path, "sequences", from_path
+                    MAIN_APP_PATHNAME, source_path, "sequences", from_path
                 )
 
             elif from_path.endswith(".sequences"):
@@ -38,7 +41,7 @@ class Util:
         if name.endswith(".sequences"):
             """ @ToDo :: Implement for a list of sequences """                
             folderpath = os.path.join(
-                source_path, "sequences",
+                MAIN_APP_PATHNAME, source_path, "sequences",
                 f"{name}"
             )
             sequences = []

@@ -18,21 +18,21 @@
             -->
 
             <h2 id="exec-search"
-                class="section-titlemt-5 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
+                class="section-title mt-5">
                 Search
             </h2>
             {% unicorn 'webscrape.manage' parent=self %}
 
 
             <h2 id="exec-reversesearch"
-                class="section-titlemt-8 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
+                class="section-title mt-8">
                 Reverse find
             </h2>
             {% unicorn 'webscrape.manage_reverse' parent=self %}
 
 
             <h2 id="exec-batch"
-                class="section-title mt-8 mb-4 bg-green-800 text-3xl text-green-100 p-2 px-4">
+                class="section-title mt-8">
                 Search list
             </h2>
             {% unicorn 'webscrape.manage_people' parent=self %}
@@ -50,14 +50,13 @@
 
 
             <h2 id="aggregated-results-title"
-                class="section-title mt-10 mb-4 bg-green-800 text-3xl text-green-100 text-center p-2">
+                class="section-title">
                 {{aggregated_results_nr}} Aggregated Results
             </h2>
 
             <div class="flex sm:block sm:mt-5 sm:mb-10 items-center">
                 <a  href="{% url 'webscrape_export_dataoutput_to_csv' webscrape_data_id  %}"
-                    class="btn btn-outline-tertiary rounded bg-green-600 hover:bg-green-500 
-                           p-2 py-1 text-3xl text-white font-bold shadow-xl duration-1000 search">
+                    class="download">
                        Download
                 </a>
             </div>
@@ -232,12 +231,18 @@
                 font-size: .8em;
             }
 
-            #aggregated-results-title {
-                margin-top: 8em;
-            }  
-
             body {
                 min-height: 200em;
+            }
+
+            .section-title {
+                background: none;
+                text-transform: uppercase;
+                color: green;
+                font-size: 1.5em;
+                letter-spacing: 0.1em;
+                border-bottom: 1px solid green;
+                padding-left: .5em;
             }
 
             .website-data-form {
@@ -246,11 +251,56 @@
             .website-data-form heading {
                 background-color: #fefefe;
                 border-color: lightgreen;
-                padding: 3em;
+                padding: 2em;
                 font-size: 1.2em;
                 letter-spacing: .1em;
             }
+            .website-data-form label {
+                font-size: 1.3em;
+                font-weight: normal;
+                color: #232323;
+                padding-left: .5em;
+            }
+            .website-data-form input[type="checkbox"] {
+                width: 1.8em;
+                height: 1.3em;
+            }
+            .website-data-form select option+option {
+                text-transform: uppercase;
+            }
 
+            .form-button-container {
+                border-top: 1px solid #0ecc0e;
+                margin-bottom: 3em;
+            }
+
+            button.search.submit,
+            button.test.submit,
+            .download {
+                background-color: #0ecc0e;
+                color: white;
+                text-transform: uppercase;
+                font-size: 1.3rem;
+                letter-spacing: 0.1em;
+                padding: .3em .7em;
+                font-weight: bold;
+            }
+            button.search.submit:hover,
+            button.test.submit:hover,
+            .download:hover {
+                background-color: #1ddd1d;
+            }
+
+            #aggregated-results-title {
+                margin-top: 8em;
+            }  
+
+
+            /* table area container sizes  */
+            #webscrapes-table-selectors,
+            h3.message {
+                width: 197%;
+            }
             .tab-selector {
                 background: none;
                 font-size: 1.2em;
@@ -263,6 +313,25 @@
                 background: darkgreen;
                 color: white;
             }
+
+            #reloading-prompt {
+              float: right;
+              background-color: lightred;
+              color: maroon;
+              border-top: 1px solid;
+              padding: 0.2em 0 0;
+              text-transform: uppercase;
+              font-size: .9em;
+            }
+            #reloading-prompt #seconds {
+              font-weight: bold;
+            }
+            #reloading-message {
+                font-weight: normal !important;
+                font-size: .9em;
+                text-transform: lowercase;
+            }
+
             .tab-content {
                 border: 1px solid darkgreen;
             }
@@ -289,6 +358,27 @@
             }
             .highlighted.error {
                 background-color: pink;
+            }
+
+            .hide {
+                display: none !important;
+            }
+
+            .border-top {
+                border-top: 1px solid;
+            }
+
+            .cursor-pointer {
+                cursor: pointer;
+            }
+            .link-button {
+                /* pass */
+            }
+            .link-button:hover {
+                opacity: .7;
+            }
+            .link-button-function-call:hover {
+                font-weight: normal !important;
             }
         </style>
 
@@ -329,41 +419,39 @@
                  **/
                 let progressBars = document.querySelectorAll('.progressBar');
                 progressBars.forEach(function(progressBar) {
-                    const task_id = progressBar.id;
+                    const task_run_id = progressBar.id;
 
-                    Unicorn.call('webscrape.webscrape', 'task_is_running', task_id);
+                    console.log(`progressBars.forEach(... task_run_id: ${task_run_id} ...)`);
+
+                    Unicorn.call('webscrape.webscrape', 'task_is_running', task_run_id);
                     const task_is_running = Unicorn.getReturnValue('webscrape.webscrape');
-                    console.log(1111111111);
 
-                    if(!(task_id in tasksProgress)){
-                        tasksProgress[task_id] = { 'has_succeeded': false };
+                    if(!(task_run_id in tasksProgress)){
+                        tasksProgress[task_run_id] = { 'has_succeeded': false };
                     }
 
-                    if(task_is_running && !tasksProgress[task_id]['has_succeeded']){
+                    if(task_is_running && !tasksProgress[task_run_id]['has_succeeded']){
 
-                        console.log(22222222222);
                         Unicorn.call('webscrape.webscrape', 
-                            'get_task_progress_data', task_id);
+                            'get_task_progress_data', task_run_id);
 
                         const task_progress_data = 
                                     Unicorn.getReturnValue('webscrape.webscrape');
                         const task_progress_value = task_progress_data.task_progress_value;
 
                         if(task_progress_data && task_progress_value) {
-                            console.log(333333333333);
-                            console.log(`task_progress - ${task_id} : ${task_progress_value}`);
+                            console.log(`task_progress - ${task_run_id} : ${task_progress_value}`);
 
                             progressBar.style.width = `${task_progress_value}%`;
 
                             // Optionally, update progress text
-                            const progressText = document.getElementById(`progressText-${task_id}`);
+                            const progressText = document.getElementById(`progressText-${task_run_id}`);
                             if (progressText) {
-                                console.log(4444444444);
                                 progressText.textContent = `${task_progress_value}%`;
                             }
 
                             if(task_progress_value >= 100){
-                                tasksProgress[task_id]['has_succeeded'] = true;
+                                tasksProgress[task_run_id]['has_succeeded'] = true;
                             }
                         } else {
                             console.log(`task_progress - no value`);
@@ -382,8 +470,9 @@
                         field.value = formFielValues[field.id];
                     });
                 }
+
             }
-            setInterval(updateTasks, 1000*20);
+            // setInterval(updateTasks, 1000*20);
 
 
             function clear_fields() {
@@ -446,6 +535,81 @@
                 document.getElementById(id).classList.add("error");
             }
 
+
+            /**
+             * --------------- 
+             * RELOAD TABLE... 
+             * ---------------
+             **/
+            const reloadTableCounterInitial = 60;
+            const reloadTableCounterPromptTreshold = 20;
+            let reloadTableCounter = reloadTableCounterInitial;
+            // let reloadingPromptHidden = true; --not used, delete
+
+            let reloadingPrompt;
+            let reloadingPromptSeconds;
+            let reloadingMessage;
+
+            let reloadTableInterval;
+            let reloadTableIntervalTime = 1000*1;
+
+            function reloadTableCounterRun() {
+
+                // console.log(`reloadTableCounter: ${reloadTableCounter}`); // DEBUG
+
+                if(reloadTableCounter > 0){
+                    reloadTableCounter -= 1;
+
+                    if(reloadTableCounter <= reloadTableCounterPromptTreshold){
+                        // if(reloadingPromptHidden){  --not used, delete
+                        reloadingPrompt.classList.remove("hidden");
+                        //     reloadingPromptHidden = false;  --not used, delete
+                        // }
+                        reloadingPromptSeconds.textContent = reloadTableCounter;
+                    }
+
+                } else {                        
+                    Unicorn.call('webscrape.table', 'load_table', "true");
+                    reloadingMessageFlash();
+
+                    reloadTableCounter = reloadTableCounterInitial;
+                    reloadingPrompt.classList.add("hidden");
+                    // reloadingPromptHidden = true; --not used, delete
+                }
+            };
+
+
+            function reloadTableCancel() {
+                clearInterval(reloadTableInterval);
+                document.querySelector('#reloading-prompt-reloading').classList.add("hidden");
+                document.querySelector('#reloading-prompt-cancelled').classList.remove("hidden");
+            };
+
+
+            function reloadTableOnce() {
+                Unicorn.call('webscrape.table', 'load_table', "true");
+                reloadingMessageFlash();
+            };
+            
+
+            function reloadIntervalRestart() {
+                reloadTableInterval = setInterval(reloadTableCounterRun, reloadTableIntervalTime);
+
+                document.querySelector('#reloading-prompt-cancelled').classList.add("hidden");
+                document.querySelector('#reloading-prompt-reloading').classList.remove("hidden");
+            };
+
+
+            function reloadingMessageFlash(hide) {
+                if(!hide){
+                    reloadingMessage.classList.remove("hidden");                
+                    setTimeout(() => { reloadingMessage.classList.add("hidden"); }, 5000);                    
+                } else {
+                    reloadingMessage.add("hidden");
+                }
+            };
+
+
             addEventListener("DOMContentLoaded", (event) => {
                 document.querySelectorAll(
                     ".exec-modules h2.section-title").forEach((h2) => {
@@ -486,11 +650,13 @@
                  * RELOAD TABLE... 
                  * ---------------
                  **/
-                function reloadTable() {
-                    Unicorn.call('webscrape.table', 'load_table', "true");
-                };
-                setInterval(reloadTable, 1000*20);
+                reloadingPrompt = document.querySelector('#reloading-prompt');
+                reloadingPromptSeconds = document.querySelector('#reloading-prompt-seconds');
+                reloadingMessage = document.querySelector('#reloading-message');
+                // * Start *
+                reloadTableInterval = setInterval(reloadTableCounterRun, reloadTableIntervalTime);
             });
+
         </script>
 
     <!-- /div -->

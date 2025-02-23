@@ -6,7 +6,7 @@
     {% if webscrape.state %}
         {% define '' as select_state %}
     {% endif %}
-    <tr class="shadow-lg">
+    <tr class="shadow-lg webscrape-row {{webscrape.task_status}}">
         <!--
         <td class="py-6">
             {% if is_editing %}
@@ -63,16 +63,16 @@ n btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
                     class="form-control rounded border-green-700 shadow-sm text-green-900
                            tracking-wider text-xs"/>
             {% else %}
-                <div id="{{ webscrape.task_id }}"
+                <div id="{{ webscrape.task_run_id }}"
                      class="progressBar"
                      style="width: {{ webscrape.task_progress }}%; height: 20px; background-color: lightblue;"></div>
-                <p id="progressText-{{ webscrape.task_id }}">
+                <p id="progressText-{{ webscrape.task_run_id }}">
                     {{ webscrape.task_progress }}%</p>
             {% endif %}
         </td>
 
         <td>
-            <p id="taskStatus-{{ webscrape.task_id }}"
+            <p id="taskStatus-{{ webscrape.task_run_id }}"
                class="taskStatus text-center">
                 {% if webscrape.task_status == "SUCCESS" %}
                     <span class="fas fa-check text-green-900"></span>
@@ -89,28 +89,28 @@ n btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
         </td>
 
         <td>
-            <p id="taskOutput-{{ webscrape.task_id }}"
+            <p id="taskOutput-{{ webscrape.task_run_id }}"
                class="taskOutput">
                 {% if webscrape.task_status == 'SUCCESS' and task_output %}
                     <small>
-                        <a id="alink-{{ webscrape.task_id }}">(view raw output)</a>
+                        <a id="alink-{{ webscrape.task_run_id }}">(view raw output)</a>
                     </small>
                     <input type="hidden"
-                           id="output-{{ webscrape.task_id }}"
+                           id="output-{{ webscrape.task_run_id }}"
                            value="{{task_output}}"/>
 
                     <!-- DOWNLOAD :: See documentation in views.export_data_to_csv -->
-                    <a href="{% url 'webscrape_export_taskoutput_to_csv' webscrape.task_id  %}" download>
+                    <a href="{% url 'webscrape_export_taskoutput_to_csv' webscrape.task_run_id  %}" download>
                         <span class="fa fa-download text-green-600"></span>
                     </a>                    
                 {% else %}
                     <!-- small>no output generated yet</small>
                     <br/ -->
                     <small>
-                        <a id="alink-{{ webscrape.task_id }}">(view raw sample)</a>
+                        <a id="alink-{{ webscrape.task_run_id }}">(view raw sample)</a>
                     </small>
                     <input type="hidden"
-                           id="output-{{ webscrape.task_id }}"
+                           id="output-{{ webscrape.task_run_id }}"
                            value="{{previous_outputs|random}}"/>                    
                 {% endif %}
 
@@ -243,7 +243,9 @@ n btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
         <td id="retry-{{webscrape.id}}"
             class="first:rounded-l-lg last:rounded-r-lg p-2
                    text-green-900 tracking-widest border-green-100">
-            <i class="fa fa-repeat repeat" unicorn:click="retry"></i>
+            {% if task_is_queueable or webscrape.task_status == "FAILED" and task_maxed_attempts %}
+                <i class="fa fa-repeat repeat" onclick="retry('{{webscrape.id}}')" title="Click to re-run task..."></i>
+            {% endif %}
         </td>
     </tr>
 </div>

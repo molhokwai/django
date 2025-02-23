@@ -97,8 +97,8 @@ class ManagePeopleView(UnicornView):
             VERBOSITY=3
         )
 
-        # Scrape: Start / Queue task
-        webscrape = self.parent.queue_task( webscrape = webscrape )
+        # If Queueable: set for scrape: set task status = QUEUED
+        webscrape = self.parent.set_queuable_task_queued( webscrape = webscrape )
 
         if i == 0:
             self.webscrape = webscrape
@@ -117,7 +117,7 @@ class ManagePeopleView(UnicornView):
             2.2  Others:
                  - Assign 1st as parent
                  - Append to main list
-            2.3  All → handled in Webscrape.update_task_status():
+            2.3  All → handled in Webscrape.update_ended_task_status():
                  - Update corresponding line
                  - Replace in main by_text
                  - Save main → Updates ui textarea

@@ -35,7 +35,7 @@ class ManageReverseView(UnicornView):
 
     task_name: str = ''
     task_variables: dict = ''
-    task_id: int = None
+    task_run_id: int = None
     task_progress: int = None
 
     website_urls = None
@@ -81,7 +81,7 @@ class ManageReverseView(UnicornView):
 
             task_name = self.task_name,
             task_variables = self.task_variables,
-            task_id = self.task_id
+            task_run_id = self.task_run_id
         )
         self.clear_fields()
         return self.parent.load_table(force_render=True)
@@ -108,8 +108,8 @@ class ManageReverseView(UnicornView):
         # Get task variables from user given fields
         self.task_variables = "..."
 
-        # Scrape: Start / Queue task
-        webscrape = self.parent.queue_task( webscrape = webscrape )
+        # If Queueable: set for scrape: set task status = QUEUED
+        webscrape = self.parent.set_queuable_task_queued( webscrape = webscrape )
 
         self.add()
 
