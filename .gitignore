@@ -3,10 +3,11 @@
 *.pot
 *.pyc
 __pycache__
-# exception for branch <62610716-journal-ai-guidance-sqlite-X>
+# exception for branch <62610716-journal-ai-guidance-sqlite-X>:
+# allow sqlite db
+# ---------------
 # db.sqlite3
-# --------------------------------------
-db.sqlite3
+# ---------------
 media
 
 # Backup files # 

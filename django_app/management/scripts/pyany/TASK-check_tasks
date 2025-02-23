@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# ------------------
+# Install in user home folder
+#
+# cd to scripts folder
+# ------------------
+cd /home/amylovesdaisys/django_app/scripts/
+
+# exec scripts, catching process (freezes), to execute the next ones
+# ------------------------------------------------------------------
+./webscraping-cron-exec-dequeue-and-run-tasks &
+./webscraping-cron-exec-tasks-to-queue &
+./webscraping-cron-exec-tasks-to-end &
+./webscraping-cron-exec-tasks-to-update &

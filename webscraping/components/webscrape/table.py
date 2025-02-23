@@ -242,6 +242,19 @@ class TableView(UnicornView):
         return redirect('webscrape')
 
 
+    def force_task_run(self, 
+                    webscrape: Union[ Webscrape, None ]  = None) -> Webscrape:
+        """
+            Description
+            Args
+            Raises
+            Returns
+                ____________________
+                See parent...
+        """
+        return self.parent.force_task_run(webscrape)
+
+
     def messages_display(self, status:MessageStatus=None, message:str=""):
         if status == MessageStatus.SUCCESS:
             messages.success(self.request, message)

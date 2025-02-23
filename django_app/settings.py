@@ -39,6 +39,14 @@ _print('--------------| BASE_DIR :: %s' % BASE_DIR, VERBOSITY=2)
 sys.path.append(BASE_DIR) 
 
 
+
+# for completing path on Pythonanywhere...
+# -----------------------------------------
+MAIN_APP_PATHNAME = ""
+if str(BASE_DIR).find("/home/amylovesdaisys/") >= 0:
+    MAIN_APP_PATHNAME = "django_app"
+
+
 # -----------------------------------------
 # ______________________
 # QUICK-START DEVELOPMENT SETTINGS - unsuitable for production
@@ -151,6 +159,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django_app.middleware.default_image.DefaultImageMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

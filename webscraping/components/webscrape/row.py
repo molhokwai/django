@@ -1,6 +1,6 @@
 from django_unicorn.components import UnicornView
 
-from django_app.settings import _print
+from django_app.settings import _print, WEBSCRAPER_TASK_MAX_ATTEMPTS
 from .webscrape import MessageStatus
 from webscraping.models import Webscrape
 from webscraping.modules.threader.classes.TaskHandler import TaskHandler
@@ -19,6 +19,9 @@ class RowView(UnicornView):
     task_output = ''
 
     task_is_queueable = False
+
+    task_maxed_attempts = False
+
 
     def mount(self):
         self.us_states = self.parent.us_states
@@ -55,6 +58,8 @@ class RowView(UnicornView):
 
         self.task_is_queueable = TaskHandler.task_is_queueable(self.webscrape)
 
+        self.task_maxed_attempts = self.webscrape.task_attempts >= WEBSCRAPER_TASK_MAX_ATTEMPTS
+
         self.force_render = force_render
 
 
@@ -66,20 +71,25 @@ class RowView(UnicornView):
         self.is_editing = False
 
 
-    def retry(self):
+    def retry(self, webscrape_id: str):
+
+        webscrape = Webscrape.objects.get(id=int(webscrape_id))
+        _print(f'webscrape.RowView.retrying → webscrape.id: {webscrape.id}...', 
+              VERBOSITY=0
+        )
+
         if self.parent:
-            _print(f'webscrape.RowView.retry → {self.webscrape.firstName} {self.webscrape.lastName} '
-                   f' | {type(self.webscrape)}', 
+            _print(f'webscrape.RowView.retry → {webscrape.firstName} {webscrape.lastName} '
+                   f' | {type(webscrape)}', 
                   VERBOSITY=0
             )
-            self.parent.set_queuable_task_queued(self.webscrape)
-            self.load(force_render = True)
-            self.call("highlight_row", f"retry-{self.webscrape.id}")
+            self.parent.force_task_run(webscrape)
+            self.call("highlight_row", f"retry-{webscrape.id}")
         else:
             _print(f'webscrape.RowView.retry → NO PARENT', 
                   VERBOSITY=0
             )
-            self.call("highlight_row_error", f"retry-{self.webscrape.id}")
+            self.call("highlight_row_error", f"retry-{webscrape.id}")
 
 
     def save(self):

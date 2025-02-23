@@ -5,9 +5,20 @@
 # With Deepseek / Python - 62610719
 # -----------
 
-# Navigate to the project directory
-# -----------------------------------------
-cd "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django"
+
+# Navigate to current, live or local platform's project directory
+# ---------------------------------------------------------------
+folders=(
+    "/home/amylovesdaisys/django_app"
+    "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django"
+)
+
+for folder in "${folders[@]}"; do
+    if [ -d "$folder" ]; then
+        echo "cd $folder..."
+        cd "$folder"
+    fi
+done
 
 
 # Get and set the maximum virtual memory (RAM) limit in KB (e.g., 2GB = 2097152 KB)

@@ -296,6 +296,11 @@
             }  
 
 
+            /* table area container sizes  */
+            #webscrapes-table-selectors,
+            h3.message {
+                width: 197%;
+            }
             .tab-selector {
                 background: none;
                 font-size: 1.2em;
@@ -308,6 +313,25 @@
                 background: darkgreen;
                 color: white;
             }
+
+            #reloading-prompt {
+              float: right;
+              background-color: lightred;
+              color: maroon;
+              border-top: 1px solid;
+              padding: 0.2em 0 0;
+              text-transform: uppercase;
+              font-size: .9em;
+            }
+            #reloading-prompt #seconds {
+              font-weight: bold;
+            }
+            #reloading-message {
+                font-weight: normal !important;
+                font-size: .9em;
+                text-transform: lowercase;
+            }
+
             .tab-content {
                 border: 1px solid darkgreen;
             }
@@ -336,8 +360,25 @@
                 background-color: pink;
             }
 
+            .hide {
+                display: none !important;
+            }
+
             .border-top {
                 border-top: 1px solid;
+            }
+
+            .cursor-pointer {
+                cursor: pointer;
+            }
+            .link-button {
+                /* pass */
+            }
+            .link-button:hover {
+                opacity: .7;
+            }
+            .link-button-function-call:hover {
+                font-weight: normal !important;
             }
         </style>
 
@@ -431,7 +472,7 @@
                 }
 
             }
-            setInterval(updateTasks, 1000*20);
+            // setInterval(updateTasks, 1000*20);
 
 
             function clear_fields() {
@@ -494,6 +535,81 @@
                 document.getElementById(id).classList.add("error");
             }
 
+
+            /**
+             * --------------- 
+             * RELOAD TABLE... 
+             * ---------------
+             **/
+            const reloadTableCounterInitial = 60;
+            const reloadTableCounterPromptTreshold = 20;
+            let reloadTableCounter = reloadTableCounterInitial;
+            // let reloadingPromptHidden = true; --not used, delete
+
+            let reloadingPrompt;
+            let reloadingPromptSeconds;
+            let reloadingMessage;
+
+            let reloadTableInterval;
+            let reloadTableIntervalTime = 1000*1;
+
+            function reloadTableCounterRun() {
+
+                // console.log(`reloadTableCounter: ${reloadTableCounter}`); // DEBUG
+
+                if(reloadTableCounter > 0){
+                    reloadTableCounter -= 1;
+
+                    if(reloadTableCounter <= reloadTableCounterPromptTreshold){
+                        // if(reloadingPromptHidden){  --not used, delete
+                        reloadingPrompt.classList.remove("hidden");
+                        //     reloadingPromptHidden = false;  --not used, delete
+                        // }
+                        reloadingPromptSeconds.textContent = reloadTableCounter;
+                    }
+
+                } else {                        
+                    Unicorn.call('webscrape.table', 'load_table', "true");
+                    reloadingMessageFlash();
+
+                    reloadTableCounter = reloadTableCounterInitial;
+                    reloadingPrompt.classList.add("hidden");
+                    // reloadingPromptHidden = true; --not used, delete
+                }
+            };
+
+
+            function reloadTableCancel() {
+                clearInterval(reloadTableInterval);
+                document.querySelector('#reloading-prompt-reloading').classList.add("hidden");
+                document.querySelector('#reloading-prompt-cancelled').classList.remove("hidden");
+            };
+
+
+            function reloadTableOnce() {
+                Unicorn.call('webscrape.table', 'load_table', "true");
+                reloadingMessageFlash();
+            };
+            
+
+            function reloadIntervalRestart() {
+                reloadTableInterval = setInterval(reloadTableCounterRun, reloadTableIntervalTime);
+
+                document.querySelector('#reloading-prompt-cancelled').classList.add("hidden");
+                document.querySelector('#reloading-prompt-reloading').classList.remove("hidden");
+            };
+
+
+            function reloadingMessageFlash(hide) {
+                if(!hide){
+                    reloadingMessage.classList.remove("hidden");                
+                    setTimeout(() => { reloadingMessage.classList.add("hidden"); }, 5000);                    
+                } else {
+                    reloadingMessage.add("hidden");
+                }
+            };
+
+
             addEventListener("DOMContentLoaded", (event) => {
                 document.querySelectorAll(
                     ".exec-modules h2.section-title").forEach((h2) => {
@@ -534,11 +650,13 @@
                  * RELOAD TABLE... 
                  * ---------------
                  **/
-                // function reloadTable() {
-                //     Unicorn.call('webscrape.table', 'load_table', "true");
-                // };
-                // setInterval(reloadTable, 1000*20);
+                reloadingPrompt = document.querySelector('#reloading-prompt');
+                reloadingPromptSeconds = document.querySelector('#reloading-prompt-seconds');
+                reloadingMessage = document.querySelector('#reloading-message');
+                // * Start *
+                reloadTableInterval = setInterval(reloadTableCounterRun, reloadTableIntervalTime);
             });
+
         </script>
 
     <!-- /div -->

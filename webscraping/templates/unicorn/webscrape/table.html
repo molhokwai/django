@@ -5,7 +5,8 @@
 
 <div unicorn:view id="webscrapes-table">
 
-    {% for status in statuses %}
+    <div id="webscrapes-table-selectors">
+        {% for status in statuses %}
 
         <a  id="{{status}}-tab-selector"
             href="#{{status}}-webscrapes-table"
@@ -15,7 +16,22 @@
                {{status}}
         </a>
 
-    {% endfor %}
+        {% endfor %}
+
+        <span id="reloading-prompt" class="hidden">
+            <i id="reloading-message" class="fa fa-hourglass hide"> (reloading) ...</i>
+
+            <span id="reloading-prompt-reloading">
+                Reloading in <span id="reloading-prompt-seconds"></span> seconds, click here to cancel: 
+                 <i onclick="reloadTableCancel()" class="fa fa-cancel cancel cursor-pointer link-button function-call"> cancel</i>...                
+            </span>
+
+            <span id="reloading-prompt-cancelled" class="hidden ">
+                Cancelled... <i onclick="reloadTableOnce()" class="fa fa-one cursor-pointer link-button function-call"> reload</i>,
+                    or <i onclick="reloadIntervalRestart()" class="fa fa-reload cursor-pointer link-button function-call"> restart reloads</i>...                                
+            </span>
+        </span>
+    </div>
 
     {% for table_tuple in tables %}
 
@@ -126,6 +142,13 @@
                 }
             });
         }
+
+
+        function retry(webscrape_id){
+            Unicorn.call('webscrape.row', 'retry', webscrape_id);
+            reloadTableOnce();
+        }
+
 
 
         const defaultWebscrapeStatus = "{{default_webscrape_status}}";

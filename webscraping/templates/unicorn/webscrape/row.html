@@ -243,8 +243,8 @@ n btn-outline-success rounded bg-green-600 hover:bg-green-400 p-1 px-4
         <td id="retry-{{webscrape.id}}"
             class="first:rounded-l-lg last:rounded-r-lg p-2
                    text-green-900 tracking-widest border-green-100">
-            {% if task_is_queueable %}
-                <i class="fa fa-repeat repeat" unicorn:click="retry"></i>
+            {% if task_is_queueable or webscrape.task_status == "FAILED" and task_maxed_attempts %}
+                <i class="fa fa-repeat repeat" onclick="retry('{{webscrape.id}}')" title="Click to re-run task..."></i>
             {% endif %}
         </td>
     </tr>
