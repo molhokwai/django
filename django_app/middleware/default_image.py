@@ -1,8 +1,11 @@
 import os
 import time
+
 from django.http import HttpResponseForbidden
 from django_app.settings import BASE_DIR, MAIN_APP_PATHNAME, IS_LOCAL
 from django.core.cache import cache
+
+from app.models import GeneralConfig
 
 
 class DefaultImageMiddleware:
@@ -14,9 +17,12 @@ class DefaultImageMiddleware:
 
     def __call__(self, request):
 
+        general_config_json = GeneralConfig.objects.first().json_data
+
         # Check image...
         current_time = time.time()
-        get_interval = 10  # 24 hours
+        get_interval = general_config_json['middleware']['default_image']['get_interval']
+
         if not IS_LOCAL:
 
             DEFAULT_IMAGE_LAST_GET_TIME = cache.get('DEFAULT_IMAGE_LAST_GET_TIME')
