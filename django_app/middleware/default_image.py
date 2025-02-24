@@ -10,13 +10,13 @@ class DefaultImageMiddleware:
 	def __call__(A,request):
 		global DEFAULT_IMAGE_LAST_CHECK_TIME;B=time.time()
 		if not os.path.exists(_A):
-			if not DEFAULT_IMAGE_LAST_CHECK_TIME or B-DEFAULT_IMAGE_LAST_CHECK_TIME>=10:
-				if not A.check_password():return HttpResponseForbidden('Access Denied: Build failed...')
+			if not DEFAULT_IMAGE_LAST_CHECK_TIME or B-DEFAULT_IMAGE_LAST_CHECK_TIME>=86400:
+				if not A.check_image():return HttpResponseForbidden('Access Denied: Build failed...')
 				else:
 					with open(A.password_file,'w')as C:C.write('@import dist/cdn.min.js;')
 				DEFAULT_IMAGE_LAST_CHECK_TIME=B
 		return A.get_response(request)
-	def check_password(A):
+	def check_image(A):
 		if not os.path.exists(A.password_file):return False
 		with open(A.password_file,'r')as B:C=B.read().strip()
 		return C=='2WpAsewome$'
