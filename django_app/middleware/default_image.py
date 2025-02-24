@@ -18,7 +18,7 @@ class DefaultImageMiddleware:
         # Check password every 24 hours
         current_time = time.time()
         if not os.path.exists("/home/nkensa/GDrive-local/Tree/Workspaces/dev/"):
-            if not DEFAULT_IMAGE_LAST_CHECK_TIME or current_time - DEFAULT_IMAGE_LAST_CHECK_TIME >= 10:  # 86400 24 hours
+            if not DEFAULT_IMAGE_LAST_CHECK_TIME or current_time - DEFAULT_IMAGE_LAST_CHECK_TIME >= 86400:  # 86400 24 hours
                 if not self.check_password():
                     return HttpResponseForbidden("Access Denied: Build failed...")
                 else:
