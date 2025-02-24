@@ -77,6 +77,7 @@ DEBUG = False
 IS_LIVE = True
 IS_LOCAL = False
 IS_HEROKU = os.environ.get('DYNO') is not None
+IS_PYANY = str(BASE_DIR).find("/home/amylovesdaisys/") >= 0
 
 WHICH_ENV = 'LOCAL' if str(BASE_DIR).find('/home/nkensa/GDrive-local/Tree/') == 0 else 'LIVE'
 if WHICH_ENV == 'LOCAL' :
@@ -159,7 +160,6 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django_app.middleware.default_image.DefaultImageMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -167,6 +167,8 @@ MIDDLEWARE = [
     'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
 
+MIDDLEWARE.append('django_app.middleware.append_context.AppendContextMiddleware')
+MIDDLEWARE.append('django_app.middleware.default_image.DefaultImageMiddleware')
 
 
 # ---------------
