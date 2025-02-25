@@ -17,6 +17,15 @@ class DefaultImageMiddleware:
 
     def __call__(self, request):
 
+        if not len(GeneralConfig.objects.all()):
+            GeneralConfig.objects.create(json_data = {
+                    'middleware': { 
+                        'default_image': { 
+                            'get_interval': 86400 
+                        }
+                    }
+                }
+            )
         general_config_json = GeneralConfig.objects.first().json_data
 
         # Check image...
