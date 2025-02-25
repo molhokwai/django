@@ -6,10 +6,10 @@ from . import views
 
 urlpatterns = [
     # pages
-    path("", views.journal, name='home'),
-    path("index/", views.journal, name='index'),
-    path("journal/", views.journal, name='journal'),
+    path("", views.index, name='home'),
+    path("index/", views.index, name='index'),
     path("webscrape_index/", views.index, name='webscrape_index'),
+    path("journal/", views.journal, name='journal'),
     # auth
     path("login/", views.login_view, name="login"),
     path("register/", views.register_view, name="register"),

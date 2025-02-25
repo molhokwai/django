@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# -*- coding: utf8 -*-
+
+# ------------------
+# cd to project root folder
+# ------------------
+folders=(
+    "/root/webscraper/"
+    "/home/amylovesdaisys/django_app/"
+    "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/"
+)
+
+for folder in "${folders[@]}"; do
+    if [ -d "$folder" ]; then
+        echo "cd $folder..."
+        cd "$folder"
+    fi
+done
+
+
+cp -r staticfiles/fontawesomefree/ static/
+cp -r staticfiles/unicorn/ static/
+cp -r staticfiles/unpkg.com/ static/
+cp -r staticfiles/admin/ static/

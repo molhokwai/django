@@ -28,13 +28,19 @@
         <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
 
 
+        <!-- Django Unicorn -->
         {% load unicorn %}
-        <!-- script defer src="https://unpkg.com/@alpinejs/morph@3.x.x/dist/cdn.min.js"></script -->
-        <!-- script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script -->
-        <script defer src="{% static 'js/unpkg.com/@alpinejs/morph@3.x.x/dist/cdn.min.js' %}"></script>
-        <script defer src="{% static 'js/unpkg.com/alpinejs@3.x.x/dist/cdn.min.js' %}"></script>
+        {% if request.IS_LIVE %}
+            <script defer src="https://unpkg.com/@alpinejs/morph@3.x.x/dist/cdn.min.js"></script>
+            <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        {% else %}
+            <script defer src="{% static 'js/unpkg.com/@alpinejs/morph@3.x.x/dist/cdn.min.js' %}"></script>
+            <script defer src="{% static 'js/unpkg.com/alpinejs@3.x.x/dist/cdn.min.js' %}"></script>
+        {% endif %}
         {% unicorn_scripts %}
 
+
+        <!-- Template: main.js -->
         <script type="text/javascript" src="{% static 'templates/main/js/main.js' %}"></script>
     </head>
 

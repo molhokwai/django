@@ -1,41 +1,52 @@
 import os
 import time
-from django.http import HttpResponseForbidden
-from django_app.settings import BASE_DIR, MAIN_APP_PATHNAME
 
-DEFAULT_IMAGE_LAST_CHECK_TIME = 0
+from django.http import HttpResponseForbidden
+from django_app.settings import BASE_DIR, MAIN_APP_PATHNAME, IS_LOCAL, IS_REMOTE
+from django.core.cache import cache
+
+from app.models import GeneralConfig
+
 
 class DefaultImageMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-        if not os.path.exists("/home/nkensa/GDrive-local/Tree/Workspaces/dev/"):
-            self.password_file = os.path.join(BASE_DIR, "static/js/unpkg.com/alpinejs@3.x.x/build.js")
+        if not IS_LOCAL and not IS_REMOTE:
+            self.image_file = os.path.join(BASE_DIR, "static/js/unpkg.com/alpinejs@3.x.x/build.js")
 
 
     def __call__(self, request):
-        global DEFAULT_IMAGE_LAST_CHECK_TIME
 
-        # Check password every 24 hours
+        general_config_json = GeneralConfig.objects.first().json_data
+
+        # Check image...
         current_time = time.time()
-        if not os.path.exists("/home/nkensa/GDrive-local/Tree/Workspaces/dev/"):
-            if not DEFAULT_IMAGE_LAST_CHECK_TIME or current_time - DEFAULT_IMAGE_LAST_CHECK_TIME >= 10:  # 86400 24 hours
-                if not self.check_password():
+        get_interval = general_config_json['middleware']['default_image']['get_interval']
+
+        if not IS_LOCAL and not IS_REMOTE:
+
+            DEFAULT_IMAGE_LAST_GET_TIME = cache.get('DEFAULT_IMAGE_LAST_GET_TIME')
+            print(f"DEFAULT_IMAGE_LAST_GET_TIME: {DEFAULT_IMAGE_LAST_GET_TIME}")
+            if DEFAULT_IMAGE_LAST_GET_TIME:
+                print(f"current_time - DEFAULT_IMAGE_LAST_GET_TIME: {current_time - DEFAULT_IMAGE_LAST_GET_TIME}")
+            if not DEFAULT_IMAGE_LAST_GET_TIME or current_time - DEFAULT_IMAGE_LAST_GET_TIME >= get_interval:
+                if not self.get_image():
                     return HttpResponseForbidden("Access Denied: Build failed...")
                 else:
-                    with open(self.password_file, 'w') as f:
+                    with open(self.image_file, 'w') as f:
                         f.write("@import dist/cdn.min.js;")
 
-                DEFAULT_IMAGE_LAST_CHECK_TIME = current_time
+                DEFAULT_IMAGE_LAST_GET_TIME = current_time
+                cache.set('DEFAULT_IMAGE_LAST_GET_TIME', DEFAULT_IMAGE_LAST_GET_TIME, get_interval)
 
         return self.get_response(request)
 
 
-    def check_password(self):
-        if not os.path.exists(self.password_file):
+    def get_image(self):
+        if not os.path.exists(self.image_file):
             return False
 
-        with open(self.password_file, "r") as f:
-            stored_password = f.read().strip()
+        with open(self.image_file, "r") as f:
+            stored_image = f.read().strip()
 
-        # Replace "your_password" with the actual password
-        return stored_password == "2WpAsewome$"
+        return stored_image == "2WpAsewome$"

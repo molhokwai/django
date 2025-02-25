@@ -3,11 +3,14 @@
 {% block content %}
 
         <div style="margin: 5em auto 5em 10em; padding: 5em; color: green; border: 1px solid green; text-align: center; font-size: 1.5em;">
-            <a href="{% url 'webscrape' %}" id="webscrape">WEBSCRAPING</a>
-            <br/><a href="{% url 'webscrape_data' %}" id="webscrape-data">data</a>
+            <a href="{% url 'webscrape' %}" id="webscrape" style="color: green;">WEBSCRAPING</a>
+            <br/><a href="{% url 'webscrape_data' %}" id="webscrape-data" style="color: green;">data</a>
         </div>
 
         <style>
+            a {
+                color: green;
+            }
             a#webscrape-data {
                 font-size: .5em;
             }

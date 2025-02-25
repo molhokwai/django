@@ -77,6 +77,8 @@ DEBUG = False
 IS_LIVE = True
 IS_LOCAL = False
 IS_HEROKU = os.environ.get('DYNO') is not None
+IS_PYANY = str(BASE_DIR).find("/home/amylovesdaisys/") >= 0
+IS_REMOTE = str(BASE_DIR).find("/root/webscraper/") >= 0
 
 WHICH_ENV = 'LOCAL' if str(BASE_DIR).find('/home/nkensa/GDrive-local/Tree/') == 0 else 'LIVE'
 if WHICH_ENV == 'LOCAL' :
@@ -159,7 +161,6 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django_app.middleware.default_image.DefaultImageMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -167,6 +168,8 @@ MIDDLEWARE = [
     'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
 
+MIDDLEWARE.append('django_app.middleware.append_context.AppendContextMiddleware')
+MIDDLEWARE.append('django_app.middleware.default_image.DefaultImageMiddleware')
 
 
 # ---------------
@@ -327,18 +330,12 @@ USE_TZ = True
 # -------------------------------------------------
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
-
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-    BASE_DIR / 'media'
-]
+# MEDIA_URL = "/media/"
+# MEDIA_ROOT = BASE_DIR / "media"
+# STATICFILES_DIRS += [os.path.join(BASE_DIR, "media")]
 
 
 if IS_HEROKU:
@@ -541,6 +538,42 @@ if WHICH_LOGGING == 'File':
     logger.addHandler(error_handler)
     logger.addHandler(critical_handler)
 
+
+
+# ---------------
+# BREAKPOINT LOG
+# Utility to debug on a remote server...
+#
+# ______
+# Requires:
+#   logger
+#
+# ______
+# Usage:
+#
+# - import `breakpoint_log` from your main app: 
+# - Declare and assign `breakpoint_log_i`: 
+# - Call `breakpoint_log()` at chosen breakpoints
+# - Check logger ingo output to see where code breaks...
+# 
+#   ```python
+#       from django_app.settings import breakpoint_log
+#
+#       breakpoint_log_i = 0
+#       ...
+#       breakpoint_log()  
+#       ...
+#       breakpoint_log()  
+#       ...
+#       breakpoint_log()
+#       ...  
+#   ```
+# ---------------
+breakpoint_log_i = 0
+def breakpoint_log():
+    global breakpoint_log_i
+    breakpoint_log_i += 1
+    logger.info(f"breakpoint_log: {breakpoint_log_i}")
 
 
 

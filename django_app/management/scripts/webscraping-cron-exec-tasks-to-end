@@ -9,6 +9,7 @@
 # Navigate to current, live or local platform's project directory
 # ---------------------------------------------------------------
 folders=(
+    "/root/webscraper"
     "/home/amylovesdaisys/django_app"
     "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django"
 )
