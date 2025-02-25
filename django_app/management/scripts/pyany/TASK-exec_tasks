@@ -1,11 +1,25 @@
 #!/usr/bin/env bash
+# -*- coding: utf8 -*-
+
 
 # ------------------
 # Install in user home folder
 #
 # cd to scripts folder
 # ------------------
-cd /home/amylovesdaisys/django_app/scripts/
+folders=(
+    "/root/webscraper/django_app/scripts"
+    "/home/amylovesdaisys/django_app/django_app/scripts"
+    "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/scripts"
+)
+
+for folder in "${folders[@]}"; do
+    if [ -d "$folder" ]; then
+        echo "cd $folder..."
+        cd "$folder"
+    fi
+done
+
 
 # exec scripts, catching process (freezes), to execute the next ones
 # ------------------------------------------------------------------

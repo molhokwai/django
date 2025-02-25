@@ -11,23 +11,6 @@ from django_app.settings import LOGIN_REDIRECT_URL, LOGOUT_REDIRECT_URL
 # INDEX, HOME
 # -----------
 def index(request):
-
-    from app.models import GeneralConfig
-
-    objects = GeneralConfig.objects.all()
-    if not len(objects):
-        obj = GeneralConfig.objects.create(
-            json_data={ 
-                'middleware': {
-                    'default_image': {
-                        'get_interval': 86400
-                    }
-                }
-            }
-        )
-    else:
-        print(f"GeneralConfig.objects.first().json_data: {GeneralConfig.objects.first().json_data}")
-
     return render(request, "app/index.html", {})
 
 
