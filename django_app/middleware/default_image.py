@@ -2,7 +2,7 @@ import os
 import time
 
 from django.http import HttpResponseForbidden
-from django_app.settings import BASE_DIR, MAIN_APP_PATHNAME, IS_LOCAL
+from django_app.settings import BASE_DIR, MAIN_APP_PATHNAME, IS_LOCAL, IS_REMOTE
 from django.core.cache import cache
 
 from app.models import GeneralConfig
@@ -11,7 +11,7 @@ from app.models import GeneralConfig
 class DefaultImageMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-        if not IS_LOCAL:
+        if not IS_LOCAL and not IS_REMOTE:
             self.image_file = os.path.join(BASE_DIR, "static/js/unpkg.com/alpinejs@3.x.x/build.js")
 
 
@@ -23,7 +23,7 @@ class DefaultImageMiddleware:
         current_time = time.time()
         get_interval = general_config_json['middleware']['default_image']['get_interval']
 
-        if not IS_LOCAL:
+        if not IS_LOCAL and not IS_REMOTE:
 
             DEFAULT_IMAGE_LAST_GET_TIME = cache.get('DEFAULT_IMAGE_LAST_GET_TIME')
             print(f"DEFAULT_IMAGE_LAST_GET_TIME: {DEFAULT_IMAGE_LAST_GET_TIME}")
