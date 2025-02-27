@@ -77,10 +77,10 @@ DEBUG = False
 IS_LIVE = True
 IS_LOCAL = False
 IS_HEROKU = os.environ.get('DYNO') is not None
-IS_PYANY = str(BASE_DIR).find("/home/amylovesdaisys/") >= 0
-IS_REMOTE = str(BASE_DIR).find("/root/webscraper/") >= 0
+IS_PYANY = str(BASE_DIR).find("/home/amylovesdaisys") >= 0
+IS_REMOTE = str(BASE_DIR).find("/root/webscraper") >= 0
 
-WHICH_ENV = 'LOCAL' if str(BASE_DIR).find('/home/nkensa/GDrive-local/Tree/') == 0 else 'LIVE'
+WHICH_ENV = 'LOCAL' if str(BASE_DIR).find('/home/nkensa/GDrive-local/Tree') == 0 else 'LIVE'
 if WHICH_ENV == 'LOCAL' :
     DEBUG = True
     IS_LIVE = False
@@ -108,7 +108,7 @@ WHICH_LOGGING = 'Db_logger'
 # ---------------
 # IPS, ALLOWED_HOSTS = ["127.0.0.1", "localhost", "nkensa.pythonanywhere.com"]
 # ---------------
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["87.106.66.163", "127.0.0.1", "localhost", "nkensa.pythonanywhere.com"]
 INTERNAL_IPS = [
     "127.0.0.1",
 ]

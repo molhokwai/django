@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# -*- coding: utf8 -*-
+
+# ----------------------------
+# src: https://django-tailwind.readthedocs.io/en/latest/installation.html
+# ----------------------------
+
+echo "1. Install the django-tailwind package via pip:";
+
+pip install 'django-tailwind[reload]'
+
+echo "2. Install the django-tailwind package via pip:";
+
+read -p "! COMMENT 'theme' from your settings.py if there...: " _input
+
+echo "3. Create a Tailwind CSS compatible Django app, I like to call it theme:";
+
+python manage.py tailwind init
+
+read -p "4. Add / UNCOMMENT your newly created 'theme' app to INSTALLED_APPS in settings.py: " _input
+
+read -p "5. Register the generated 'theme' app by adding the following line to settings.py file: " _input
+
+read -p "6. Make sure that the INTERNAL_IPS list is present in the settings.py file and contains the 127.0.0.1 ip address: " _input
+
+read -p "! Node.js must be installed. \nINSTALL ? for linux systems... \nOthers, check: https://nodejs.org/en/download, or https://nodejs.org/ (yes/no) " _input
+
+if [ "$_input" = "yes" ]; then
+
+    # Download and install nvm:
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+
+    # in lieu of restarting the shell
+    \. "$HOME/.nvm/nvm.sh"
+
+    # Download and install Node.js:
+    nvm install 22
+
+    # Verify the Node.js version:
+    node -v # Should print "v22.14.0".
+    nvm current # Should print "v22.14.0".
+
+    # Verify npm version:
+    npm -v # Should print "10.9.2".
+
+else
+    echo "continuing..."
+fi
+
+echo "7. Install Tailwind CSS dependencies, by running the following command: "
+
+python manage.py tailwind install
+
+echo "ALL DONE for command line installation... please refer to https://django-tailwind.readthedocs.io/en/latest/installation.html for code updates... "
