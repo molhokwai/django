@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# -*- coding: utf8 -*-
+
+sqlite> SELECT * FROM django_db_logger_statuslog WHERE msg LIKE '%henry%' ORDER BY id DESC LIMIT 5;
+sqlite> SELECT sql FROM sqlite_schema WHERE type = 'table' AND name = 'django_db_logger_statuslog';
+
+# --------------------------------
+# Output:
+# CREATE TABLE "django_db_logger_statuslog" (
+#     "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+#     "logger_name" varchar(100) NOT NULL,
+#     "level" smallint unsigned NOT NULL CHECK ("level" >= 0),
+#     "msg" text NOT NULL,
+#     "trace" text NULL,
+#     "create_datetime" datetime NOT NULL
+# )
+# --------------------------------
+
+
+# --------------------------------
+# INVESTIGATION:
+# To be adjusted according to what will work..
+#
+#   1. GET LAST LOGGED ERRORS 
+#      To analyze them...
+# --------------------------------
+#       LOG LEVELS:
+#       10: Debug
+#       20: Info
+#       40: Error
+# --------------------------------
+sqlite> SELECT id, level, create_datetime, msg, trace FROM django_db_logger_statuslog WHERE level = 40 AND NOT msg LIKE '%PointerUnicornView%' ORDER BY id DESC LIMIT 100;
+#      Copy command output to file...
+# --------------------------------
+
+
+#   2. GET LAST LOG LEVELS FOR A SCRAPE 
+#      See if there were errors, if so analyze them...
+# --------------------------------
+sqlite> SELECT id, level, create_datetime FROM django_db_logger_statuslog WHERE msg LIKE '%henry%' ORDER BY id DESC LIMIT 20;
+#      Copy command output to file...
+# --------------------------------
+
+
+#   3. GET MSG & TRACES FROM GIVEN SAME LOG ENTRIES... 
+# --------------------------------
+sqlite> SELECT id, level, msg, trace, create_datetime FROM django_db_logger_statuslog WHERE msg LIKE '%henry%' ORDER BY id DESC LIMIT 20;
+#      Copy command output to file...
+# --------------------------------
+
+
+#   4. EVENTUALLY: GET MSG & TRACE FROM GIVEN LOG ENTRY... 
+# --------------------------------
+sqlite> SELECT msg, trace FROM django_db_logger_statuslog WHERE id = [previous_output.id];
+
+
+#   5. ANALYZE... 
+# --------------------------------
+
+
+# --------------------------------
+# Look into the application where the issue is:
+#
+# - Scrape not running: 
+#   > Startup ? Check start process...
+#   > Scrape not picked up ? Check corresponding automation script...
+#
+# - Scrape running failing at given step: Step's definition ?
+#
+# - Scrape failing, but not picked up again for run ? Check corresponding automation script...
+#
+# - Scrape running, completing, but status not updated ?
+#   > Check process...
+#   > Check corresponding automation script...
+#
+# --------------------------------
+
+
+# --------------------------------
+# TRUNCATE TABLE:
+# --------------------------------
+sqlite> DELETE FROM django_db_logger_statuslog; DELETE FROM SQLITE_SEQUENCE WHERE name = "django_db_logger_statuslog";

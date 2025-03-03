@@ -28,6 +28,7 @@ BASE_DIR = settings.BASE_DIR
 DEBUG = settings.DEBUG
 IS_LIVE = settings.IS_LIVE
 WEBSCRAPER_HEADLESS = settings.WEBSCRAPER_HEADLESS
+WEBSCRAPER_GECKODRIVER_BINARY_PATH = settings.WEBSCRAPER_GECKODRIVER_BINARY_PATH
 
 
 def index(request):
@@ -177,8 +178,13 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
 
     driver = None
     options = FirefoxOptions()
-    if IS_LIVE:
-        options = ChromeOptions()
+    options.binary = WEBSCRAPER_GECKODRIVER_BINARY_PATH
+
+    # ---------------
+    # ! Firefox only
+    # ---------------
+    # if IS_LIVE:
+    #     options = ChromeOptions()
 
     # ---------------
     # driver instance create
@@ -216,16 +222,20 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
     # ______________________________
     # service = Service("chrome/driver/path" | "firefox|gecko/driver/path")
     # -----------------------------------
-    if IS_LIVE:                
-        driver = webdriver.Chrome(
-            options=options,
-            service_log_path=os.path.join(str(BASE_DIR), "log/chromedriver.log")
-        )
-    else:
-        driver = webdriver.Firefox(
-            options=options,
-            service_log_path=os.path.join(str(BASE_DIR), "log/geckodriver.log")
-        )
+
+    driver = webdriver.Firefox(
+        options=options,
+        service_log_path=os.path.join(str(BASE_DIR), "log/geckodriver.log")
+    )
+
+    # ---------------
+    # ! Firefox only
+    # ---------------
+    # if IS_LIVE:
+    #     driver = webdriver.Chrome(
+    #         options=options,
+    #         service_log_path=os.path.join(str(BASE_DIR), "log/chromedriver.log")
+    #     )
 
 
 

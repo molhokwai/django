@@ -1,0 +1,710 @@
+qlite> SELECT id, level, create_datetime, msg, trace FROM django_db_logger_statuslog WHERE level = 40 AND NOT msg LIKE '%PointerUnicornView%' ORDER BY id DESC LIMIT 100;
+11256|40|2025-02-27 23:19:19.472572|Error in thread 45310e56-f561-11ef-9183-02013de78908: Message: 'chromedriver' executable needs to be in PATH. Please see https://chromedriver.chromium.org/home
+|
+11251|40|2025-02-27 23:19:19.411791|2025-02-27 23:19:19.410758 - Taskhandler.start_task - taskObject.save() ERROR : Webscrape matching query does not exist.|
+11250|40|2025-02-27 23:19:17.538968|Error in thread 44069725-f561-11ef-b307-02013de78908: Message: 'chromedriver' executable needs to be in PATH. Please see https://chromedriver.chromium.org/home
+|
+11245|40|2025-02-27 23:19:17.395200|2025-02-27 23:19:17.394630 - Taskhandler.start_task - taskObject.save() ERROR : Webscrape matching query does not exist.|
+11244|40|2025-02-27 23:18:57.875773|Error in thread 385f4485-f561-11ef-a1ce-02013de78908: Message: 'chromedriver' executable needs to be in PATH. Please see https://chromedriver.chromium.org/home
+|
+11240|40|2025-02-27 23:18:57.834454|2025-02-27 23:18:57.831807 - Taskhandler.start_task - taskObject.save() ERROR : Webscrape matching query does not exist.|
+11236|40|2025-02-27 23:18:55.211183|2025-02-27 23:18:55.207016 - Taskhandler.start_task - taskObject.save() ERROR : Webscrape matching query does not exist.|
+11235|40|2025-02-27 23:18:55.208438|Error in thread 36ceefdb-f561-11ef-a01c-02013de78908: Message: 'chromedriver' executable needs to be in PATH. Please see https://chromedriver.chromium.org/home
+|
+11230|40|2025-02-27 23:18:52.936495|Error in thread 3573d9aa-f561-11ef-9898-02013de78908: cannot pickle '_thread.lock' object|
+11228|40|2025-02-27 23:18:52.925690|2025-02-27 23:18:52.924658 - Taskhandler.start_task - taskObject.save() ERROR : Webscrape matching query does not exist.|
+11227|40|2025-02-27 23:18:50.518252|Error in thread 33efb6e0-f561-11ef-80e3-02013de78908: Message: 'chromedriver' executable needs to be in PATH. Please see https://chromedriver.chromium.org/home
+|
+11222|40|2025-02-27 23:18:50.438300|2025-02-27 23:18:50.415026 - Taskhandler.start_task - taskObject.save() ERROR : Webscrape matching query does not exist.|
+11221|40|2025-02-27 23:18:47.392649|Error in thread 320f1758-f561-11ef-9e42-02013de78908: Message: 'chromedriver' executable needs to be in PATH. Please see https://chromedriver.chromium.org/home
+|
+11217|40|2025-02-27 23:18:47.330092|2025-02-27 23:18:47.307285 - Taskhandler.start_task - taskObject.save() ERROR : Webscrape matching query does not exist.|
+11215|40|2025-02-25 07:13:45.676723|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11214|40|2025-02-25 07:13:45.352770|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11213|40|2025-02-25 07:13:45.035137|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11212|40|2025-02-25 07:13:44.705300|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11211|40|2025-02-25 07:13:44.381501|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11210|40|2025-02-25 07:13:44.052217|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11209|40|2025-02-25 07:13:43.724602|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11208|40|2025-02-25 07:13:43.395149|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11207|40|2025-02-25 07:13:42.833596|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11206|40|2025-02-25 07:13:42.487027|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11205|40|2025-02-25 07:13:42.156173|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11204|40|2025-02-25 07:13:41.831395|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11203|40|2025-02-25 07:13:41.508755|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11202|40|2025-02-25 07:13:41.183630|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11201|40|2025-02-25 07:13:40.858355|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11200|40|2025-02-25 07:13:40.529163|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11199|40|2025-02-25 07:13:40.409887|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11198|40|2025-02-25 07:13:40.284898|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11197|40|2025-02-25 07:13:40.128251|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11196|40|2025-02-25 07:13:40.004959|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11195|40|2025-02-25 07:13:39.885067|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11194|40|2025-02-25 07:13:39.762143|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11193|40|2025-02-25 07:13:39.642304|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11192|40|2025-02-25 07:13:39.509909|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11191|40|2025-02-25 07:13:39.386387|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11190|40|2025-02-25 07:13:39.254079|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11189|40|2025-02-25 07:13:39.100275|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11188|40|2025-02-25 07:13:38.979375|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11187|40|2025-02-25 07:13:38.846153|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11186|40|2025-02-25 07:13:38.695099|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11185|40|2025-02-25 07:13:38.575798|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11184|40|2025-02-25 07:13:38.449957|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11183|40|2025-02-25 07:13:38.298077|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11182|40|2025-02-25 07:13:38.160455|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11181|40|2025-02-25 07:13:38.026439|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11180|40|2025-02-25 07:13:37.857994|Internal Server Error: /|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11179|40|2025-02-25 07:13:37.022467|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11178|40|2025-02-25 07:13:35.975636|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 21, in __call__
+    GeneralConfig.objects.objects.create(json_data = {
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11177|40|2025-02-25 07:13:33.883300|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11176|40|2025-02-25 07:13:32.857357|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11175|40|2025-02-25 07:13:31.824549|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11174|40|2025-02-25 07:13:30.771928|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11173|40|2025-02-25 07:13:29.739998|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11172|40|2025-02-25 07:13:28.695061|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11171|40|2025-02-25 07:13:27.661876|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11170|40|2025-02-25 07:13:26.627738|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11169|40|2025-02-25 07:13:25.602091|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11168|40|2025-02-25 07:13:24.470787|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11167|40|2025-02-25 07:13:24.147959|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11166|40|2025-02-25 07:13:23.824551|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11165|40|2025-02-25 07:13:23.499832|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11164|40|2025-02-25 07:13:23.177232|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11163|40|2025-02-25 07:13:22.854124|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11162|40|2025-02-25 07:13:22.531409|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11161|40|2025-02-25 07:13:22.208822|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11160|40|2025-02-25 07:13:21.885094|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11159|40|2025-02-25 07:13:21.561164|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11158|40|2025-02-25 07:13:21.233451|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11157|40|2025-02-25 07:13:20.910595|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11156|40|2025-02-25 07:13:20.587447|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11155|40|2025-02-25 07:13:20.263941|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11154|40|2025-02-25 07:13:19.934264|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11153|40|2025-02-25 07:13:19.610197|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11152|40|2025-02-25 07:13:19.285520|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11151|40|2025-02-25 07:13:18.960852|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11150|40|2025-02-25 07:13:18.636060|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11149|40|2025-02-25 07:13:18.288387|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11148|40|2025-02-25 07:13:17.969747|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11147|40|2025-02-25 07:13:17.846890|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11146|40|2025-02-25 07:13:17.697531|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11145|40|2025-02-25 07:13:17.572738|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11144|40|2025-02-25 07:13:17.450342|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11143|40|2025-02-25 07:13:17.303088|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11142|40|2025-02-25 07:13:17.185716|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11141|40|2025-02-25 07:13:17.063523|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11140|40|2025-02-25 07:13:16.939120|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11139|40|2025-02-25 07:13:16.818685|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11138|40|2025-02-25 07:13:16.697526|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11137|40|2025-02-25 07:13:16.573217|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11136|40|2025-02-25 07:13:16.450508|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11135|40|2025-02-25 07:13:16.328261|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11134|40|2025-02-25 07:13:16.201205|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11133|40|2025-02-25 07:13:16.083269|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11132|40|2025-02-25 07:13:15.962451|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11131|40|2025-02-25 07:13:15.837041|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+11130|40|2025-02-25 07:13:15.707788|Internal Server Error: /__reload__/events/|Traceback (most recent call last):
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nkensa/GDrive-local/Tree/Workspaces/dev/frameworks/django/projects/django/django_app/middleware/default_image.py", line 20, in __call__
+    if not len(GeneralConfig.objects.objects.all()):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'objects'
+sqlite> 

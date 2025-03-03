@@ -417,6 +417,7 @@ mimetypes.add_type("text/css", ".css", True)
 #       */10 * * * * pkill -f "check_tasks"
 # ------------------------
 
+WEBSCRAPER_GECKODRIVER_BINARY_PATH = "/usr/bin/geckodriver"
 WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
 WEBSCRAPER_HEADLESS = True
 WEBSCRAPER_CACHING_DURATION = 600 # This should match THREAD_TIMEOUT, as a higher value would be inneffective...? 
