@@ -22,3 +22,8 @@ cp -r staticfiles/fontawesomefree/ static/
 cp -r staticfiles/unicorn/ static/
 cp -r staticfiles/unpkg.com/ static/
 cp -r staticfiles/admin/ static/
+
+
+mkdir static/css/
+mkdir static/css/dist/
+cp staticfiles/css/dist/styles.css static/css/dist/styles.css

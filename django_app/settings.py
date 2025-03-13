@@ -91,7 +91,7 @@ TESTING = "test" in sys.argv
 # ---------------------
 # 'postgres' or 'sqlite'
 # ---------------------
-WHICH_DATABASE = 'sqlite'
+WHICH_DATABASE = 'postgres'
 
 # ---------------------
 # 'Database', 'Redis' (must be installed), 
@@ -237,7 +237,7 @@ elif WHICH_DATABASE == 'postgres':
         }
     }
 
-    if WHICH_ENV != 'LOCAL' or IS_HEROKU:
+    if IS_HEROKU:
         import dj_database_url
         DATABASES = {
             'default': dj_database_url.config(conn_max_age=600)  # Optional connection pooling
@@ -417,11 +417,13 @@ mimetypes.add_type("text/css", ".css", True)
 #       */10 * * * * pkill -f "check_tasks"
 # ------------------------
 
+#WEBSCRAPER_GECKODRIVER_BINARY_PATH = "/usr/bin/geckodriver-v0.30.0
 WEBSCRAPER_GECKODRIVER_BINARY_PATH = "/usr/bin/geckodriver"
+WEBSCRAPER_FIREFOX_BINARY_PATH = "/usr/lib/firefox/firefox"
 WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
 WEBSCRAPER_HEADLESS = True
 WEBSCRAPER_CACHING_DURATION = 600 # This should match THREAD_TIMEOUT, as a higher value would be inneffective...? 
-WEBSCRAPER_THREADS_MAX = 2
+WEBSCRAPER_THREADS_MAX = 10
 
 # ------------------------------------------
 # ChromeDriver, GeckoDriver: 
