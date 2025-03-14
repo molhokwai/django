@@ -423,7 +423,7 @@ WEBSCRAPER_FIREFOX_BINARY_PATH = "/usr/lib/firefox/firefox"
 WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
 WEBSCRAPER_HEADLESS = True
 WEBSCRAPER_CACHING_DURATION = 600 # This should match THREAD_TIMEOUT, as a higher value would be inneffective...? 
-WEBSCRAPER_THREADS_MAX = 10
+WEBSCRAPER_THREADS_MAX = 3
 
 # ------------------------------------------
 # ChromeDriver, GeckoDriver: 

@@ -314,18 +314,27 @@
                 color: white;
             }
 
+            #message-prompt,
             #reloading-prompt {
-              float: right;
               background-color: lightred;
               color: maroon;
-              border-top: 1px solid;
-              padding: 0.2em 0 0;
               text-transform: uppercase;
-              font-size: .9em;
+              border-top: 1px solid;
             }
+            #message-prompt {
+              display: block;
+              text-align: center;
+              margin-bottom: 1.5em;
+            }
+            #reloading-prompt {
+              float: right;
+              font-size: .9em;
+              padding: 0.2em 0 0;
+            }
+            #message-prompt .link-button,
             #reloading-prompt #seconds {
               font-weight: bold;
-            }
+            }	    
             #reloading-message {
                 font-weight: normal !important;
                 font-size: .9em;
@@ -380,7 +389,18 @@
             .link-button-function-call:hover {
                 font-weight: normal !important;
             }
-        </style>
+
+            .hide-smoothly {
+                transition: opacity 0.5s ease, visibility 0.5s ease;
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .hide-smoothly.hidden {
+                opacity: 0;
+                visibility: hidden;
+            }            
+	</style>
 
         <script>
             let tasksProgress = {};
