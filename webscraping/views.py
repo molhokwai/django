@@ -22,14 +22,14 @@ from webscraping.modules.webscraper.classes.SequenceManager import SequenceManag
 
 from django_app.settings import logger, _print, PRINT_VERBOSITY
 
-import os, datetime, time, copy, csv, json
+import os, datetime, time, copy, csv, json, re
 
 BASE_DIR = settings.BASE_DIR
 DEBUG = settings.DEBUG
 IS_LIVE = settings.IS_LIVE
 WEBSCRAPER_HEADLESS = settings.WEBSCRAPER_HEADLESS
 WEBSCRAPER_GECKODRIVER_BINARY_PATH = settings.WEBSCRAPER_GECKODRIVER_BINARY_PATH
-
+WEBSCRAPER_FIREFOX_BINARY_PATH = settings.WEBSCRAPER_FIREFOX_BINARY_PATH
 
 def index(request):
     context = {}
@@ -169,6 +169,18 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
     # input values
     # ------------
     name = webscrape.task_name
+
+    # ----------------
+    # fix name as converted list value, after switch from 
+    # sqlite to postgres...
+    # ----------------
+    print(name, type(name))
+    r = r"[\[|\(]'(.*)'[\]|\)]"
+    res = re.match(r, name)
+    if res:
+        name = res.group(1)
+    print(name)
+
     variables = webscrape.task_variables
     _print('type(webscrape.task_variables)', type(webscrape.task_variables))
     _print('webscrape.task_variables', webscrape.task_variables)
@@ -225,7 +237,8 @@ def webscrape_steps_long_running_method( webscrape: Webscrape, taskProgress ):
 
     driver = webdriver.Firefox(
         options=options,
-        service_log_path=os.path.join(str(BASE_DIR), "log/geckodriver.log")
+        service_log_path=os.path.join(str(BASE_DIR), "log/geckodriver.log"),
+        firefox_binary=WEBSCRAPER_FIREFOX_BINARY_PATH
     )
 
     # ---------------

@@ -5,6 +5,17 @@
 
 <div unicorn:view id="webscrapes-table">
 
+    <div id="webscrapes-message-prompt" class="hide-smoothly">
+        <span id="message-prompt">
+            <i id="message-icon" class="fa fa-question hide"></i>
+
+            <span id="message-prompt-message">
+                Is (open)vpn started ? 
+                 <i onclick="messagePromptHide()" class="fa fa-ok ok cursor-pointer link-button function-call">Yes</i>                
+            </span>
+        </span>
+    </div>
+
     <div id="webscrapes-table-selectors">
         {% for status in statuses %}
 
@@ -147,6 +158,11 @@
         function retry(webscrape_id){
             Unicorn.call('webscrape.row', 'retry', webscrape_id);
             reloadTableOnce();
+        }
+
+
+        function messagePromptHide(){
+            document.querySelector(`#webscrapes-message-prompt`).classList.add("hidden");
         }
 
 

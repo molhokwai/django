@@ -220,7 +220,7 @@ elif WHICH_DATABASE == 'postgres':
     # POSTGRES
     # --------
     os.environ.setdefault("PGDATABASE", "webscraper")
-    os.environ.setdefault("PGUSER", "postgres")
+    os.environ.setdefault("PGUSER", "webscraper_user")
     os.environ.setdefault("PGPASSWORD", "LeA45Jf~7ZL][e%k")
     os.environ.setdefault("PGHOST", "localhost")
     os.environ.setdefault("PGPORT", "5432")
@@ -230,7 +230,7 @@ elif WHICH_DATABASE == 'postgres':
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.environ.get("PGDATABASE", "webscraper"),
-            'USER': os.environ.get("PGUSER", "postgres"),
+            'USER': os.environ.get("PGUSER", "webscraper_user"),
             'PASSWORD': os.environ.get("PGPASSWORD", ""),
             'HOST': os.environ.get("PGHOST", "localhost"),
             'PORT': os.environ.get("PGPORT", "5432"),
@@ -417,7 +417,11 @@ mimetypes.add_type("text/css", ".css", True)
 #       */10 * * * * pkill -f "check_tasks"
 # ------------------------
 
+#WEBSCRAPER_GECKODRIVER_BINARY_PATH = "/usr/bin/geckodriver-v0.30.0
 WEBSCRAPER_GECKODRIVER_BINARY_PATH = "/usr/bin/geckodriver"
+WEBSCRAPER_FIREFOX_BINARY_PATH = "/usr/bin/firefox"
+if IS_REMOTE:
+    WEBSCRAPER_FIREFOX_BINARY_PATH = "/usr/lib/firefox/firefox"
 WEBSCRAPER_SOURCE_PATH = "webscraping/modules/webscraper/"
 WEBSCRAPER_HEADLESS = True
 WEBSCRAPER_CACHING_DURATION = 600 # This should match THREAD_TIMEOUT, as a higher value would be inneffective...? 
